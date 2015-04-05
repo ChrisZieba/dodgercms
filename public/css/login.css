@@ -1,0 +1,51 @@
+body {
+    color: #333;
+    font-size:16px;
+    padding:15px;
+}
+
+a {
+    text-decoration: none;
+    color: #1b98f8;
+}
+
+.help-text {
+    color: #666;
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+.login-form {
+    margin-top: 100px;
+    padding:55px 15px;
+    border: 1px solid #e1e1e1;
+    background-color: #f7f7f7;
+    border-radius: 3px;
+}
+
+.login-form input[type=text]{
+    margin-bottom: 0.75em;
+}
+
+.login-form label {
+    color:#666;
+}
+
+.login-submit {
+    float:right;
+}
+
+@media (min-width: 48em) {
+
+    .login-offset {
+        margin-left:12.5%;;
+    }
+}
+
+@media (min-width: 64em) {
+
+    .login-offset {
+        margin-left:37.5%;
+    }
+}
+
