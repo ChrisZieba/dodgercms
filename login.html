@@ -20,13 +20,20 @@
             <div class="pure-u-1 pure-u-md-3-4 pure-u-lg-1-4 login-offset">
                 <form id="login-form" class="pure-form pure-form-stacked login-form">
                     <fieldset>
-                        <label for="login-form-access-key">Access Key</label>
+                        <label for="login-form-access-key" class="pure-input-label">Access Key</label>
                         <input id="login-form-access-key" class="pure-input-1" type="text" placeholder="Access Key">
 
-                        <label for="login-form-access-secret">Access Secret</label>
+                        <label for="login-form-access-secret" class="pure-input-label">Access Secret</label>
                         <input id="login-form-access-secret" class="pure-input-1" type="password" placeholder="Access Secret">
 
-                        <p class="help-text">Your access key and secret will be used to generate a federated user. They will not be stored anywhere.</p>
+                        <label for="login-form-bucket" class="pure-input-label">Bucket</label>
+                        <input id="login-form-bucket" class="pure-input-1" type="text" placeholder="Bucket">
+
+                        <label for="remember" class="pure-checkbox pure-input-label">
+                            <input id="login-remember-me" type="checkbox"> Remember me
+                        </label>
+
+                        <p class="help-text">Your access key and secret will be used to generate a federated user. They will be stored in local session storage if selected.</p>
                         <button type="submit" class="pure-button pure-button-primary login-submit">Login</button>
 
                     </fieldset>
