@@ -5,7 +5,14 @@ $(function() {
         var accessKey = $("#login-form-access-key").val();
         var accessSecret = $("#login-form-access-secret").val();
         var bucket = $("#login-form-bucket").val();
-        var remember = $("#login-remember-me").is(":checked"));
+        var remember = $("#login-remember-me").is(":checked");
+
+        // validation
+        if (accessKey === '' || accessSecret === '' || bucket === '') {
+            alert('All fields are required.');
+            event.preventDefault();
+            return;
+        }
 
         var sts = new AWS.STS({
             accessKeyId: accessKey,
