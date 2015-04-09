@@ -37,7 +37,7 @@
                         </label>
 
                         <p class="help-text">Your access key and secret will be used to generate a federated user. They will be stored in local session storage if selected.</p>
-                        <button type="submit" class="pure-button pure-button-primary login-submit">Login</button>
+                        <button type="submit" class="pure-button pure-button-primary">Login</button>
 
                     </fieldset>
                 </form>
