@@ -12,28 +12,103 @@
 
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.20.min.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
 
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/themes/default/style.min.css" />
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/jstree.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/jstree.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.min.js"></script>
 
     <script src="public/js/app.js"></script>
 
-
     <script type="text/javascript">
 
-        // Test to make sure the user has authenticated (check local session)
-        
-    </script>
+        // test to make sure the user has authenticated (check local session)
+        var accessKeyId = sessionStorage.getItem("dodgercms-token-access-key-id");
+        var secretAccessKey = sessionStorage.getItem("dodgercms-token-secret-access-key");
+        var sessionToken = sessionStorage.getItem("dodgercms-token-session-token");
+        var bucket = localStorage.getItem("dodgercms-bucket");
 
+        var s3 = new AWS.S3({
+            accessKeyId: accessKeyId,
+            secretAccessKey: secretAccessKey,
+            sessionToken: sessionToken,
+            sslEnabled: true
+        });
+
+        var params = {
+            Bucket: bucket
+        }
+
+        s3.headBucket(params, function(err, data) {
+            // any error will be because the crendentials are missing or incorrect
+            if (err) {
+                console.log(err, err.stack);
+                // try to login using saved credentials
+
+                window.location.replace(location.protocol + "//" + location.host);
+            }
+        });
+    </script>
 </head>
 <body>
 
 
+<script id="entry-template" type="text/x-handlebars-template">
+
+<div class="content-header pure-g">
+    <div class="pure-u-3-4">
+        <h1 class="content-title">Hello from Toronto</h1>
+        <p class="content-subtitle">
+            From <a>Tilo Mitra</a> at <span>3:56pm, April 3, 2012</span>
+        </p>
+    </div>
+    <div class="content-controls pure-u-1-4">
+        <button class="secondary-button pure-button">Edit</button>
+    </div>
+</div>
+<div class="content-body">
+    <form class="pure-form">
+        <fieldset class="pure-group">
+            <textarea id="content" class="pure-input-1" rows="25">{{ content }}</textarea>
+        </fieldset>
+    </form>
+</div>
+</script>
 
 
+<script id="edit-entry-template" type="text/x-handlebars-template">
 
-    
+<div class="content-header pure-g">
+    <div class="pure-u-3-4">
+        <h1 class="content-title">Editing</h1>
+    </div>
+    <div class="content-controls pure-u-1-4">
+        <button class="secondary-button pure-button">Edit</button>
+    </div>
+</div>
+<div class="content-body">
+    <form id="new-entry-form" class="pure-form">
+        <fieldset>
+
+            <input id="new-entry-form-title" class="pure-input-1" type="text" placeholder="Title">
+
+            <select id="new-entry-form-dir" class="pure-input-1-3">
+                {{#each dirs}}
+                    <option data-dir="{{this}}">{{this}}</option>
+                {{/each}}
+            </select>
+
+            <input id="new-entry-form-slug" class="pure-input-1-3" type="text" placeholder="Slug">
+
+            <textarea id="new-entry-form-content" class="pure-input-1" rows="25"></textarea>
+
+
+            <button type="submit" class="pure-button pure-button-primary">Save</button>
+
+        </fieldset>
+    </form>
+</div>
+</script>  
 
 
 <div id="layout" class="content pure-g">
@@ -41,7 +116,7 @@
         <a href="#" class="nav-menu-button">Menu</a>
 
         <div class="nav-inner">
-            <button class="primary-button pure-button new-entry-button"><i class="fa fa-plus-circle"></i> Entry</button>
+            <button id="new-entry" class="primary-button pure-button new-entry-button"><i class="fa fa-plus-circle"></i> Entry</button>
 
             <div class="pure-menu">
                 <ul class="pure-menu-list">
@@ -67,7 +142,9 @@
 
     <div id="main" class="pure-u-1">
 
-            <div class="content-header pure-g">
+
+
+<!--             <div class="content-header pure-g">
                 <div class="pure-u-3-4">
                     <h1 class="content-title">Hello from Toronto</h1>
                     <p class="content-subtitle">
@@ -90,7 +167,7 @@
 
                     </form>
 
-            </div>
+            </div> -->
 
     </div>
 </div>
