@@ -11,9 +11,9 @@ $(function() {
 
 
     // Set up the connection to S3
-	var accessKeyId = sessionStorage.getItem("lemonchop-AccessKeyId");
-	var secretAccessKey = sessionStorage.getItem("lemonchop-SecretAccessKey");
-	var sessionToken = sessionStorage.getItem("lemonchop-SessionToken");
+    var accessKeyId = sessionStorage.getItem("dodgercms-token-access-key-id");
+    var secretAccessKey = sessionStorage.getItem("dodgercms-token-secret-access-key");
+    var sessionToken = sessionStorage.getItem("dodgercms-token-session-token");
 
 	var s3 = new AWS.S3({
 	    accessKeyId: accessKeyId,
@@ -24,7 +24,8 @@ $(function() {
 	    apiVersion: API_VERSION
 	});
 
-	setupTree();
+	getS3Objects(processTree);
+	//registerEventhandlers();
 
 	$(document).bind('keydown', function(e) {
 	  if (e.ctrlKey && (e.which == 83)) {
@@ -32,6 +33,86 @@ $(function() {
 	    save();
 	  }
 	});
+
+    // login functionality
+    $(document).on("submit", "#new-entry-form", function(event) {
+    	console.log('wtf');
+        var title = $.trim($("#new-entry-form-title").val());
+        var slug = $.trim($("#new-entry-form-slug").val());
+        var content = $.trim($("#new-entry-form-content").val());
+        var dir = $("#new-entry-form-dir option:selected" ).data('dir');
+
+        console.log(dir);
+
+        var key = (dir !== '/') ? dir + slug : slug;
+        console.log(key);
+        // create the new key in s3
+		var params = {
+			Bucket: BUCKET,
+			Key: key,
+			Body: content,
+			ContentEncoding: 'utf-8',
+            ContentType: "text/html",
+            Expires: 0,
+            CacheControl: "public, max-age=0, no-cache",
+			Metadata: {
+				title: title,
+			}
+		};
+		s3.putObject(params, function(err, data) {
+			if (err) {
+
+			} else {
+				console.log(data);
+			}
+		});
+
+       	event.preventDefault();
+
+    });
+
+	$('#new-entry').click(function(event) {
+		// clear the content
+		newEntry();
+		// create a new
+	});
+
+	function newEntry() {
+		var source   = $("#edit-entry-template").html();
+		var template = Handlebars.compile(source);
+
+		getS3Objects(function(err, data) {
+			if (err) {
+				// soemting
+			} else {
+				var name = data.Name;
+				var prefix = data.Prefix;
+				var contents = data.Contents;
+				var dirs = [];
+
+				// push the root of the folder
+				dirs.push('/');
+
+				for (var i = 0; i < contents.length; i+=1) {
+					var key = contents[i].Key;
+
+					// only want directories
+					if (key.substr(-1) === '/') {
+						dirs.push(key);
+					}
+					
+				}
+
+				var context = {
+					dirs: dirs
+				};
+				var html = template(context);
+				$("#main").html(html);
+			}
+		});
+
+	}
+
 
 
 	function save() {
@@ -47,33 +128,53 @@ $(function() {
 		saveKeyContent(key);
 	}
 
-	function setupTree() {
+	// function setupTree() {
+	// 	var params = {
+	// 	  	Bucket: BUCKET,
+	// 	  	EncodingType: ENCODING_TYPE,
+	// 	  	MaxKeys: 1000,
+	// 	};
+
+	// 	s3.listObjects(params, function(err, data) {
+	// 	    if (err) {
+	// 	        console.log(err, err.stack);
+	// 	        // show the login if credentials ar expired or incorrect
+	// 	    } else {
+	// 	    	console.log(data);
+	// 	    	processTree(data.Name, data.Prefix, data.Contents);
+		        
+	// 	    }
+	// 	});
+	// }
+
+	function getS3Objects(callback) {
 		var params = {
-		  Bucket: BUCKET,
-		  //Delimiter: '/',
-		  EncodingType: ENCODING_TYPE,
-		  //Marker: 'STRING_VALUE',
-		  MaxKeys: 1000,
-		  //Prefix: ''
+		  	Bucket: BUCKET,
+		  	EncodingType: ENCODING_TYPE,
+		  	MaxKeys: 1000,
 		};
 
 		s3.listObjects(params, function(err, data) {
 		    if (err) {
 		        console.log(err, err.stack);
+		        // show the login if credentials ar expired or incorrect
 		    } else {
-		    	console.log(data);
-		    	processTree(data.Name, data.Prefix, data.Contents);
+		    	callback(null, data)
 		        
 		    }
 		});
 	}
 
 	// takes the s3 contents
-	function processTree(name, prefix, contents) {
-		var data = [];
+	function processTree(err, data) {
+		var name = data.Name;
+		var prefix = data.Prefix;
+		var contents = data.Contents;
+
+		var tree = [];
 
 		// pus hthe bucket
-		data.push({
+		tree.push({
 			"id" : "s3-root", 
 			"parent" : '#', 
 			"text" : BUCKET,
@@ -86,30 +187,18 @@ $(function() {
 		for (var i = 0; i < contents.length; i+=1) {
 			var key = contents[i].Key;
 
-			// Ignore any reserved dirs and any root level files
-			if (isReserved(key) || key.indexOf('/') === -1) {
-				continue;
-			}
-
-			console.log(key);
-			// folder
-			if (contents[i].Size === 0) {
-				// This will remove the last slash and any whitespace after it:
-				//key = key.replace(/\/\s*$/, "");
-				
-			}
 			console.log('key= ',key);
-			// split 
+
+			// split and remove last slash for directory
 			parts = key.replace(/\/\s*$/, "").split('/');
-			//console.log('parts',parts);
 
 
 			for (var j = 0; j < parts.length; j+=1) {
 				console.log('part=',parts[j]);
 				var search =  's3-' + ((j > 0) ? parts.slice(0,j+1).join("-") : parts[j]);
 				console.log('parts',parts);
-				console.log('search=',search);
-				var result = $.grep(data, function(e){ 
+
+				var result = $.grep(tree, function(e){ 
 					return e.id === search; 
 				});
 
@@ -119,12 +208,12 @@ $(function() {
 				console.log(j, parts.length-1);
 				if (result.length === 0) {
 					console.log('result not found')
-					data.push({
+					tree.push({
 						"id" : search, 
 						"parent" : (j > 0) ? 's3-' + parts.slice(0,j).join("-") : 's3-root', 
 						"text" : parts[j],
 						// if the key has a trailing slash or is in not the last elemenet it is a folder
-						"icon" : (j === parts.length-1 && key.substr(-1) === '/') ? "fa fa-folder-o" : "fa fa-file-o",
+						"icon" : (j === parts.length-1 && key.substr(-1) === '/') ? "fa fa-folder-open-o" : "fa fa-file-o",
 						"state": {
 							"opened": true
 						},
@@ -137,7 +226,6 @@ $(function() {
 
 			console.log('----------------');
 		}
-		//console.log(data);
 
 		var onTreeChange = function(event, data) {
 			var action = data.action;
@@ -171,7 +259,7 @@ $(function() {
 		      "dots" : false
 		    },
 		    "animation" : false,
-		    "data": data
+		    "data": tree
 		  }
 		});
 	}
@@ -232,22 +320,53 @@ $(function() {
 		//bodyAsString = (string) $result['Body'];
 	}
 
-	function isReserved(name) {
-		// these are key names that cannot be used
-		var reserved = ['admin/', 'public/'];
-		var isReserved = false;
-
-		for (var i = 0; i < reserved.length; i+=1) {
-			if (name.substring(0, reserved[i].length) == reserved[i]) {
-				isReserved = true;
-			}
-		}
-
-		return isReserved;
-	}
 
 
+        // <input type="file" id="file-chooser" /> 
 
 
+        // <script type="text/javascript">
+        //     var accessKeyId = sessionStorage.getItem("dodgercms-token-access-key-id");
+        //     var secretAccessKey = sessionStorage.getItem("dodgercms-token-secret-access-key");
+        //     var sessionToken = sessionStorage.getItem("dodgercms-token-session-token");
+
+        //     var s3 = new AWS.S3({
+        //         accessKeyId: accessKeyId,
+        //         secretAccessKey: secretAccessKey,
+        //         sessionToken: sessionToken,
+        //         sslEnabled: true,
+        //         DurationSeconds: 129600, // 36 hours
+        //         apiVersion: '2011-06-15'
+        //     });
+
+        // $("#file-chooser").change(function(){
+        //     var file = $("#file-chooser")[0].files[0];
+        //     if (file) {
+
+        //       var params = {
+        //         Bucket: BUCKET,
+        //         Key: file.name, 
+        //         ContentType: file.type, 
+        //         Body: file
+        //     };
+        //       s3.upload(params, function (err, data) {
+        //         if (err) {
+
+        //         } else {
+        //             var content =  $('#content');
+        //                 var cursorPosStart = content.prop('selectionStart');
+        //                 var cursorPosEnd = content.prop('selectionEnd');
+        //                 var v = content.val();
+        //                 var textBefore = v.substring(0,  cursorPosStart );
+        //                 var textAfter  = v.substring( cursorPosEnd, v.length );
+        //                 content.val(textBefore + '[]' + file.name + '()' + textAfter);
+
+        //         }
+        //       });
+        //     } 
+        //  });
+
+
+        // </script>
 
 });
