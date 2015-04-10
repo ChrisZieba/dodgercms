@@ -71,6 +71,13 @@ $(function() {
 
     });
 
+	$(document).on("click", "#preview-entry", function(event) {
+		var content = $.trim($("#new-entry-form-content").val());
+		console.log('preview')
+		console.log(marked(content));
+		// create a new
+	});
+
 	$('#new-entry').click(function(event) {
 		// clear the content
 		newEntry();
