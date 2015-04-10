@@ -6,18 +6,14 @@
 
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/themes/default/style.min.css" />
     <link rel="stylesheet" href="public/css/app.css">
 
     <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
-
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.20.min.js"></script>
-
-
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/themes/default/style.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/jstree.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
     <script src="public/js/app.js"></script>
 
     <script type="text/javascript">
@@ -43,9 +39,9 @@
             // any error will be because the crendentials are missing or incorrect
             if (err) {
                 console.log(err, err.stack);
-                // try to login using saved credentials
+                // TODO: try to login using saved credentials
 
-                window.location.replace(location.protocol + "//" + location.host);
+                //window.location.replace(location.protocol + "//" + location.host);
             }
         });
     </script>
@@ -99,6 +95,8 @@
             </select>
 
             <input id="new-entry-form-slug" class="pure-input-1-3" type="text" placeholder="Slug">
+
+            <button type="button" id="preview-entry" class="button-xsmall pure-button">Extra Small Button</button>
 
             <textarea id="new-entry-form-content" class="pure-input-1" rows="25"></textarea>
 
