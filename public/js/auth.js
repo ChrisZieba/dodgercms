@@ -65,11 +65,11 @@ $(function() {
 
                 s3.headBucket({ Bucket: dataBucket }, function(err) {
                     if (err) {
-                        return callback("Access Denied. Please make sure the user attached to the access key has access to the bucket entered.");
+                        return callback("Access Denied. Please make sure the user attached to the access key has access to the data bucket.");
                     } else {
                         s3.headBucket({ Bucket: assetsBucket }, function(err) {
                             if (err) {
-                                return callback("Access Denied. Please make sure the user attached to the access key has access to the bucket entered.");
+                                return callback("Access Denied. Please make sure the user attached to the access key has access to the assets entered.");
                             } else {
                                 // Store the federated user and bucket in local session data
                                 sessionStorage.setItem("dodgercms-token-access-key-id", data.Credentials.AccessKeyId);
