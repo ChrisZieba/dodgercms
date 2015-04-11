@@ -18,65 +18,58 @@
 
     <script type="text/javascript">
 
-        // test to make sure the user has authenticated (check local session)
-        var accessKeyId = sessionStorage.getItem("dodgercms-token-access-key-id");
-        var secretAccessKey = sessionStorage.getItem("dodgercms-token-secret-access-key");
-        var sessionToken = sessionStorage.getItem("dodgercms-token-session-token");
-        var bucket = localStorage.getItem("dodgercms-bucket");
+        // // test to make sure the user has authenticated (check local session)
+        // var accessKeyId = sessionStorage.getItem("dodgercms-token-access-key-id");
+        // var secretAccessKey = sessionStorage.getItem("dodgercms-token-secret-access-key");
+        // var sessionToken = sessionStorage.getItem("dodgercms-token-session-token");
+        // var bucket = localStorage.getItem("dodgercms-bucket");
 
-        var s3 = new AWS.S3({
-            accessKeyId: accessKeyId,
-            secretAccessKey: secretAccessKey,
-            sessionToken: sessionToken,
-            sslEnabled: true
-        });
+        // var s3 = new AWS.S3({
+        //     accessKeyId: accessKeyId,
+        //     secretAccessKey: secretAccessKey,
+        //     sessionToken: sessionToken,
+        //     sslEnabled: true
+        // });
 
-        var params = {
-            Bucket: bucket
-        }
+        // var params = {
+        //     Bucket: bucket
+        // }
 
-        s3.headBucket(params, function(err, data) {
-            // any error will be because the crendentials are missing or incorrect
-            if (err) {
-                console.log(err, err.stack);
-                // TODO: try to login using saved credentials
+        // s3.headBucket(params, function(err, data) {
+        //     // any error will be because the crendentials are missing or incorrect
+        //     if (err) {
+        //         console.log(err, err.stack);
+        //         // TODO: try to login using saved credentials
 
-                //window.location.replace(location.protocol + "//" + location.host);
-            }
-        });
+        //         //window.location.replace(location.protocol + "//" + location.host);
+        //     }
+        // });
     </script>
 </head>
 <body>
 
 
 <script id="entry-template" type="text/x-handlebars-template">
-
-<div class="content-header pure-g">
-    <div class="pure-u-3-4">
-        <h1 class="content-title">Hello from Toronto</h1>
-        <p class="content-subtitle">
-            From <a>Tilo Mitra</a> at <span>3:56pm, April 3, 2012</span>
-        </p>
+    <div class="content-header pure-g">
+        <div class="pure-u-3-4">
+            <h1 class="content-title">{{title}}</h1>
+            <p class="content-subtitle">
+                Last modified <a href="{{link}}" target="_blank">{{key}}</a> at <span>{{modified}}</span>
+            </p>
+        </div>
+        <div class="content-controls pure-u-1-4">
+            <button id="edit-entry" data-key="{{key}}" class="secondary-button pure-button">Edit</button>
+        </div>
     </div>
-    <div class="content-controls pure-u-1-4">
-        <button class="secondary-button pure-button">Edit</button>
-    </div>
-</div>
-<div class="content-body">
-    <form class="pure-form">
-        <fieldset class="pure-group">
-            <textarea id="content" class="pure-input-1" data-key="{{key}}" rows="25">{{content}}</textarea>
-        </fieldset>
-    </form>
-</div>
+    <div class="content-body">{{&content}}</div>
 </script>
 
 
-<script id="edit-entry-template" type="text/x-handlebars-template">
 
+<script id="new-entry-template" type="text/x-handlebars-template">
 <div class="content-header pure-g">
     <div class="pure-u-3-4">
-        <h1 class="content-title">Editing</h1>
+        <h1 class="content-title">New Entry</h1>
     </div>
     <div class="content-controls pure-u-1-4">
         <button class="secondary-button pure-button">Edit</button>
@@ -99,6 +92,42 @@
             <button type="button" id="preview-entry" class="button-xsmall pure-button">Extra Small Button</button>
 
             <textarea id="new-entry-form-content" class="pure-input-1" rows="25"></textarea>
+
+
+            <button type="submit" class="pure-button pure-button-primary">Save</button>
+
+        </fieldset>
+    </form>
+</div>
+</script>  
+
+<script id="edit-entry-template" type="text/x-handlebars-template">
+
+<div class="content-header pure-g">
+    <div class="pure-u-3-4">
+        <h1 class="content-title">Editing {{title}}</h1>
+    </div>
+    <div class="content-controls pure-u-1-4">
+        <button class="secondary-button pure-button">Edit</button>
+    </div>
+</div>
+<div class="content-body">
+    <form id="edit-entry-form" class="pure-form entry-form">
+        <fieldset>
+            <div class="pure-control-group">
+            <input id="new-entry-form-title" class="pure-input-1" type="text" placeholder="Title" value="{{title}}">
+            </div>
+            <select id="new-entry-form-dir" class="pure-input-1-3">
+                {{#each dirs}}
+                    <option data-dir="{{this}}">{{this}}</option>
+                {{/each}}
+            </select>
+
+            <input id="new-entry-form-slug" class="pure-input-1-3" type="text" placeholder="Slug" value="{{slug}}">
+
+            <button type="button" id="preview-entry" class="button-xsmall pure-button">Extra Small Button</button>
+
+            <textarea id="new-entry-form-content" class="pure-input-1" rows="25">{{content}}</textarea>
 
 
             <button type="submit" class="pure-button pure-button-primary">Save</button>
