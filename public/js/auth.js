@@ -6,10 +6,11 @@ $(function() {
     function autofill() {
         $("#login-form-access-key").val(localStorage.getItem("dodgercms-access-key-id") || '');
         $("#login-form-access-secret").val(localStorage.getItem("dodgercms-secret-access-key") || '');
-        $("#login-form-bucket").val(localStorage.getItem("dodgercms-bucket") || '');
+        $("#login-form-data-bucket").val(localStorage.getItem("dodgercms-data-bucket") || '');
+        $("#login-form-assets-bucket").val(localStorage.getItem("dodgercms-assets-bucket") || '');
     }
 
-    function login(bucket, accessKey, accessSecret, remember, callback) {
+    function login(dataBucket, assetsBucket, accessKey, accessSecret, remember, callback) {
 
 
         var sts = new AWS.STS({
@@ -34,15 +35,17 @@ $(function() {
                         '"s3:PutObject"' +
                     '],' +
                     '"Resource": [' +
-                        '"arn:aws:s3:::' + bucket + '",' +
-                        '"arn:aws:s3:::' + bucket + '/*"' +
+                        '"arn:aws:s3:::' + dataBucket + '",' +
+                        '"arn:aws:s3:::' + dataBucket + '/*",' +
+                        '"arn:aws:s3:::' + assetsBucket + '",' +
+                        '"arn:aws:s3:::' + assetsBucket + '/*"' +
                     ']' +
                 '}' +
             ']' +
         '}';
 
         var stsParams = {
-            Name: 'dodgercms-bucket-policy',
+            Name: 'dodgercms-buckets-policy',
             Policy: policy,
             DurationSeconds: 129600, // 36 hours
         };
@@ -60,29 +63,32 @@ $(function() {
                     sslEnabled: true
                 });
 
-                var s3Params = {
-                    Bucket: bucket
-                };
-
-                s3.headBucket(s3Params, function(err) {
+                s3.headBucket({ Bucket: dataBucket }, function(err) {
                     if (err) {
                         return callback("Access Denied. Please make sure the user attached to the access key has access to the bucket entered.");
                     } else {
-                        // Store the federated user and bucket in local session data
-                        sessionStorage.setItem("dodgercms-token-access-key-id", data.Credentials.AccessKeyId);
-                        sessionStorage.setItem("dodgercms-token-secret-access-key", data.Credentials.SecretAccessKey);
-                        sessionStorage.setItem("dodgercms-token-session-token", data.Credentials.SessionToken);
+                        s3.headBucket({ Bucket: assetsBucket }, function(err) {
+                            if (err) {
+                                return callback("Access Denied. Please make sure the user attached to the access key has access to the bucket entered.");
+                            } else {
+                                // Store the federated user and bucket in local session data
+                                sessionStorage.setItem("dodgercms-token-access-key-id", data.Credentials.AccessKeyId);
+                                sessionStorage.setItem("dodgercms-token-secret-access-key", data.Credentials.SecretAccessKey);
+                                sessionStorage.setItem("dodgercms-token-session-token", data.Credentials.SessionToken);
 
-                        // If the user selected "remember me" store their access key and secret in local storage
-                        if (remember) {
-                            localStorage.setItem("dodgercms-access-key-id", accessKey);
-                            localStorage.setItem("dodgercms-secret-access-key", accessSecret);
-                        }
+                                // If the user selected "remember me" store their access key and secret in local storage
+                                if (remember) {
+                                    localStorage.setItem("dodgercms-access-key-id", accessKey);
+                                    localStorage.setItem("dodgercms-secret-access-key", accessSecret);
+                                }
 
-                        localStorage.setItem("dodgercms-bucket", bucket);
+                                localStorage.setItem("dodgercms-data-bucket", dataBucket);
+                                localStorage.setItem("dodgercms-assets-bucket", assetsBucket);
 
-                        // Success
-                        callback(null, data)
+                                // Success
+                                callback(null, data)
+                            }
+                        });
                     }
                 });
             } 
@@ -95,27 +101,27 @@ $(function() {
 
     // login functionality
     $("#login-form").submit(function(event) {
+        // Don't want the form to submit
+        event.preventDefault();
 
         var accessKey = $.trim($("#login-form-access-key").val());
         var accessSecret = $.trim($("#login-form-access-secret").val());
-        var bucket = $.trim($("#login-form-bucket").val());
+        var dataBucket = $.trim($("#login-form-data-bucket").val());
+        var assetsBucket = $.trim($("#login-form-assets-bucket").val());
         var remember = $("#login-remember").is(":checked");
 
         // validate the form fields
-        if (accessKey === '' || accessSecret === '' || bucket === '') {
+        if (accessKey === '' || accessSecret === '' || dataBucket === '' || assetsBucket === '') {
             alert('All fields are required.');
-            event.preventDefault();
             return;
         }
 
-        login(bucket, accessKey, accessSecret, remember, function(err, data) {
+        login(dataBucket, assetsBucket, accessKey, accessSecret, remember, function(err, data) {
             if (err) {
                 alert(err);
             } else {
                 window.location.replace(location.protocol + "//" + location.host);
             }
         });
-
-        event.preventDefault();
     });
 });
