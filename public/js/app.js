@@ -5,6 +5,7 @@ $(function() {
     var ENCODING_TYPE = 'url';
     var API_VERSION = '2011-06-15';
     var CONTENT_TYPE = 'text/plain; charset=UTF-8';
+
     // var ACCESS_KEY_ID = sessionStorage.getItem("lemonchop-AccessKeyId");
     // var SECRET_ACCESS_KEY sessionStorage.getItem("lemonchop-SecretAccessKey") || null;
     // var SESSION_TOKEN = sessionStorage.getItem("lemonchop-SessionToken") || null;
@@ -55,7 +56,7 @@ $(function() {
 		}
 	}
 
-	getS3Objects(function(err, data) {
+	listS3Objects(function(err, data) {
 		var name = data.Name;
 		var prefix = data.Prefix;
 		var contents = data.Contents;
@@ -212,17 +213,15 @@ $(function() {
         }
 
         // the title needs to be between 1 and 32 characters
-        if (!/^([a-zA-Z0-9-_]){3,32}$/.test(slug)) {
-    		alert("The url slug must be at least 3 characters and can only contain letters, numbers, dashed and underscores.");
+        if (!/^([a-zA-Z0-9-_.]){3,32}$/.test(slug)) {
+    		alert("The url slug must be at least 3 characters and can only contain letters, numbers, dashes, underscores and periods.");
     		return;
         }
 
 
         console.log(dir);
 
-        // All markdown files are placed in the content folder
-        var key = "content/";
-        key += (dir !== '/') ? dir + slug : slug;
+        var key = (dir !== '/') ? dir + slug : slug;
         console.log(key);
         // create the new key in s3
 		var params = {
@@ -234,7 +233,7 @@ $(function() {
             Expires: 0,
             CacheControl: "public, max-age=0, no-cache",
 			Metadata: {
-				"x-amz-meta-title": title,
+				"title": title,
 			}
 		};
 		s3.putObject(params, function(err, data) {
@@ -249,6 +248,45 @@ $(function() {
 
     });
 
+	$(document).on("click", "#edit-entry", function(event) {
+		var key = $(this).data("key");
+
+		if (typeof key === "undefined") {
+			return;
+		}
+
+		getS3Object(key, function(err, data) {
+			var body = data.Body.toString();
+
+			// check if the file is a markdown file, we dont wantt o load any images, etc
+			var source = $("#edit-entry-template").html();
+			var template = Handlebars.compile(source);
+			var modified = new Date(data.LastModified);
+
+			// TODO: cache the objects from list
+			listS3Objects(function(err, list) {
+				if (err) {
+					// soemting
+				} else {
+					var dirs = getDirs(list.Contents);
+					var slug = getSlug(key);
+					var context = {
+						title: data.Metadata['title'],
+						modified: modified.toLocaleString(),
+						key: key,
+						dirs: dirs,
+						slug: slug,
+						content: body
+					};
+					var html = template(context);
+					$("#main").html(html);
+				}
+			});
+
+
+		});
+	});
+
 	$(document).on("click", "#preview-entry", function(event) {
 		var content = $.trim($("#new-entry-form-content").val());
 		console.log('preview')
@@ -260,27 +298,14 @@ $(function() {
 		var source   = $("#new-entry-template").html();
 		var template = Handlebars.compile(source);
 
-		getS3Objects(function(err, data) {
+		listS3Objects(function(err, data) {
 			if (err) {
 				// soemting
 			} else {
 				var name = data.Name;
 				var prefix = data.Prefix;
 				var contents = data.Contents;
-				var dirs = [];
-
-				// push the root of the folder
-				dirs.push('/');
-
-				for (var i = 0; i < contents.length; i+=1) {
-					var key = contents[i].Key;
-
-					// only want directories
-					if (key.substr(-1) === '/') {
-						dirs.push(key);
-					}
-					
-				}
+				var dirs = getDirs(contents);
 
 				var context = {
 					dirs: dirs
@@ -291,7 +316,29 @@ $(function() {
 		});
 	});
 
+	function getSlug(key) {
+		parts = key.split('/');
+		return parts.pop();
+	}
 
+	function getDirs(objects) {
+		var dirs = [];
+
+		// push the root of the folder
+		dirs.push('/');
+
+		for (var i = 0; i < objects.length; i+=1) {
+			var key = objects[i].Key;
+
+			// only want directories
+			if (key.substr(-1) === '/') {
+				dirs.push(key);
+			}
+			
+		}
+
+		return dirs;
+	}
 
 	function save() {
 		// get the data key attached the textra
@@ -306,7 +353,7 @@ $(function() {
 		saveKeyContent(key);
 	}
 
-	function getS3Objects(callback) {
+	function listS3Objects(callback) {
 		var params = {
 		  	Bucket: DATA_BUCKET,
 		  	EncodingType: ENCODING_TYPE,
@@ -324,7 +371,23 @@ $(function() {
 		});
 	}
 
-	function getKeyContent(key) {
+	function getS3Object(key, callback) {
+		var params = {
+		  	Bucket: DATA_BUCKET,
+		  	Key: key
+		};
+
+		s3.getObject(params, function(err, data) {
+		    if (err) {
+		        callbuck(err);
+		    } else {
+		    	callback(null, data);
+		        
+		    }
+		});
+	}
+
+	function getKeyContent(key, callback) {
 
 		var params = {
 		  	Bucket: DATA_BUCKET,
@@ -374,13 +437,17 @@ $(function() {
 		// check if the file is a markdown file, we dont wantt o load any images, etc
 		var source   = $("#entry-template").html();
 		var template = Handlebars.compile(source);
+		var modified = new Date(content.LastModified);
+
+		console.log(marked(body));
+
 		var context = {
-			title: content.Metadata['x-amz-meta-title'],
-			modified: content.LastModified.toString(),
+			title: content.Metadata['title'],
+			modified: modified.toLocaleString(),
 			// provide a link to the actual resource
 			link: '',
 			key: key,
-			content: body
+			content: marked(body)
 		};
 		var html = template(context);
 		$("#main").html(html);
