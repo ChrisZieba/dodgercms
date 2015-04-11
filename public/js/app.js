@@ -42,8 +42,6 @@ $(function() {
                         data.Key = object.Key;
                         keys.push(data);
                         if (index===contents.length-1) {
-                        	console.log(keys);
-                        	console.log(callback);
                         	callback(null, keys);
                         }
                     }
@@ -73,11 +71,20 @@ $(function() {
 		headS3Objects(contents, function(err, data) {
 			console.log(contents);
 			for (var i = 0; i < data.length; i+=1) {
-				var key = data[i].Key;
+				var object = data[i];
+				var key = object.Key;
+				console.log(key);
+				console.dir(object);
 
-				// if (key.meta.) {
 
-				// }
+
+				if (key.substr(-1) !== '/') {
+					// anything other than a directory or text/plain (markdown) will be ignored
+					if (object.ContentType !== 'text/plain') {
+						continue;
+					}
+				}
+
 				console.log('key= ',key);
 
 				// split and remove last slash for directory
@@ -128,7 +135,7 @@ $(function() {
 						var key = data.node.li_attr["data-key"];
 
 
-						// check if directory
+						// check if not a directory
 						if (key && key.substr(-1) !== '/') {
 							getKeyContent(key);
 						}
@@ -330,13 +337,17 @@ $(function() {
 
 	function loadKeyContent(key, content) {
 		//var allowedContentTypes = ['application/'];
-
-		// check if the file is a markdown file, we dont wantt o load any images, etc
-
 		var content = content.Body.toString();
 
-		$('#content').val(content);
-		$('#content').data("key", key);
+		// check if the file is a markdown file, we dont wantt o load any images, etc
+		var source   = $("#entry-template").html();
+		var template = Handlebars.compile(source);
+		var context = {
+			key: key,
+			content: content
+		};
+		var html = template(context);
+		$("#main").html(html);
 
 		//bodyAsString = (string) $result['Body'];
 	}
