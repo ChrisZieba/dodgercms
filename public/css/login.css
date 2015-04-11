@@ -10,25 +10,22 @@ a {
 }
 
 .help-text {
-    color: #666;
+    color: #999;
     font-style: italic;
     font-size: 0.9em;
 }
 
 .login-form {
     margin-top: 100px;
-    padding:55px 15px;
+    padding:15px;
     border: 1px solid #e1e1e1;
     background-color: #f7f7f7;
     border-radius: 3px;
 }
 
-.login-form input[type=text]{
-    margin-bottom: 0.75em;
-}
-
-.login-form label {
+.login-form .pure-input-label {
     color:#666;
+    margin: 0.75em 0 0.5em 0;
 }
 
 .login-submit {
