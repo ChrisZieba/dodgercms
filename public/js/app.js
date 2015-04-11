@@ -24,7 +24,139 @@ $(function() {
 	    apiVersion: API_VERSION
 	});
 
-	getS3Objects(processTree);
+	// need to make a head request for each key 
+	// usefula after getting a list of objects
+	function headS3Objects(contents, callback) {
+		var keys = [];
+
+		for (var i = 0; i < contents.length; i+=1) {
+			(function(index, object){
+                s3.headObject({
+                    Bucket: BUCKET, 
+                    Key: object.Key
+                }, function(err, data) {
+                    if (err) {
+                        callback(err);
+                    } else {
+                        // add the Key attribute
+                        data.Key = object.Key;
+                        keys.push(data);
+                        if (index===contents.length-1) {
+                        	console.log(keys);
+                        	console.log(callback);
+                        	callback(null, keys);
+                        }
+                    }
+                });
+			}(i, contents[i]));
+		}
+	}
+
+	getS3Objects(function(err, data) {
+		var name = data.Name;
+		var prefix = data.Prefix;
+		var contents = data.Contents;
+
+		var tree = [];
+
+		// pus hthe bucket
+		tree.push({
+			"id" : "s3-root", 
+			"parent" : '#', 
+			"text" : BUCKET,
+			"icon" : "fa fa-folder-open-o",
+			"state": {
+				"opened": true
+			}
+		});
+
+		headS3Objects(contents, function(err, data) {
+			console.log(contents);
+			for (var i = 0; i < data.length; i+=1) {
+				var key = data[i].Key;
+
+				// if (key.meta.) {
+
+				// }
+				console.log('key= ',key);
+
+				// split and remove last slash for directory
+				parts = key.replace(/\/\s*$/, "").split('/');
+
+
+				for (var j = 0; j < parts.length; j+=1) {
+					console.log('part=',parts[j]);
+					var search =  's3-' + ((j > 0) ? parts.slice(0,j+1).join("-") : parts[j]);
+					console.log('parts',parts);
+
+					var result = $.grep(tree, function(e){ 
+						return e.id === search; 
+					});
+
+					console.log('parent=',parts.slice(0,j-1).join("-"));
+
+
+					console.log(j, parts.length-1);
+					if (result.length === 0) {
+						console.log('result not found')
+						tree.push({
+							"id" : search, 
+							"parent" : (j > 0) ? 's3-' + parts.slice(0,j).join("-") : 's3-root', 
+							"text" : parts[j],
+							// if the key has a trailing slash or is in not the last elemenet it is a folder
+							"icon" : (j === parts.length-1 && key.substr(-1) === '/') ? "fa fa-folder-open-o" : "fa fa-file-o",
+							"state": {
+								"opened": true
+							},
+							"li_attr": {
+								"data-key": key
+							}
+						});
+					}
+				}
+
+				console.log('----------------');
+			}
+
+			var onTreeChange = function(event, data) {
+				var action = data.action;
+
+				switch (action) {
+					case "select_node":
+					
+						// 
+						var key = data.node.li_attr["data-key"];
+
+
+						// check if directory
+						if (key && key.substr(-1) !== '/') {
+							getKeyContent(key);
+						}
+						
+
+						break;
+
+				} 
+
+
+			}
+
+			// Render the jstree
+			$('#tree')
+			.on('changed.jstree', onTreeChange)
+			.jstree({
+			  "core" : {
+			    "themes" : {
+			      "dots" : false
+			    },
+			    "animation" : false,
+			    "data": tree
+			  }
+			});
+		});
+
+	
+	});
 	//registerEventhandlers();
 
 	$(document).bind('keydown', function(e) {
@@ -52,7 +184,7 @@ $(function() {
 			Key: key,
 			Body: content,
 			ContentEncoding: 'utf-8',
-            ContentType: "text/html",
+            ContentType: "text/plain",
             Expires: 0,
             CacheControl: "public, max-age=0, no-cache",
 			Metadata: {
@@ -135,25 +267,6 @@ $(function() {
 		saveKeyContent(key);
 	}
 
-	// function setupTree() {
-	// 	var params = {
-	// 	  	Bucket: BUCKET,
-	// 	  	EncodingType: ENCODING_TYPE,
-	// 	  	MaxKeys: 1000,
-	// 	};
-
-	// 	s3.listObjects(params, function(err, data) {
-	// 	    if (err) {
-	// 	        console.log(err, err.stack);
-	// 	        // show the login if credentials ar expired or incorrect
-	// 	    } else {
-	// 	    	console.log(data);
-	// 	    	processTree(data.Name, data.Prefix, data.Contents);
-		        
-	// 	    }
-	// 	});
-	// }
-
 	function getS3Objects(callback) {
 		var params = {
 		  	Bucket: BUCKET,
@@ -169,105 +282,6 @@ $(function() {
 		    	callback(null, data)
 		        
 		    }
-		});
-	}
-
-	// takes the s3 contents
-	function processTree(err, data) {
-		var name = data.Name;
-		var prefix = data.Prefix;
-		var contents = data.Contents;
-
-		var tree = [];
-
-		// pus hthe bucket
-		tree.push({
-			"id" : "s3-root", 
-			"parent" : '#', 
-			"text" : BUCKET,
-			"icon" : "fa fa-folder-open-o",
-			"state": {
-				"opened": true
-			}
-		});
-
-		for (var i = 0; i < contents.length; i+=1) {
-			var key = contents[i].Key;
-
-			console.log('key= ',key);
-
-			// split and remove last slash for directory
-			parts = key.replace(/\/\s*$/, "").split('/');
-
-
-			for (var j = 0; j < parts.length; j+=1) {
-				console.log('part=',parts[j]);
-				var search =  's3-' + ((j > 0) ? parts.slice(0,j+1).join("-") : parts[j]);
-				console.log('parts',parts);
-
-				var result = $.grep(tree, function(e){ 
-					return e.id === search; 
-				});
-
-				console.log('parent=',parts.slice(0,j-1).join("-"));
-
-
-				console.log(j, parts.length-1);
-				if (result.length === 0) {
-					console.log('result not found')
-					tree.push({
-						"id" : search, 
-						"parent" : (j > 0) ? 's3-' + parts.slice(0,j).join("-") : 's3-root', 
-						"text" : parts[j],
-						// if the key has a trailing slash or is in not the last elemenet it is a folder
-						"icon" : (j === parts.length-1 && key.substr(-1) === '/') ? "fa fa-folder-open-o" : "fa fa-file-o",
-						"state": {
-							"opened": true
-						},
-						"li_attr": {
-							"data-key": key
-						}
-					});
-				}
-			}
-
-			console.log('----------------');
-		}
-
-		var onTreeChange = function(event, data) {
-			var action = data.action;
-
-			switch (action) {
-				case "select_node":
-				
-					// 
-					var key = data.node.li_attr["data-key"];
-
-
-					// check if directory
-					if (key && key.substr(-1) !== '/') {
-						getKeyContent(key);
-					}
-					
-
-					break;
-
-			} 
-
-
-		}
-
-		// Render the jstree
-		$('#tree')
-		.on('changed.jstree', onTreeChange)
-		.jstree({
-		  "core" : {
-		    "themes" : {
-		      "dots" : false
-		    },
-		    "animation" : false,
-		    "data": tree
-		  }
 		});
 	}
 
