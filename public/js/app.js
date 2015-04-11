@@ -1,9 +1,10 @@
 $(function() {
     
-    var BUCKET = "manager.entropyzx.com";
+    var DATA_BUCKET = localStorage.getItem('dodgercms-data-bucket');
+    var ASSETS_BUCKET = localStorage.getItem('dodgercms-assets-bucket');
     var ENCODING_TYPE = 'url';
     var API_VERSION = '2011-06-15';
-
+    var CONTENT_TYPE = 'text/plain; charset=UTF-8';
     // var ACCESS_KEY_ID = sessionStorage.getItem("lemonchop-AccessKeyId");
     // var SECRET_ACCESS_KEY sessionStorage.getItem("lemonchop-SecretAccessKey") || null;
     // var SESSION_TOKEN = sessionStorage.getItem("lemonchop-SessionToken") || null;
@@ -29,24 +30,28 @@ $(function() {
 	function headS3Objects(contents, callback) {
 		var keys = [];
 
-		for (var i = 0; i < contents.length; i+=1) {
-			(function(index, object){
-                s3.headObject({
-                    Bucket: BUCKET, 
-                    Key: object.Key
-                }, function(err, data) {
-                    if (err) {
-                        callback(err);
-                    } else {
-                        // add the Key attribute
-                        data.Key = object.Key;
-                        keys.push(data);
-                        if (index===contents.length-1) {
-                        	callback(null, keys);
-                        }
-                    }
-                });
-			}(i, contents[i]));
+		if (contents.length > 0) {
+			for (var i = 0; i < contents.length; i+=1) {
+				(function(index, object){
+	                s3.headObject({
+	                    Bucket: DATA_BUCKET, 
+	                    Key: object.Key
+	                }, function(err, data) {
+	                    if (err) {
+	                        callback(err);
+	                    } else {
+	                        // add the Key attribute
+	                        data.Key = object.Key;
+	                        keys.push(data);
+	                        if (index===contents.length-1) {
+	                        	callback(null, keys);
+	                        }
+	                    }
+	                });
+				}(i, contents[i]));
+			}
+		} else {
+			callback(null, []);
 		}
 	}
 
@@ -54,14 +59,15 @@ $(function() {
 		var name = data.Name;
 		var prefix = data.Prefix;
 		var contents = data.Contents;
-
+		console.dir(contents);
+		console.log('------contents----------')
 		var tree = [];
 
-		// pus hthe bucket
+		// push the bucket
 		tree.push({
 			"id" : "s3-root", 
 			"parent" : '#', 
-			"text" : BUCKET,
+			"text" : DATA_BUCKET,
 			"icon" : "fa fa-folder-open-o",
 			"state": {
 				"opened": true
@@ -80,7 +86,7 @@ $(function() {
 
 				if (key.substr(-1) !== '/') {
 					// anything other than a directory or text/plain (markdown) will be ignored
-					if (object.ContentType !== 'text/plain') {
+					if (object.ContentType !== CONTENT_TYPE) {
 						continue;
 					}
 				}
@@ -92,34 +98,49 @@ $(function() {
 
 
 				for (var j = 0; j < parts.length; j+=1) {
+					var isDir = false;
 					console.log('part=',parts[j]);
 					var search =  's3-' + ((j > 0) ? parts.slice(0,j+1).join("-") : parts[j]);
 					console.log('parts',parts);
 
-					var result = $.grep(tree, function(e){ 
+					// Check to see if the id exists in the tree already
+					var result = $.grep(tree, function(e) { 
 						return e.id === search; 
 					});
 
 					console.log('parent=',parts.slice(0,j-1).join("-"));
-
-
 					console.log(j, parts.length-1);
+
+					// if the last part in the key has a trailing slash or if the part 
+					// is in not the last elemenet it is a path
+					if ((j === parts.length-1 && key.substr(-1) === '/') || j !== parts.length-1) {
+						isDir = true;
+					}
+
+					console.log('isdir='+isDir)
+
+					// Only want to push a new node onto the tree if unique
 					if (result.length === 0) {
-						console.log('result not found')
-						tree.push({
+						var node = {
 							"id" : search, 
 							"parent" : (j > 0) ? 's3-' + parts.slice(0,j).join("-") : 's3-root', 
 							"text" : parts[j],
-							// if the key has a trailing slash or is in not the last elemenet it is a folder
-							"icon" : (j === parts.length-1 && key.substr(-1) === '/') ? "fa fa-folder-open-o" : "fa fa-file-o",
+
+							"icon" : (isDir) ? "fa fa-folder-open-o" : "fa fa-file-o",
 							"state": {
 								"opened": true
-							},
-							"li_attr": {
-								"data-key": key
 							}
-						});
+						};
 					}
+
+					// Only key ojects need the data aatrivute
+					if (!isDir) {
+						node.li_attr = {
+							"data-key": key
+						};
+					}
+
+					tree.push(node);
 				}
 
 				console.log('----------------');
@@ -134,9 +155,8 @@ $(function() {
 						// 
 						var key = data.node.li_attr["data-key"];
 
-
-						// check if not a directory
-						if (key && key.substr(-1) !== '/') {
+						// The key atribuete only exists on files, not folders
+						if (key) {
 							getKeyContent(key);
 						}
 						
@@ -173,29 +193,48 @@ $(function() {
 	  }
 	});
 
-    // login functionality
+
+
+    // A new entry is submitted
     $(document).on("submit", "#new-entry-form", function(event) {
+    	event.preventDefault();
+
     	console.log('wtf');
         var title = $.trim($("#new-entry-form-title").val());
         var slug = $.trim($("#new-entry-form-slug").val());
         var content = $.trim($("#new-entry-form-content").val());
         var dir = $("#new-entry-form-dir option:selected" ).data('dir');
 
+        // The title cannot be empty
+        if (!title.length || title.length > 64) {
+    		alert("The title can not be empty.");
+    		return;
+        }
+
+        // the title needs to be between 1 and 32 characters
+        if (!/^([a-zA-Z0-9-_]){3,32}$/.test(slug)) {
+    		alert("The url slug must be at least 3 characters and can only contain letters, numbers, dashed and underscores.");
+    		return;
+        }
+
+
         console.log(dir);
 
-        var key = (dir !== '/') ? dir + slug : slug;
+        // All markdown files are placed in the content folder
+        var key = "content/";
+        key += (dir !== '/') ? dir + slug : slug;
         console.log(key);
         // create the new key in s3
 		var params = {
-			Bucket: BUCKET,
+			Bucket: DATA_BUCKET,
 			Key: key,
 			Body: content,
 			ContentEncoding: 'utf-8',
-            ContentType: "text/plain",
+            ContentType:  CONTENT_TYPE,
             Expires: 0,
             CacheControl: "public, max-age=0, no-cache",
 			Metadata: {
-				title: title,
+				"x-amz-meta-title": title,
 			}
 		};
 		s3.putObject(params, function(err, data) {
@@ -206,7 +245,7 @@ $(function() {
 			}
 		});
 
-       	event.preventDefault();
+
 
     });
 
@@ -218,13 +257,7 @@ $(function() {
 	});
 
 	$('#new-entry').click(function(event) {
-		// clear the content
-		newEntry();
-		// create a new
-	});
-
-	function newEntry() {
-		var source   = $("#edit-entry-template").html();
+		var source   = $("#new-entry-template").html();
 		var template = Handlebars.compile(source);
 
 		getS3Objects(function(err, data) {
@@ -256,8 +289,7 @@ $(function() {
 				$("#main").html(html);
 			}
 		});
-
-	}
+	});
 
 
 
@@ -276,7 +308,7 @@ $(function() {
 
 	function getS3Objects(callback) {
 		var params = {
-		  	Bucket: BUCKET,
+		  	Bucket: DATA_BUCKET,
 		  	EncodingType: ENCODING_TYPE,
 		  	MaxKeys: 1000,
 		};
@@ -295,7 +327,7 @@ $(function() {
 	function getKeyContent(key) {
 
 		var params = {
-		  	Bucket: BUCKET,
+		  	Bucket: DATA_BUCKET,
 		  	Key: key
 		};
 
@@ -314,14 +346,14 @@ $(function() {
 		var body = $("#content").val();
 		console.log(body);
 		var metadata = {
-			"ContentType": "text/plain"
+			"Content-Type":  CONTENT_TYPE
 		}
 
 		var params = {
-		  	Bucket: BUCKET,
+		  	Bucket: DATA_BUCKET,
 		  	Key: key,
 		  	Body: body,
-		  	ContentType: "text/plain",
+		  	ContentType:  CONTENT_TYPE,
 		  	Metadata: metadata
 		};
 
@@ -337,19 +369,21 @@ $(function() {
 
 	function loadKeyContent(key, content) {
 		//var allowedContentTypes = ['application/'];
-		var content = content.Body.toString();
-
+		var body = content.Body.toString();
+		console.log(content);
 		// check if the file is a markdown file, we dont wantt o load any images, etc
 		var source   = $("#entry-template").html();
 		var template = Handlebars.compile(source);
 		var context = {
+			title: content.Metadata['x-amz-meta-title'],
+			modified: content.LastModified.toString(),
+			// provide a link to the actual resource
+			link: '',
 			key: key,
-			content: content
+			content: body
 		};
 		var html = template(context);
 		$("#main").html(html);
-
-		//bodyAsString = (string) $result['Body'];
 	}
 
 
@@ -376,7 +410,7 @@ $(function() {
         //     if (file) {
 
         //       var params = {
-        //         Bucket: BUCKET,
+        //         Bucket: ASSETS_BUCKET,
         //         Key: file.name, 
         //         ContentType: file.type, 
         //         Body: file
