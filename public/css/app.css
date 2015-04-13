@@ -7,11 +7,21 @@ body {
     font-size:16px;
 }
 
-
-
 a {
     text-decoration: none;
     color: #1b98f8;
+}
+
+input[type=file].file-upload {
+    display:none;
+}
+
+label.upload-image {
+    display: inline-block;
+}
+
+.button-small {
+    font-size: 80%;
 }
 
 .new-entry-button {
@@ -69,10 +79,6 @@ a {
 .tree {
     padding:2em 1em;
     font-size: 0.9em;
-}
-
-.tree li a {
-    color: #474747 !important;
 }
 
 /* Make the navigation 100% width on phones */
@@ -134,13 +140,26 @@ a {
 
 /* Email Content Styles */
 .content-header, .content-body, .content-footer {
-    padding: 1em 2em;
+    padding: 1em 2em 0 2em;
 }
-
+.content-footer-controls {
+    margin-top: 1.5em;
+    text-align: right;
+}
+.content-header-div {
+    border-bottom: 1px dashed #e1e1e1;
+    padding-bottom:2em;
+}
         .content-title {
             margin: 0.4em 0 0;
         }
-        .content-subtitle {
+            .content-title span {
+               font-style: italic;
+               padding: 0.15em 0.25em;
+               border-radius: 3px;
+               background-color: #f3f3f3;
+            }
+        p.content-subtitle {
             font-size: 1em;
             margin: 0;
             font-weight: normal;
@@ -150,7 +169,7 @@ a {
             }
 
     .content-controls {
-        margin-top: 1em;
+        margin-top: 1.5em;
         text-align: right;
     }
         .content-controls .secondary-button {
