@@ -1,12 +1,12 @@
 ![DodgerCMS](http://i.imgur.com/EmVj8OL.png)
 
-A simple CMS using AWS Lambda, S3 and react.js. Markdown files are converted to HTML.
+A simple CMS using AWS Lambda and S3 for storage. Markdown files are created and edited in the editor, and then converted to markdown by a Lambda function. 
 
-Policy for 
+# Use Cases
+
+DodgerCMS was built to create documentation as quickly as possible.
 
 # Installation
-
-
 
 You will need four buckets in s3 for this application
 
@@ -55,6 +55,7 @@ The CORS file will also need to be modified:
         <AllowedMethod>DELETE</AllowedMethod>
         <ExposeHeader>ETag</ExposeHeader>
         <ExposeHeader>x-amz-meta-title</ExposeHeader>
+        <ExposeHeader>x-amz-meta-label</ExposeHeader>
         <AllowedHeader>*</AllowedHeader>
     </CORSRule>
 </CORSConfiguration>
@@ -91,3 +92,10 @@ You will want to do is create an IAM user who can upload and modify the data (`d
     ]
 }
 ```
+
+# Libraries 
+
+- highlightjs
+- marked
+- aws sdk
+- jstree
