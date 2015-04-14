@@ -6,6 +6,7 @@ $(function() {
     var API_VERSION = '2011-06-15';
     var CONTENT_TYPE = 'text/plain; charset=UTF-8';
     var S3_ENDPOINT = 's3.amazonaws.com';
+    var ERROR_EXPIRED_TOKEN = 'ExpiredToken';
 
     // var ACCESS_KEY_ID = sessionStorage.getItem("lemonchop-AccessKeyId");
     // var SECRET_ACCESS_KEY sessionStorage.getItem("lemonchop-SecretAccessKey") || null;
@@ -180,7 +181,8 @@ $(function() {
                                 "data-dir": (j > 0) ? parts.slice(0,j+1).join("/") + '/' : parts[j] + '/'
                             };
 
-                            if (object.Metadata["label"]) {
+                            // The last part of the key will have the label
+                            if (j === parts.length-1 && object.Metadata["label"]) {
                                 node.text = parts[j] + ' <span class="object-label">(' + object.Metadata["label"] + ')</span>';
                                 node.li_attr["data-label"] = object.Metadata["label"];
                             } else {
@@ -218,6 +220,7 @@ $(function() {
 
                 // The default set of all items
                 var items = {
+                    editLabel: {},
                     newEntry: {
                         label: "New Entry",
                         action: function(elem) {
@@ -264,25 +267,21 @@ $(function() {
                     }
                 };
 
-                if (node.id === 's3-root') {
-                    items.deleteItem._disabled = true;
-                    items.renameItem._disabled = true;
-                }
-
                 // Folder
                 var key = node.li_attr["data-key"];
+                var dir = node.li_attr["data-dir"];
                 if (key) {
                     items.newEntry._disabled = true;
                     items.newFolder._disabled = true;
-                }
+                    delete items.editLabel;
+                } else if (dir) {
 
-                var dir = node.li_attr["data-dir"];
-                if (dir) {
                     var label = node.li_attr["data-label"];
                     var labelText = (label) ? 'Edit Label': 'Add Label';
 
                     items.editLabel = {
                         label: labelText,
+                        separator_after: true,
                         action: function() {
                             var input, msg;
 
@@ -305,6 +304,11 @@ $(function() {
                     }
                 }
 
+                if (node.id === 's3-root') {
+                    items.deleteItem._disabled = true;
+                    items.renameItem._disabled = true;
+                    items.editLabel._disabled = true;
+                }
                 return items;
             }
 
@@ -566,7 +570,7 @@ $(function() {
                 console.log(err, err.stack);
             } else {
                 console.log(data)
-                // regenerate the node
+                tree.jstree("refresh");
             }
         });
 
@@ -623,7 +627,11 @@ $(function() {
 
         s3.listObjects(params, function(err, data) {
             if (err) {
-                console.log(err, err.stack);
+                if (err.code === ERROR_EXPIRED_TOKEN) {
+                    dodgercms.auth.login(function(err) {
+
+                    });
+                }
                 // show the login if credentials ar expired or incorrect
             } else {
                 callback(null, data)
