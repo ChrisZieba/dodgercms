@@ -76,10 +76,11 @@ $(function() {
 
         // push the bucket
         tree.push({
-            "id" : "s3-root", 
-            "parent" : '#', 
-            "text" : '<strong>' + DATA_BUCKET + '</strong>',
-            "icon" : "fa fa-folder-o",
+            "id": "s3-root", 
+            "parent": '#', 
+            "text": '<strong>' + DATA_BUCKET + '</strong>',
+            //"icon": "fa fa-folder-o",
+            "type": "folder", 
             "li_attr": {
                 "data-key": "/",
                 "data-folder": true
@@ -162,7 +163,8 @@ $(function() {
                             "id" : search, 
                             "parent" : parent, 
                             "text" : parts[j],
-                            "icon" : (isFolder) ? "fa fa-folder-o" : "fa fa-file-text-o",
+                            "type": (isFolder) ? "folder" : "file",
+                            //"icon" : (isFolder) ? "fa fa-folder-o" : "fa fa-file-text-o",
                             "state": {
                                 "opened": true
                             }
@@ -259,6 +261,7 @@ $(function() {
                     deleteItem: {
                         label: "Delete",
                         action: function(elem) {
+                            console.log(node);
                             input = window.confirm("Are you sure?");
                             if (!input) {
                                 return;
@@ -268,7 +271,9 @@ $(function() {
                                 if (err) {
                                     // TODO
                                 } else {
-                                    alert('Successfully delete item(s).')
+                                    console.log(node)
+                                    // remove from the tree
+                                    $("#tree").jstree("delete_node", "#" + node.id);
                                 }
                             });
                         }
@@ -333,7 +338,18 @@ $(function() {
                     "animation" : false,
                     "data": tree
                 },
-                "plugins" : ["unique", "contextmenu", "sort"],
+                "types" : {
+                    "default" : {
+                        "icon" : "fa"
+                    },
+                    "file" : {
+                        "icon" : "fa fa-file-text-o"
+                    },
+                    "folder" : {
+                        "icon" : "fa fa-folder-o"
+                    }
+                },
+                "plugins" : ["unique", "contextmenu", "sort", "ui", "types"],
                 "contextmenu": {
                     "items": customMenu,
                     "select_node": false
