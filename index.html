@@ -15,9 +15,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/jstree.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/async/0.9.0/async.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
 
+    <script src="templates/compiled/entry.html.js"></script>
+    <script src="templates/compiled/nav.html.js"></script>
+    <script src="templates/compiled/menu.html.js"></script>
+
+
+    <script src="lib/auth.js"></script>
+    <script src="lib/process.js"></script>
     <script src="public/js/app.js"></script>
 
     <script type="text/javascript">
@@ -88,9 +96,9 @@
                     <input id="entry-form-title" class="pure-u-1" type="text" placeholder="Title">
 
                     <div class="pure-u-1-2">
-                        <select id="edit-entry-form-dir" class="pure-u-23-24">
-                            {{#each dirs}}
-                                <option value="{{this}}" data-dir="{{this}}" {{selected this ../selectedDir}}>{{this}}</option>
+                        <select id="entry-form-folder" class="pure-u-23-24">
+                            {{#each folders}}
+                                <option value="{{this}}" data-folder="{{this}}" {{selected this ../selectedFolder}}>{{this}}</option>
                             {{/each}}
                         </select>
                     </div>
@@ -136,9 +144,9 @@
                     <input id="entry-form-title" class="pure-u-1" type="text" placeholder="Title" value="{{title}}">
 
                     <div class="pure-u-1-2">
-                        <select id="edit-entry-form-dir" class="pure-u-23-24">
-                            {{#each dirs}}
-                                <option data-dir="{{this}}">{{this}}</option>
+                        <select id="entry-form-folder" class="pure-u-23-24">
+                            {{#each folders}}
+                                <option data-folder="{{this}}">{{this}}</option>
                             {{/each}}
                         </select>
                     </div>
@@ -177,10 +185,8 @@
 
             <div class="pure-menu">
                 <ul class="pure-menu-list">
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">Inbox <span class="email-count">(2)</span></a></li>
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">Important</a></li>
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">Sent</a></li>
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">Drafts</a></li>
+                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">Recent</a></li>
+                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">Draft</a></li>
                     <li class="pure-menu-item"><a href="#" class="pure-menu-link">Trash</a></li>
                     <li class="pure-menu-heading">Tags <i class="fa fa-plus-circle"></i></li>
                     <li class="pure-menu-item"><a href="#" class="pure-menu-link"><span class="email-label-personal"></span>Personal</a></li>
