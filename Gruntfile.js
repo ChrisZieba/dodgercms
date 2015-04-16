@@ -32,12 +32,23 @@ module.exports = function(grunt) {
         handlebars: {
             compile: {
                 options: {
-                    namespace: "dodgercms.templates"
+                    namespace: "dodgercms.templates",
+                    partialsUseNamespace: false,
+                    partialRegex: /.*/,
+                    partialsPathRegex: /templates\/partials\//,
+                    processPartialName: function(filePath) {
+                        var pieces = filePath.split("/");
+                        return pieces[pieces.length - 1];
+                    },
+                    processName: function(filePath) {
+                        var pieces = filePath.split("/");
+                        return pieces[pieces.length - 1];
+                    }
                 },
                 files: {
-                    "templates/compiled/entry.html": "templates/raw/entry.html",
-                    "templates/compiled/menu.html": "templates/raw/nav.html",
-                    "templates/compiled/nav.html": "templates/raw/menu.html"
+                    "templates/compiled/entry.html.js": "templates/entry.html",
+                    "templates/compiled/nav.html.js": "templates/nav.html",
+                    "templates/compiled/menu.html.js": "templates/partials/menu.html"
                 }
             }
         }
