@@ -4,45 +4,37 @@ body {
     padding:15px;
 }
 
-a {
-    text-decoration: none;
-    color: #1b98f8;
-}
-
-.help-text {
-    color: #999;
-    font-style: italic;
-    font-size: 0.9em;
+.container {
+    margin-top:2em;
+    width: 320px;
+    margin-right: auto;
+    margin-left: auto;
 }
 
 .login-form {
-    margin-top: 100px;
-    padding:15px;
+    margin-top:2em;
+    padding:5px 10px 10px 10px;
     border: 1px solid #e1e1e1;
     background-color: #f7f7f7;
     border-radius: 3px;
 }
 
+.login-form label {
+    margin: 0 0 0.5em 0;
+    color: #777;
+}
+
+.login-form input[type=text] {
+    margin: 0 0 1em 0;
+    color: #595959;
+}
+
 .login-form .pure-input-label {
     color:#666;
-    margin: 0.75em 0 0.5em 0;
+    margin: 0 0 0.5em 0;
 }
 
 .login-submit {
-    float:right;
-}
-
-@media (min-width: 48em) {
-
-    .login-offset {
-        margin-left:12.5%;;
-    }
-}
-
-@media (min-width: 64em) {
-
-    .login-offset {
-        margin-left:37.5%;
-    }
+    font-size:1.2em;
 }
 
