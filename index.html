@@ -18,6 +18,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/async/0.9.0/async.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+    <script src="public/js/vendor/jquery.blockUI.min.js"></script>
 
     <script src="templates/compiled/entry.html.js"></script>
     <script src="templates/compiled/nav.html.js"></script>
@@ -25,38 +26,11 @@
 
 
     <script src="lib/auth.js"></script>
-    <script src="lib/process.js"></script>
+    <script src="lib/entry.js"></script>
+    <script src="lib/s3.js"></script>
+    <script src="lib/utils.js"></script>
     <script src="public/js/app.js"></script>
 
-    <script type="text/javascript">
-
-        // // test to make sure the user has authenticated (check local session)
-        // var accessKeyId = sessionStorage.getItem("dodgercms-token-access-key-id");
-        // var secretAccessKey = sessionStorage.getItem("dodgercms-token-secret-access-key");
-        // var sessionToken = sessionStorage.getItem("dodgercms-token-session-token");
-        // var bucket = localStorage.getItem("dodgercms-bucket");
-
-        // var s3 = new AWS.S3({
-        //     accessKeyId: accessKeyId,
-        //     secretAccessKey: secretAccessKey,
-        //     sessionToken: sessionToken,
-        //     sslEnabled: true
-        // });
-
-        // var params = {
-        //     Bucket: bucket
-        // }
-
-        // s3.headBucket(params, function(err, data) {
-        //     // any error will be because the crendentials are missing or incorrect
-        //     if (err) {
-        //         console.log(err, err.stack);
-        //         // TODO: try to login using saved credentials
-
-        //         //window.location.replace(location.protocol + "//" + location.host);
-        //     }
-        // });
-    </script>
 </head>
 <body>
 
@@ -77,59 +51,14 @@
     <div class="content-body">{{&content}}</div>
 </script>
 
-
-
-<script id="new-entry-template" type="text/x-handlebars-template">
-    <div class="content-header pure-g">
-        <div class="pure-u-3-4">
-            <h1 class="content-title">New Entry</h1>
-        </div>
-        <div class="content-controls pure-u-1-4">
-            <button class="secondary-button pure-button">Edit</button>
-        </div>
-    </div>
-    <div class="content-body">
-        <form id="entry-form" class="pure-form pure-form-stacked entry-form">
-            <fieldset>
-                <div class="pure-g">
-
-                    <input id="entry-form-title" class="pure-u-1" type="text" placeholder="Title">
-
-                    <div class="pure-u-1-2">
-                        <select id="entry-form-folder" class="pure-u-23-24">
-                            {{#each folders}}
-                                <option value="{{this}}" data-folder="{{this}}" {{selected this ../selectedFolder}}>{{this}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
-
-                    <input id="entry-form-slug" class="pure-u-1-2" type="text" placeholder="Slug">
-
-                    <div class="pure-u-1">
-                        <button type="button" id="preview-entry" class="button-small pure-button">Preview</button>
-
-                        <label for="upload-image" class="button-small pure-button upload-image">
-                            <i class="fa fa-cloud-upload"></i> Insert Image
-                        </label>
-                        <input id="upload-image" type="file" class="file-upload" />
-                    </div>
-
-                    <div id="content-body-container" class="pure-u-1">
-                        <textarea id="entry-form-content" class="pure-u-1" rows="25"></textarea>
-                    </div>
-
-                    <button type="submit" class="pure-button pure-button-primary">Save</button>
-                </div>
-            </fieldset>
-
-        </form>
-    </div>
-</script>  
-
 <script id="edit-entry-template" type="text/x-handlebars-template">
     <div class="content-header pure-g">
         <div class="pure-u-3-4">
-            <h1 class="content-title">Editing <span>{{title}}</span></h1>
+            {{#if title}}
+                <h1 class="content-title">Editing <span>{{title}}</span></h1>
+            {{else}}
+                <h1 class="content-title">New Entry</h1>
+            {{/if}}
         </div>
         <div class="content-controls pure-u-1-4">
             <button class="secondary-button pure-button">Close</button>
@@ -146,7 +75,11 @@
                     <div class="pure-u-1-2">
                         <select id="entry-form-folder" class="pure-u-23-24">
                             {{#each folders}}
-                                <option data-folder="{{this}}">{{this}}</option>
+                                {{#if selectedFolder}}
+                                    <option value="{{this}}" data-folder="{{this}}" {{selected this ../selectedFolder}}>{{this}}</option>
+                                {{else}}
+                                    <option data-folder="{{this}}">{{this}}</option>
+                                {{/if}}
                             {{/each}}
                         </select>
                     </div>
