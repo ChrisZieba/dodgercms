@@ -2,6 +2,7 @@ $(function() {
     
     var DATA_BUCKET = localStorage.getItem('dodgercms-data-bucket');
     var ASSETS_BUCKET = localStorage.getItem('dodgercms-assets-bucket');
+    var SITE_BUCKET = 'dodgercms.com';
     var ENCODING_TYPE = 'url';
     var API_VERSION = '2011-06-15';
     var CONTENT_TYPE = 'text/plain; charset=UTF-8';
@@ -22,52 +23,9 @@ $(function() {
     var secretAccessKey = sessionStorage.getItem("dodgercms-token-secret-access-key");
     var sessionToken = sessionStorage.getItem("dodgercms-token-session-token");
 
-    var s3 = new AWS.S3({
-        accessKeyId: accessKeyId,
-        secretAccessKey: secretAccessKey,
-        sessionToken: sessionToken,
-        sslEnabled: true,
-        DurationSeconds: 129600, // 36 hours
-        apiVersion: API_VERSION
-    });
+    var s3 = dodgercms.s3.init(accessKeyId, secretAccessKey, sessionToken);
 
-    // need to make a head request for each key 
-    // usefula after getting a list of objects
-    function headS3Objects(contents, callback) {
-        var keys = [];
-
-        // keep track of how many requests were made
-        var completed = 0;
-
-        if (contents.length > 0) {
-            for (var i = 0; i < contents.length; i+=1) {
-                (function(index, object){
-                    s3.headObject({
-                        Bucket: DATA_BUCKET, 
-                        Key: object.Key
-                    }, function(err, data) {
-                        if (err) {
-                            callback(err);
-                        } else {
-                            completed+=1;
-                            // add the Key attribute
-                            data.Key = object.Key;
-                            keys.push(data);
-                            console.log(keys);
-                            // When the requests have all finished
-                            if (completed === contents.length) {
-                                callback(null, keys);
-                            }
-                        }
-                    });
-                }(i, contents[i]));
-            }
-        } else {
-            callback(null, []);
-        }
-    }
-
-    listObjects(function(err, data) {
+    dodgercms.s3.listObjects(DATA_BUCKET, function(err, data) {
         var name = data.Name;
         var prefix = data.Prefix;
         var contents = data.Contents;
@@ -92,7 +50,7 @@ $(function() {
 
 
 
-        headS3Objects(contents, function(err, data) {
+        dodgercms.s3.headObjects(contents, DATA_BUCKET, function(err, data) {
             console.log(data);
             console.log('data ^^');
 
@@ -114,7 +72,7 @@ $(function() {
                 console.log('key= ',key);
 
                 // split and remove last slash for directory
-                parts = key.replace(/\/\s*$/, "").split('/');
+                var parts = key.replace(/\/\s*$/, "").split('/');
 
 
                 for (var j = 0; j < parts.length; j+=1) {
@@ -236,7 +194,7 @@ $(function() {
                             var input = '';
 
                             // Don't let them pass without valid input
-                            while (!/^([a-zA-Z0-9-_.]){3,32}$/.test(input)) {
+                            while (!/^([a-zA-Z0-9-_]){3,32}$/.test(input)) {
                                 // store the user input
                                 input = window.prompt("Enter the name of the new folder.");
                                 // The hit cancel
@@ -248,17 +206,49 @@ $(function() {
                             var folder = node.li_attr["data-folder"];
                             console.log(folder);
                             if (folder) {
-                                newFolder(node.li_attr["data-key"], input);
+                                dodgercms.utils.newFolder(node.li_attr["data-key"], input, DATA_BUCKET, SITE_BUCKET);
                             }
                         }
                     },
                     renameItem: {
                         label: "Rename",
-                        action: function() {
+                        action: function(elem) {
 
+                            var folder = node.li_attr["data-folder"];
+                            var key = node.li_attr["data-key"];
+
+                            // remove the last slash if present
+                            var parts = key.replace(/\/\s*$/, "").split('/');
+                            var last = parts[parts.length-1]
+                            var input = last;
+
+                            do {
+                                msg = (folder) ? "Enter the new name for this folder: " + input : "Enter the new name for this entry: " + input;
+                                // store the user input
+                                input = window.prompt(msg, input);
+                                // They hit cancel
+                                if (!input) {
+                                    return;
+                                }
+                            } while (!/^([a-zA-Z0-9-_]){3,32}$/.test(input));
+
+                            // Only update if different
+                            if (input !== last) {
+                                
+                                dodgercms.entry.rename(key, input, DATA_BUCKET, SITE_BUCKET, function(err, data) {
+                                    if (err) {
+                                        // TODO
+                                        console.log(err);
+                                    } else {
+                                        console.log(data);
+                                        // remove from the tree
+                                        //$("#tree").jstree("delete_node", "#" + node.id);
+                                    }
+                                });
+                            }
                         }
                     },
-                    deleteItem: {
+                    removeItem: {
                         label: "Delete",
                         action: function(elem) {
                             console.log(node);
@@ -267,11 +257,12 @@ $(function() {
                                 return;
                             }
                             var key = node.li_attr["data-key"];
-                            deleteItem(key, function(err, data) {
+
+                            dodgercms.entry.remove(key, DATA_BUCKET, SITE_BUCKET, function(err, data) {
                                 if (err) {
                                     // TODO
                                 } else {
-                                    console.log(node)
+                                    console.log(node);
                                     // remove from the tree
                                     $("#tree").jstree("delete_node", "#" + node.id);
                                 }
@@ -298,7 +289,7 @@ $(function() {
                                 // store the user input
                                 input = (label) ? window.prompt(msg, label) : window.prompt(msg);
                                 // The hit cancel
-                                if (input === null) {
+                                if (!input) {
                                     return;
                                 }
                             } while(!/^([\w-_\.\s\(\)\/\\]){1,32}$/.test(input));
@@ -317,7 +308,7 @@ $(function() {
                 }
 
                 if (node.id === 's3-root') {
-                    items.deleteItem._disabled = true;
+                    items.removeItem._disabled = true;
                     items.renameItem._disabled = true;
                     items.editLabel._disabled = true;
                 }
@@ -376,7 +367,6 @@ $(function() {
     $(document).on("submit", "#entry-form", function(event) {
         event.preventDefault();
 
-        console.log('wtf');
         var title = $.trim($("#entry-form-title").val());
         var slug = $.trim($("#entry-form-slug").val());
         var content = $.trim($("#entry-form-content").val());
@@ -389,7 +379,7 @@ $(function() {
         }
 
         // the title needs to be between 1 and 32 characters
-        if (!/^([a-zA-Z0-9-_\.]){3,32}$/.test(slug)) {
+        if (!/^([a-zA-Z0-9-_]){3,32}$/.test(slug)) {
             alert("The url slug must be at least 3 characters and can only contain letters, numbers, dashes, underscores and periods.");
             return;
         }
@@ -417,8 +407,10 @@ $(function() {
 
             } else {
                 console.log(data);
+                // update the node
+
                 // Process the entry
-                dodgercms.process.entry(key, content, 'dodgercms.com', 'http://dodgercms.com.s3-website-us-east-1.amazonaws.com/', s3);
+                dodgercms.entry.upsert(key, 'dodgercms.com', content, 'http://dodgercms.com.s3-website-us-east-1.amazonaws.com/', s3);
             }
         });
     });
@@ -430,7 +422,7 @@ $(function() {
             return;
         }
 
-        getObject(key, function(err, data) {
+        dodgercms.s3.getObject(key, DATA_BUCKET, function(err, data) {
             var body = data.Body.toString();
 
             // check if the file is a markdown file, we dont wantt o load any images, etc
@@ -439,10 +431,11 @@ $(function() {
             var modified = new Date(data.LastModified);
 
             // TODO: cache the objects from list
-            listObjects(function(err, list) {
+            dodgercms.s3.listObjects(DATA_BUCKET, function(err, list) {
                 if (err) {
-                    // soemting
+                    console.log(err);
                 } else {
+
                     var folders = getFolders(list.Contents);
                     var slug = getSlug(key);
                     var context = {
@@ -450,10 +443,12 @@ $(function() {
                         modified: modified.toLocaleString(),
                         key: key,
                         folders: folders,
+                        selectedFolder: '', //todo
                         slug: slug,
                         content: body
                     };
                     var html = template(context);
+                    console.log(html);
                     $("#main").html(html);
                 }
             });
@@ -540,10 +535,10 @@ $(function() {
     // The directory is null if the "New Entry" button is used,
     // but if the user right clicks in the tree this should be populated
     function newEntry(folder) {
-        var source   = $("#new-entry-template").html();
+        var source = $("#edit-entry-template").html();
         var template = Handlebars.compile(source);
 
-        listObjects(function(err, data) {
+        dodgercms.s3.listObjects(DATA_BUCKET, function(err, data) {
             if (err) {
                 // TODO: handle error
             } else {
@@ -560,70 +555,6 @@ $(function() {
                 $("#main").html(html);
             }
         });
-    }
-
-    function newFolder(currentFolder, newFolder) {
-        console.log(currentFolder, newFolder);
-        // create a new Folder key
-        var key = (currentFolder === '/') ? newFolder + '/' : currentFolder + newFolder + '/';
-        var params = {
-            Bucket: DATA_BUCKET,
-            Key: key
-        };
-
-        s3.putObject(params, function(err, data) {
-            if (err) {
-                console.log(err, err.stack);
-            } else {
-                console.log(data)
-                // regenerate the tree
-            }
-        });
-    }
-
-    function deleteItem(key, callback) {
-        console.log(key);
-
-        // If the key is a folder we want to delete all keys inside the folder as well so we use the key name as a prefix 
-        // but if its a file, no prefix will delete only the one item
-        if (key.substr(-1) === '/') {
-            listObjects(key, function(err, data) {
-                if (err) {
-                    // TODO: handle error
-                } else {
-                    var contents = data.Contents;
-                    console.log(contents);
-
-                    // get each object in parallel
-                    async.each(contents, function(object, cb) {
-                      // Perform operation on file here.
-                        // s3.deleteObject({
-                        //     Bucket: DATA_BUCKET, 
-                        //     Key: object.Key
-                        // }, function(err, data) {
-                        //     if (err) {
-                        //         cb(err);
-                        //     } else {
-                        //         keys.push(object.Key);
-                        //         cb(null);
-                        //     }
-                        // });
-
-                        deleteObject(object.Key, cb);
-                    }, function(err) {
-                        // if any of the file processing produced an error
-                        if (err) {
-                            callback(err);
-                        } else {
-                            callback(null);
-                        }
-                    });
-                }
-            });
-        } else {
-            // just delete the one key
-            deleteObject(key, callback);
-        }
     }
 
     function editLabel(label, folder) {
@@ -690,63 +621,17 @@ $(function() {
         saveKeyContent(key);
     }
 
-    function listObjects(prefix, callback) {
-        if (arguments.length === 1) {
-            callback = prefix;
-            prefix = '';
-        }
-
-        var params = {
-            Bucket: DATA_BUCKET,
-            EncodingType: ENCODING_TYPE,
-            MaxKeys: 1000,
-            Prefix: prefix
-        };
-
-        s3.listObjects(params, function(err, data) {
-            if (err) {
-                if (err.code === ERROR_EXPIRED_TOKEN) {
-                    dodgercms.auth.login(function(err) {
-
-                    });
+    function errorHandler(code, message, retryable) {
+        if (code === ERROR_EXPIRED_TOKEN) {
+            $.blockUI();
+            dodgercms.auth.login(function(err) {
+                // remove the page blocker
+                $.unblockUI;
+                if (err) {
+                    // redirect to the login page
                 }
-                // show the login if credentials ar expired or incorrect
-            } else {
-                callback(null, data)
-            }
-        });
-    }
-
-    function getObject(key, callback) {
-        var params = {
-            Bucket: DATA_BUCKET,
-            Key: key
-        };
-
-        s3.getObject(params, function(err, data) {
-            if (err) {
-                callbuck(err);
-            } else {
-                callback(null, data);
-                
-            }
-        });
-    }
-
-    function deleteObject(key, callback) {
-        var params = {
-            Bucket: DATA_BUCKET,
-            Key: key
-        };
-
-        s3.deleteObject(params, function(err, data) {
-            if (err) {
-                callbuck(err);
-            } else {
-                callback(null, data);
-                
-            }
-        });
+            });
+        }
     }
 
     function getKeyContent(key, callback) {
