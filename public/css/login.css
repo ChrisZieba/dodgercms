@@ -6,15 +6,19 @@ body {
 
 .container {
     margin-top:2em;
-    width: 320px;
+    width: 100%;
     margin-right: auto;
     margin-left: auto;
 }
 
+.logo {
+    width:100%;
+}
+
 .login-form {
     margin-top:2em;
-    padding:5px 10px 10px 10px;
-    border: 1px solid #e1e1e1;
+    padding:15px;
+    border: 1px solid #ddd;
     background-color: #f7f7f7;
     border-radius: 3px;
 }
@@ -38,3 +42,9 @@ body {
     font-size:1.2em;
 }
 
+@media (min-width: 48em) {
+
+    .container  {
+        width: 32em;
+    }
+}
