@@ -18,6 +18,11 @@ $(function() {
         return (option === value) ? ' selected="selected"' : '';
     });
 
+    $(document).on("click", ".pure-button", function() {
+        // Removes focus of the button.
+        $(this).blur();
+    });
+
     // Set up the connection to S3
     var accessKeyId = sessionStorage.getItem("dodgercms-token-access-key-id");
     var secretAccessKey = sessionStorage.getItem("dodgercms-token-secret-access-key");
@@ -367,52 +372,81 @@ $(function() {
     $(document).on("submit", "#entry-form", function(event) {
         event.preventDefault();
 
-        var title = $.trim($("#entry-form-title").val());
-        var slug = $.trim($("#entry-form-slug").val());
-        var content = $.trim($("#entry-form-content").val());
-        var folder = $("#entry-form-folder option:selected" ).data('folder');
+        var $title = $("#entry-form-title");
+        var $folder = $("#entry-form-folder");
+        var $slug = $("#entry-form-slug");
+        var $content = $("#entry-form-content");
+
+        var title = $.trim($title.val());
+        var folder = $("option:selected", $folder).data('folder');
+        var slug = $.trim($slug.val());
+        var content = $.trim($content.val());
 
         // The title cannot be empty
         if (!title.length || title.length > 64) {
-            alert("The title can not be empty.");
+            alert("The title needs to be between 1 and 64 characters.");
             return;
         }
 
-        // the title needs to be between 1 and 32 characters
+        // the slug needs to be between 1 and 32 characters
         if (!/^([a-zA-Z0-9-_]){3,32}$/.test(slug)) {
-            alert("The url slug must be at least 3 characters and can only contain letters, numbers, dashes, underscores and periods.");
+            alert("The url slug must be between 3 and 32 characters, and can only contain letters, numbers, dashes, underscores.");
             return;
         }
 
-
-        console.log(folder);
-
+        // check for the root folder
         var key = (folder !== '/') ? folder + slug : slug;
-        console.log(key);
-        // create the new key in s3
-        var params = {
-            Bucket: DATA_BUCKET,
-            Key: key,
-            Body: content,
-            ContentEncoding: 'utf-8',
-            ContentType:  CONTENT_TYPE,
-            Expires: 0,
-            CacheControl: "public, max-age=0, no-cache",
-            Metadata: {
-                "title": title,
-            }
-        };
-        s3.putObject(params, function(err, data) {
+
+        var callback = function(err, data) {
             if (err) {
 
             } else {
                 console.log(data);
-                // update the node
+                // TODO: update the node
+
+                // update the data attributes
+                $slug.attr('data-entry-form-slug', slug);
+                $slug.data('entry-form-slug', slug);
+                $slug.val(slug)
+                $folder.attr('data-entry-form-folder', folder);
+                $folder.data('entry-form-folder', folder);
 
                 // Process the entry
                 dodgercms.entry.upsert(key, 'dodgercms.com', content, 'http://dodgercms.com.s3-website-us-east-1.amazonaws.com/', s3);
             }
-        });
+
+
+        }
+
+        $folderData = $folder.data('entry-form-folder');
+        $slugData = $slug.data('entry-form-slug');
+
+        // if the folder or slug has changed we need to move the object
+        if (($folderData && $folderData !== folder) ||
+            ($slugData && $slugData !== slug)) {
+            
+            // This is the where the entry was originally located before the save
+            var oldKey = ($folderData !== '/') ? $folderData + $slugData : $slugData;
+
+            dodgercms.s3.renameObject(oldKey, key, DATA_BUCKET, callback)
+        } else {
+            // create the new key in s3
+            var params = {
+                Bucket: DATA_BUCKET,
+                Key: key,
+                Body: content,
+                ContentEncoding: 'utf-8',
+                ContentType:  CONTENT_TYPE,
+                Expires: 0,
+                CacheControl: "public, max-age=0, no-cache",
+                Metadata: {
+                    "title": title,
+                }
+            };
+
+            // Put the object in its place
+            s3.putObject(params, callback);
+        }
     });
 
     $(document).on("click", "#edit-entry", function(event) {
@@ -424,8 +458,6 @@ $(function() {
 
         dodgercms.s3.getObject(key, DATA_BUCKET, function(err, data) {
             var body = data.Body.toString();
-
-            // check if the file is a markdown file, we dont wantt o load any images, etc
             var source = $("#edit-entry-template").html();
             var template = Handlebars.compile(source);
             var modified = new Date(data.LastModified);
@@ -435,7 +467,6 @@ $(function() {
                 if (err) {
                     console.log(err);
                 } else {
-
                     var folders = getFolders(list.Contents);
                     var slug = getSlug(key);
                     var context = {
@@ -443,17 +474,15 @@ $(function() {
                         modified: modified.toLocaleString(),
                         key: key,
                         folders: folders,
-                        selectedFolder: '', //todo
+                        selectedFolder: key.substr(0, key.lastIndexOf('/') + 1),
                         slug: slug,
                         content: body
                     };
+
                     var html = template(context);
-                    console.log(html);
                     $("#main").html(html);
                 }
             });
-
-
         });
     });
 
