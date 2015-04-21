@@ -7,6 +7,8 @@ body {
     font-size:16px;
 }
 
+
+
 a {
     text-decoration: none;
     color: #1b98f8;
@@ -18,10 +20,6 @@ input[type=file].file-upload {
 
 label.upload-image {
     display: inline-block;
-}
-
-.button-small {
-    font-size: 80%;
 }
 
 .new-entry-button {
@@ -44,7 +42,8 @@ label.upload-image {
  * Over-riding some of the .pure-button styles to make my buttons look unique
  */
 .primary-button,
-.secondary-button {
+.secondary-button,
+.save-button {
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
@@ -138,12 +137,17 @@ label.upload-image {
     }
 
 
-/* Email Content Styles */
+#content-preview {
+    padding:1em;
+    margin: 0.25em 0;
+    border: 1px dashed #e1e1e1;
+    border-radius: 4px;
+}
 .content-header, .content-body, .content-footer {
     padding: 1em 2em 0 2em;
 }
 .content-footer-controls {
-    margin-top: 1.5em;
+    margin: 0.25em 0;
     text-align: right;
 }
 .content-header-div {
@@ -176,6 +180,9 @@ label.upload-image {
             margin-bottom: 0.3em;
         }
 
+.toolbar-button {
+
+}
 /*
  * -- TABLET (AND UP) MEDIA QUERIES --
  * On tablets and other medium-sized devices, we want to customize some

@@ -70,24 +70,20 @@
             <fieldset>
                 <div class="pure-g">
 
-                    <input id="entry-form-title" class="pure-u-1" type="text" placeholder="Title" value="{{title}}">
+                    <input id="entry-form-title" class="pure-u-1" type="text" placeholder="Title" data-entry-form-title="{{title}}" value="{{title}}">
 
                     <div class="pure-u-1-2">
-                        <select id="entry-form-folder" class="pure-u-23-24">
+                        <select id="entry-form-folder" data-entry-form-folder="{{selectedFolder}}" class="pure-u-23-24">
                             {{#each folders}}
-                                {{#if selectedFolder}}
-                                    <option value="{{this}}" data-folder="{{this}}" {{selected this ../selectedFolder}}>{{this}}</option>
-                                {{else}}
-                                    <option data-folder="{{this}}">{{this}}</option>
-                                {{/if}}
+                                <option value="{{this}}" data-folder="{{this}}" {{selected this ../selectedFolder}}>{{this}}</option>
                             {{/each}}
                         </select>
                     </div>
 
-                    <input id="entry-form-slug" class="pure-u-1-2" type="text" placeholder="Slug" value="{{slug}}">
+                    <input id="entry-form-slug" class="pure-u-1-2" type="text" placeholder="Slug" data-entry-form-slug="{{slug}}" value="{{slug}}">
 
                     <div class="pure-u-1">
-                        <button type="button" id="preview-entry" class="button-small pure-button">Preview</button>
+                        <button type="button" id="preview-entry" class="toolbar-button pure-button">Preview</button>
                         <label for="upload-image" class="button-small pure-button upload-image">
                             <i class="fa fa-cloud-upload"></i> Insert Image
                         </label>
@@ -99,7 +95,7 @@
                     </div>
 
                     <div class="content-footer-controls pure-u-1">
-                        <button type="submit" class="pure-button pure-button-primary">Save</button>
+                        <button type="submit" class="pure-button primary-button">Save</button>
                     </div>
                 </div>
             </fieldset>
