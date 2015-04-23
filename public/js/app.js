@@ -41,7 +41,7 @@ $(function() {
 
                 // push the bucket
                 tree.push({
-                    "id": "s3-root", 
+                    "id": "s3--root", 
                     "parent": '#', 
                     "text": '<strong>' + DATA_BUCKET + '</strong>',
                     //"icon": "fa fa-folder-o",
@@ -102,9 +102,9 @@ $(function() {
                             }
 
                         } else {
-                            var parent = (j > 0) ? 's3-' + parts.slice(0,j).join("-") : 's3-root';
+                            var parent = (j > 0) ? 's3-' + parts.slice(0,j).join("-") : 's3--root';
                             
-                            if (parent !== 's3-root') {
+                            if (parent !== 's3--root') {
                                 parent += '-folder';
                             }
 
@@ -166,6 +166,7 @@ $(function() {
                 var customMenu = function(node) {
                     var newFolder = function(elem) {
                         var input = '';
+                        var key = node.li_attr["data-key"];
 
                         // Don't let them pass without valid input
                         while (!/^([a-zA-Z0-9-_]){1,32}$/.test(input)) {
@@ -179,7 +180,15 @@ $(function() {
 
                         var folder = node.li_attr["data-folder"];
                         if (folder) {
-                            dodgercms.utils.newFolder(node.li_attr["data-key"], input, DATA_BUCKET, SITE_BUCKET);
+                            var newKey = (key === '/') ? input + '/' : key + input + '/';
+                            //var treeNode = addNode(newKey, key, input);
+
+                            dodgercms.utils.newFolder(newKey, DATA_BUCKET, SITE_BUCKET, function(err, data) {
+                                //console.log(treeNode);
+                                console.log('-----------------------------------------------');
+                                addNode(newKey, key, input)
+                                
+                            });
                         }
                     };
 
@@ -278,8 +287,8 @@ $(function() {
                                 // TODO
                             } else {
                                 // remove from the tree
-                                $tree.jstree("delete_node", "#" + node.id);
                                 clearEntry(key);
+                                $tree.jstree("delete_node", "#" + node.id);
                             }
                         });
                     };
@@ -335,7 +344,7 @@ $(function() {
                         delete items.editLabel;
                     }
 
-                    if (node.id === 's3-root') {
+                    if (node.id === 's3--root') {
                         items.removeItem._disabled = true;
                         items.renameItem._disabled = true;
                         items.editLabel._disabled = true;
@@ -388,6 +397,37 @@ $(function() {
       // }
     });
 
+    function isFolder(key) {
+        return (key.substr(-1) === '/') ? true : false;
+    }
+
+    function addNode(key, parent, text) {
+        console.log(key, text);
+        //var parts = key.split('/');
+        var folder = isFolder(key);
+        var parent = getTreeNodeId(parent);
+        var node = {
+            "id" : getTreeNodeId(key), 
+            "parent" : parent, 
+            "text" : text,
+            "type": (folder) ? "folder" : "file",
+            "li_attr": {
+                "data-key": key
+            }
+        };
+
+        if (folder) {
+            node.li_attr = {
+                "data-folder": true
+            };
+        }
+        console.log(node);
+
+        $('#tree').jstree("create_node", "#" + parent, node);
+
+        return node;
+        //$('tree').jstree("create_node", node);
+    }
 
     // A new entry is submitted or saved
     $(document).on("submit", "#entry-form", function(event) {
@@ -422,7 +462,8 @@ $(function() {
             if (err) {
 
             } else {
-                // TODO: update the node
+                // add the node to the tree
+               //addNode(key, folder, slug);
 
                 // update the data attributes
                 $slug.attr('data-entry-form-slug', slug);
@@ -544,8 +585,23 @@ $(function() {
     }
 
     function getTreeNodeId(key) {
-        var parts = key.split('/');
-        return 's3-' + parts.join('-');
+        if (key === '/') {
+            return 's3--root';
+        }
+
+        // remove the last slash
+        var parts = key.replace(/\/\s*$/, "").split('/');
+        var prefix = 's3-';
+        var folderSuffix = '-folder';
+        var id;
+
+        if (isFolder(key)) {
+            id = prefix + parts.join('-') + folderSuffix;
+        } else {
+            id = prefix + parts.join('-');
+        }
+
+        return id;
     }
 
     $(document).on("change", "#upload-image", function(event) {
