@@ -70,7 +70,6 @@ $(function() {
                     // split and remove last slash for directory
                     var parts = key.replace(/\/\s*$/, "").split('/');
 
-
                     for (var j = 0; j < parts.length; j+=1) {
                         var isFolder = false;
 
@@ -95,8 +94,6 @@ $(function() {
 
                         // Only want to push a new node onto the tree if unique
                         if (result.length) {
-                            console.log(result);
-                            //result[0].text = 'sdfsdfsd';
 
                             // add the label if it wasnt already
                             if ((parts.slice(0,j+1).join("/")  === parts.join('/')) && object.Metadata["label"]) {
@@ -288,6 +285,7 @@ $(function() {
                     };
 
                     var newItem = function(elem) {
+                        var key = node.li_attr["data-key"];
                         var folder = node.li_attr["data-folder"];
                         if (folder) {
                             newEntry(key);
@@ -341,7 +339,6 @@ $(function() {
                         items.removeItem._disabled = true;
                         items.renameItem._disabled = true;
                         items.editLabel._disabled = true;
-                        items.editEntry._disabled = true;
                     }
 
                     return items;
@@ -425,7 +422,6 @@ $(function() {
             if (err) {
 
             } else {
-                console.log(data);
                 // TODO: update the node
 
                 // update the data attributes
@@ -436,7 +432,7 @@ $(function() {
                 $folder.data('entry-form-folder', folder);
 
                 // Process the entry
-                dodgercms.entry.upsert(key, 'dodgercms.com', content, 'http://dodgercms.com.s3-website-us-east-1.amazonaws.com/', s3);
+                dodgercms.entry.upsert(key, SITE_BUCKET, content, 'http://dodgercms.com.s3-website-us-east-1.amazonaws.com/', s3);
             }
 
 
@@ -549,7 +545,6 @@ $(function() {
 
     function getTreeNodeId(key) {
         var parts = key.split('/');
-        console.log('s3-' + parts.join('-'))
         return 's3-' + parts.join('-');
     }
 
@@ -559,7 +554,7 @@ $(function() {
         var content = $('#entry-form-content');
 
         var types = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'];
-        console.dir(file);
+
         if (file) {
             // only images
             if (types.indexOf(file.type) < 0) {
@@ -706,7 +701,7 @@ $(function() {
     function saveKeyContent(key) {
 
         var body = $("#entry-form-content").val();
-        console.log(body);
+
         var metadata = {
             "Content-Type":  CONTENT_TYPE
         }
@@ -731,13 +726,11 @@ $(function() {
     function loadKeyContent(key, content) {
         //var allowedContentTypes = ['application/'];
         var body = content.Body.toString();
-        console.log(content);
+
         // check if the file is a markdown file, we dont wantt o load any images, etc
         var source   = $("#entry-template").html();
         var template = Handlebars.compile(source);
         var modified = new Date(content.LastModified);
-
-        console.log(marked(body));
 
         var context = {
             title: content.Metadata['title'],
