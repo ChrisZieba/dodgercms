@@ -2,16 +2,12 @@ $(function() {
     
     var DATA_BUCKET = localStorage.getItem('dodgercms-data-bucket');
     var ASSETS_BUCKET = localStorage.getItem('dodgercms-assets-bucket');
-    var SITE_BUCKET = 'dodgercms.com';
+    var SITE_BUCKET = localStorage.getItem('dodgercms-site-bucket');
     var ENCODING_TYPE = 'url';
     var API_VERSION = '2011-06-15';
     var CONTENT_TYPE = 'text/plain; charset=UTF-8';
     var S3_ENDPOINT = 's3.amazonaws.com';
     var ERROR_EXPIRED_TOKEN = 'ExpiredToken';
-
-    // var ACCESS_KEY_ID = sessionStorage.getItem("lemonchop-AccessKeyId");
-    // var SECRET_ACCESS_KEY sessionStorage.getItem("lemonchop-SecretAccessKey") || null;
-    // var SESSION_TOKEN = sessionStorage.getItem("lemonchop-SessionToken") || null;
 
 
     Handlebars.registerHelper('selected', function(option, value) {
@@ -181,11 +177,8 @@ $(function() {
                         var folder = node.li_attr["data-folder"];
                         if (folder) {
                             var newKey = (key === '/') ? input + '/' : key + input + '/';
-                            //var treeNode = addNode(newKey, key, input);
 
                             dodgercms.utils.newFolder(newKey, DATA_BUCKET, SITE_BUCKET, function(err, data) {
-                                //console.log(treeNode);
-                                console.log('-----------------------------------------------');
                                 addNode(newKey, key, input)
                                 
                             });
@@ -401,13 +394,22 @@ $(function() {
         return (key.substr(-1) === '/') ? true : false;
     }
 
+    function doesTreeNodeExist(id) {
+        if ($tree.jstree("get_node", id)) {
+            return true;
+        }
+
+        return false;
+    }
+
     function addNode(key, parent, text) {
         console.log(key, text);
         //var parts = key.split('/');
         var folder = isFolder(key);
+        var id = getTreeNodeId(key);
         var parent = getTreeNodeId(parent);
         var node = {
-            "id" : getTreeNodeId(key), 
+            "id" : id, 
             "parent" : parent, 
             "text" : text,
             "type": (folder) ? "folder" : "file",
@@ -423,10 +425,15 @@ $(function() {
         }
         console.log(node);
 
-        $('#tree').jstree("create_node", "#" + parent, node);
+        $tree = $('#tree');
+        // Only add the node to the tree if it doesnt exist
 
+
+        if (!doesTreeNodeExist(id)) {
+            $tree.jstree("create_node", "#" + parent, node);
+        }
+        
         return node;
-        //$('tree').jstree("create_node", node);
     }
 
     // A new entry is submitted or saved
@@ -462,9 +469,9 @@ $(function() {
             if (err) {
 
             } else {
-                // add the node to the tree
-               //addNode(key, folder, slug);
-
+                // add the node to the tree (only added if it doesnt exist)
+                addNode(key, folder, slug);
+               
                 // update the data attributes
                 $slug.attr('data-entry-form-slug', slug);
                 $slug.data('entry-form-slug', slug);
@@ -475,8 +482,6 @@ $(function() {
                 // Process the entry
                 dodgercms.entry.upsert(key, SITE_BUCKET, content, 'http://dodgercms.com.s3-website-us-east-1.amazonaws.com/', s3);
             }
-
-
         }
 
         $folderData = $folder.data('entry-form-folder');
