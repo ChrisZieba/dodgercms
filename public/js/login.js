@@ -8,6 +8,7 @@ $(function() {
         $("#login-form-access-secret").val(localStorage.getItem("dodgercms-secret-access-key") || '');
         $("#login-form-data-bucket").val(localStorage.getItem("dodgercms-data-bucket") || '');
         $("#login-form-assets-bucket").val(localStorage.getItem("dodgercms-assets-bucket") || '');
+        $("#login-form-site-bucket").val(localStorage.getItem("dodgercms-site-bucket") || '');
     }
 
     // login functionality
@@ -19,19 +20,26 @@ $(function() {
         var accessSecret = $.trim($("#login-form-access-secret").val());
         var dataBucket = $.trim($("#login-form-data-bucket").val());
         var assetsBucket = $.trim($("#login-form-assets-bucket").val());
+        var siteBucket = $.trim($("#login-form-site-bucket").val());
         var remember = $("#login-remember").is(":checked");
 
         // validate the form fields
-        if (accessKey === '' || accessSecret === '' || dataBucket === '' || assetsBucket === '') {
+        if (accessKey === '' || 
+            accessSecret === '' || 
+            dataBucket === '' || 
+            assetsBucket === '' ||
+            siteBucket === '') 
+        {
             alert('All fields are required.');
             return;
         }
 
         var params = {
-            dataBucket : dataBucket, 
-            assetsBucket: assetsBucket, 
-            accessKey: accessKey, 
-            accessSecret: accessSecret, 
+            dataBucket : dataBucket,
+            assetsBucket: assetsBucket,
+            siteBucket: siteBucket,
+            accessKey: accessKey,
+            accessSecret: accessSecret,
             remember: remember
         };
         
