@@ -465,24 +465,20 @@ $(function() {
         // check for the root folder
         var key = (folder !== '/') ? folder + slug : slug;
 
-        var callback = function(err, data) {
-            if (err) {
+        var callback = function() {
+            // add the node to the tree (only added if it doesnt exist)
+            addNode(key, folder, slug);
+           
+            // update the data attributes
+            $slug.attr('data-entry-form-slug', slug);
+            $slug.data('entry-form-slug', slug);
+            $slug.val(slug)
+            $folder.attr('data-entry-form-folder', folder);
+            $folder.data('entry-form-folder', folder);
 
-            } else {
-                // add the node to the tree (only added if it doesnt exist)
-                addNode(key, folder, slug);
-               
-                // update the data attributes
-                $slug.attr('data-entry-form-slug', slug);
-                $slug.data('entry-form-slug', slug);
-                $slug.val(slug)
-                $folder.attr('data-entry-form-folder', folder);
-                $folder.data('entry-form-folder', folder);
-
-                // Process the entry
-                dodgercms.entry.upsert(key, SITE_BUCKET, content, 'http://dodgercms.com.s3-website-us-east-1.amazonaws.com/', s3);
-            }
-        }
+            // Process the entry
+            dodgercms.entry.upsert(key, SITE_BUCKET, content, 'http://dodgercms.com.s3-website-us-east-1.amazonaws.com/', s3);
+        };
 
         $folderData = $folder.data('entry-form-folder');
         $slugData = $slug.data('entry-form-slug');
@@ -494,7 +490,14 @@ $(function() {
             // This is the where the entry was originally located before the save
             var oldKey = ($folderData !== '/') ? $folderData + $slugData : $slugData;
 
-            dodgercms.s3.renameObject(oldKey, key, DATA_BUCKET, callback)
+            dodgercms.s3.renameObject(oldKey, key, DATA_BUCKET, function(err, data) {
+                if (err) {
+
+                } else {
+                    $("#tree").jstree("delete_node", "#" + getTreeNodeId(oldKey));
+                    callback();
+                }
+            })
         } else {
             // create the new key in s3
             var params = {
@@ -511,7 +514,13 @@ $(function() {
             };
 
             // Put the object in its place
-            s3.putObject(params, callback);
+            s3.putObject(params, function(err, data) {
+                if (err) {
+                    
+                } else {
+                    callback();
+                }
+            });
         }
     });
 
