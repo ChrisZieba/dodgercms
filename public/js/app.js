@@ -32,7 +32,7 @@ $(function() {
 
     dodgercms.s3.listObjects(DATA_BUCKET, function(err, data) {
         if (err) {
-
+            // TODO
         } else {
             dodgercms.s3.headObjects(data.Contents, DATA_BUCKET, function(err, data) {
 
@@ -722,19 +722,6 @@ $(function() {
         }
 
         saveKeyContent(key);
-    }
-
-    function errorHandler(code, message, retryable) {
-        if (code === ERROR_EXPIRED_TOKEN) {
-            $.blockUI();
-            dodgercms.auth.login(function(err) {
-                // remove the page blocker
-                $.unblockUI;
-                if (err) {
-                    // redirect to the login page
-                }
-            });
-        }
     }
 
     function getKeyContent(key, callback) {
