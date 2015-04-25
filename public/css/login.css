@@ -2,10 +2,25 @@ body {
     color: #333;
     font-size:16px;
     padding:15px;
+    background-color: #f5f5f5;
+}
+
+a:visited {
+    color: #265778;
+}
+
+a:hover {
+    color: #265778;
+    text-decoration: underline;
+}
+
+a {
+    color: #3B8BBA;
+    text-decoration: underline;
 }
 
 .container {
-    margin-top:2em;
+    margin-top:3em;
     width: 100%;
     margin-right: auto;
     margin-left: auto;
@@ -16,11 +31,11 @@ body {
 }
 
 .login-form {
-    margin-top:2em;
+    margin-top:3em;
     padding:15px;
     border: 1px solid #ddd;
-    background-color: #f7f7f7;
-    border-radius: 3px;
+    background-color: #FFF;
+    border-radius: 4px;
 }
 
 .login-form label {
@@ -33,13 +48,8 @@ body {
     color: #595959;
 }
 
-.login-form .pure-input-label {
-    color:#666;
-    margin: 0 0 0.5em 0;
-}
-
 .login-submit {
-    font-size:1.2em;
+    font-size:1.1em;
 }
 
 @media (min-width: 48em) {
