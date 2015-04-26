@@ -34,7 +34,6 @@
 </head>
 <body>
 
-
 <script id="entry-template" type="text/x-handlebars-template">
     <div class="content-header content-header-div pure-g">
         <div class="pure-u-3-4">
@@ -61,8 +60,8 @@
             {{/if}}
         </div>
         <div class="content-controls pure-u-1-4">
-            <button class="secondary-button pure-button">Close</button>
-            <button class="secondary-button pure-button">Delete</button>
+            <button id="close-entry" class="secondary-button pure-button">Close</button>
+            <button id="delete-entry" data-key="{{key}}" class="secondary-button pure-button">Delete</button>
         </div>
     </div>
     <div class="content-body">
@@ -117,7 +116,7 @@
                     <li class="pure-menu-item"><a href="#" class="pure-menu-link">Recent</a></li>
                     <li class="pure-menu-item"><a href="#" class="pure-menu-link">Draft</a></li>
                     <li class="pure-menu-item"><a href="#" class="pure-menu-link">Trash</a></li>
-                    <li class="pure-menu-heading">Tags <i class="fa fa-plus-circle"></i></li>
+                    <li class="pure-menu-heading">Tags <i class="fa fa-plus-o"></i></li>
                     <li class="pure-menu-item"><a href="#" class="pure-menu-link"><span class="email-label-personal"></span>Personal</a></li>
                     <li class="pure-menu-item"><a href="#" class="pure-menu-link"><span class="email-label-work"></span>Work</a></li>
                     <li class="pure-menu-item"><a href="#" class="pure-menu-link"><span class="email-label-travel"></span>Travel</a></li>
@@ -128,49 +127,19 @@
 
     <div id="list" class="pure-u-1">
 
-        <div id="tree" class="tree">
-
-        </div>
+        <div id="tree" class="tree"></div>
             
     </div>
 
-    <div id="main" class="pure-u-1">
-
-
-
-<!--             <div class="content-header pure-g">
-                <div class="pure-u-3-4">
-                    <h1 class="content-title">Hello from Toronto</h1>
-                    <p class="content-subtitle">
-                        From <a>Tilo Mitra</a> at <span>3:56pm, April 3, 2012</span>
-                    </p>
-                </div>
-
-                <div class="content-controls pure-u-1-4">
-                    <button class="secondary-button pure-button">Edit</button>
-                </div>
-            </div>
-            <div class="content-body">
-
-
-                    <form class="pure-form">
-
-                        <fieldset class="pure-group">
-                            <textarea id="content" class="pure-input-1" rows="25"></textarea>
-                        </fieldset>
-
-                    </form>
-
-            </div> -->
-
-    </div>
+    <div id="main" class="pure-u-1" data-key></div>
 </div>
 
-
+<script type="text/javascript">
+    $(document).on("click", ".nav-menu-button", function(event) {
+        $('#nav').toggleClass('active');
+    });
+</script>
 
 </body>
 
 </html>
-
-
-
