@@ -25,12 +25,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     <script>var BUCKET = '{{&bucket}}';</script>
-    <script>var DOMAIN = '{{&domain}}';</script>
+    <script>var ENDPOINT = '{{&endpoint}}';</script>
 
-    <style>
+   <style>
         body {
             color: #777;
         }
+
+        ul.pure-menu-list { 
+          margin-left: 0; 
+          padding-left: 1.5em; 
+        }
+
+        ul.pure-menu-list li { 
+          padding-top:0.15em;
+          padding-bottom:0.15em;
+        }
+
+        ul.pure-menu-list ul { 
+          margin-left: 0.5em; 
+          padding-left: 0.5em; 
+        }
+
 
         .pure-img-responsive {
             max-width: 100%;
@@ -50,6 +66,9 @@
             transition: all 0.2s ease-out;
         }
 
+        #entry {
+            padding:1.5em 3.25em;
+        }
         /*
         This is the parent `<div>` that contains the menu and the content area.
         */
@@ -58,48 +77,56 @@
             padding-left: 0;
         }
             #layout.active #menu {
-                left: 275px;
-                width: 275px;
+                left: 300px;
+                width: 300px;
             }
 
             #layout.active .menu-link {
-                left: 275px;
+                left: 300px;
             }
         /*
         The content `<div>` is where all your content goes.
         */
         .content {
-            margin: 0 auto;
-            padding: 0 2em;
-            max-width: 800px;
+            margin: 0;
+            padding: 0;
             margin-bottom: 50px;
-            line-height: 1.6em;
+            line-height: 1.8em;
         }
 
         .header {
              margin: 0;
-             color: #333;
-             text-align: center;
-             padding: 2.5em 2em 0;
-             border-bottom: 1px solid #eee;
+             padding: 0;
+             border-bottom: 1px solid #e1e1e1;
+             height:75px;
+             background-color: #f7f7f7;
          }
-            .header h1 {
-                margin: 0.2em 0;
-                font-size: 3em;
-                font-weight: 300;
-            }
-             .header h2 {
-                font-weight: 300;
-                color: #ccc;
-                padding: 0;
-                margin-top: 0;
-            }
 
-        .content-subhead {
-            margin: 50px 0 20px 0;
-            font-weight: 300;
-            color: #888;
+         .header .breadcrumbs {
+             color: #333;
+             padding: 1.5em 3.25em 0 3.25em;
+         }
+
+         .title {
+            margin: 0 0 2em 0;
+            padding-bottom: 0.75em;
+            border-bottom: 1px solid #f0f0f0;
+         }
+
+        .title h1 {
+            margin: 0 0 0.1em 0;
+            font-size: 2.25em;
+            color: #404040;
+            font-weight: 400;
+            overflow:hidden;
         }
+
+          .title p {
+            color: #9d9d9d;
+            padding: 0.25em 0;
+            margin: 0;
+            font-size: 100%;
+          }
 
 
 
@@ -109,8 +136,8 @@
         */
 
         #menu {
-            margin-left: -275px; /* "#menu" width */
-            width: 275px;
+            margin-left: -300px; /* "#menu" width */
+            width: 300px;
             position: fixed;
             top: 0;
             left: 0;
@@ -119,14 +146,19 @@
             background: #191818;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            overflow-x:hidden;
         }
             /*
             All anchors inside the menu should be styled like this.
             */
-            #menu a {
+            #menu .pure-menu-list a {
                 color: #999;
                 border: none;
-                padding: 0.6em 0 0.6em 0.6em;
+                padding: 0.0em 0 0.0em 0.1em;
+                font-size: 90%;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                font-weight: 300;
             }
 
             /*
@@ -136,14 +168,6 @@
              #menu .pure-menu ul {
                 border: none;
                 background: transparent;
-            }
-
-            /*
-            Add that light border to separate items into groups.
-            */
-            #menu .pure-menu ul,
-            #menu .pure-menu .menu-item-divided {
-                border-top: 1px solid #333;
             }
                 /*
                 Change color of the anchor links on hover/focus.
@@ -171,9 +195,11 @@
             This styles the menu heading.
             */
             #menu .pure-menu-heading {
-                font-size: 110%;
                 color: #fff;
-                margin: 0;
+                margin: 0 0 1.5em 0;
+                padding: 0;
+                height:75px;
+                border-bottom: 1px solid #107AC0;
             }
 
         /* -- Dynamic Button For Responsive Menu -------------------------------------*/
@@ -196,7 +222,7 @@
             background: rgba(0,0,0,0.7);
             font-size: 10px; /* change this value to increase/decrease button size */
             z-index: 10;
-            width: 2em;
+            width: 1em;
             height: auto;
             padding: 2.1em 1.6em;
         }
@@ -238,28 +264,28 @@
         */
         @media (min-width: 48em) {
 
-            .header,
+/*            .header,
             .content {
                 padding-left: 2em;
                 padding-right: 2em;
-            }
+            }*/
 
             #layout {
-                padding-left: 275px; /* left col width "#menu" */
+                padding-left: 300px; /* left col width "#menu" */
                 left: 0;
             }
             #menu {
-                left: 275px;
+                left: 300px;
             }
 
             .menu-link {
                 position: fixed;
-                left: 275px;
+                left: 300px;
                 display: none;
             }
 
             #layout.active .menu-link {
-                left: 275px;
+                left: 300px;
             }
         }
 
@@ -272,7 +298,7 @@
             */
             #layout.active {
                 position: relative;
-                left: 275px;
+                left: 300px;
             }
         }
     </style>
@@ -286,8 +312,9 @@
 
             <nav id="menu"></nav>
 
+            <!-- The menu is loaded dynamically since it changes often. -->
             <script>
-                $("nav").load(DOMAIN + ".dodgercms/nav.html");
+                $("nav").load(ENDPOINT + ".dodgercms/nav.html");
             </script>
 
             <article>
