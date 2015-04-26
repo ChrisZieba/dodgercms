@@ -160,9 +160,8 @@ $(function() {
 
                         switch (action) {
                             case "select_node":
-                                var folder = data.node.li_attr["data-folder"];
                                 // The key atribuete only exists on files, not folders
-                                if (!folder) {
+                                if (node.type !== 'folder') {
                                     var key = data.node.li_attr["data-key"];
                                     getKeyContent(key);
                                     $('#main').data('key', key);
@@ -182,13 +181,14 @@ $(function() {
                                 // store the user input
                                 input = window.prompt("Enter the name of the new folder.");
                                 // The hit cancel
-                                if (!input) {
+                                if (input === null) {
                                     return;
+                                } else {
+                                    input = input.toLowerCase();
                                 }
                             }
 
-                            var folder = node.li_attr["data-folder"];
-                            if (folder) {
+                            if (node.type === 'folder') {
                                 var newKey = (key === '/') ? input + '/' : key + input + '/';
 
                                 dodgercms.utils.newFolder(newKey, DATA_BUCKET, SITE_BUCKET, function(err, data) {
@@ -199,7 +199,6 @@ $(function() {
                         };
 
                         var renameItem = function(elem) {
-                            var folder = node.li_attr["data-folder"];
                             var key = node.li_attr["data-key"];
 
                             // remove the last slash if present
@@ -208,7 +207,7 @@ $(function() {
                             var input = last;
 
                             do {
-                                msg = (folder) ? "Enter the new name for folder: " + input : "Enter the new name for entry: " + input;
+                                msg = (node.type === 'folder') ? "Enter the new name for folder: " + input : "Enter the new name for entry: " + input;
 
                                 // store the user input
                                 input = window.prompt(msg, input);
@@ -216,13 +215,16 @@ $(function() {
                                 // They hit cancel, treat empty string as invalid
                                 if (input === null) {
                                     return;
+                                } else {
+                                    input = input.toLowerCase();
                                 }
                             } while (!/^([a-zA-Z0-9-_]){1,32}$/.test(input));
 
                             // Only update if different
                             if (input !== last) {
-                                
+                                block();
                                 dodgercms.entry.rename(key, input, DATA_BUCKET, SITE_BUCKET, function(err, data) {
+                                    unblock();
                                     if (err) {
                                         // TODO
                                         console.log(err);
@@ -299,8 +301,7 @@ $(function() {
 
                         var newItem = function(elem) {
                             var key = node.li_attr["data-key"];
-                            var folder = node.li_attr["data-folder"];
-                            if (folder) {
+                            if (node.type === 'folder') {
                                 newEntry(key);
                             }
                         };
@@ -331,8 +332,7 @@ $(function() {
                             }
                         };
                         
-                        var folder = node.li_attr["data-folder"];
-                        if (folder) {
+                        if (node.type === 'folder') {
                             var label = node.li_attr["data-label"];
                             var labelText = (label) ? 'Edit Label': 'Add Label';
 
