@@ -43,10 +43,28 @@ $(function() {
             remember: remember
         };
         
-        dodgercms.auth.login(params, function(err) {
+        // block the page
+        $.blockUI({ 
+            css: { 
+                'border': 'none',
+                'font-size': '90%',
+                'padding': '15px',
+                'backgroundColor': '#000',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                'opacity': .5,
+                'color': '#fff'
+            }
+        }); 
+
+        dodgercms.auth.login(params, function(err, data) {
+            // remove the page block
+            $.unblockUI();
+
             if (err) {
                 alert(err);
             } else {
+                // redirects the manager
                 window.location.replace(location.protocol + "//" + location.host);
             }
         });
