@@ -3,11 +3,11 @@ $(function() {
     var DATA_BUCKET = localStorage.getItem('dodgercms-data-bucket');
     var ASSETS_BUCKET = localStorage.getItem('dodgercms-assets-bucket');
     var SITE_BUCKET = localStorage.getItem('dodgercms-site-bucket');
+    var SITE_ENDPOINT = localStorage.getItem('dodgercms-site-endpoint');
     var ENCODING_TYPE = 'url';
     var API_VERSION = '2011-06-15';
     var CONTENT_TYPE = 'text/plain; charset=UTF-8';
     var S3_ENDPOINT = 's3.amazonaws.com';
-    var ERROR_EXPIRED_TOKEN = 'ExpiredToken';
 
 
     Handlebars.registerHelper('selected', function(option, value) {
@@ -27,6 +27,15 @@ $(function() {
     var s3 = dodgercms.s3.init(accessKeyId, secretAccessKey, sessionToken);
 
     buildTree();
+
+    function rebuildTree() {
+        // remove from the tree
+        $("#tree").jstree("destroy");
+        $('#list').empty().html('<div id="tree" class="tree""></div>');
+
+        // rebuild the tree
+        buildTree();
+    }
 
     function buildTree() {
 
@@ -199,7 +208,7 @@ $(function() {
                             var input = last;
 
                             do {
-                                msg = (folder) ? "Enter the new name for this folder: " + input : "Enter the new name for this entry: " + input;
+                                msg = (folder) ? "Enter the new name for folder: " + input : "Enter the new name for entry: " + input;
 
                                 // store the user input
                                 input = window.prompt(msg, input);
@@ -218,12 +227,7 @@ $(function() {
                                         // TODO
                                         console.log(err);
                                     } else {
-                                        // remove from the tree
-                                        $("#tree").jstree("destroy");
-                                        $('#list').empty().html('<div id="tree" class="tree""></div>');
-
-                                        // rebuild the tree
-                                        buildTree();
+                                        rebuildTree();
                                     }
                                 });
                             }
@@ -383,7 +387,14 @@ $(function() {
                             "select_node": false
                         },
                         "sort": function(a, b) {
-                            return this.get_text(a) > this.get_text(b) ? 1 : -1; 
+                            var nodeA = this.get_node(a);
+                            var nodeB = this.get_node(b);
+
+                            if (nodeA.type === nodeB.type) {
+                                return this.get_text(a) > this.get_text(b) ? 1 : -1; 
+                            } else {
+                                return nodeA.type === 'file' ? 1 : -1; 
+                            }
                         }
                     });
                 });
@@ -485,7 +496,7 @@ $(function() {
             $folder.data('entry-form-folder', folder);
 
             // Process the entry
-            dodgercms.entry.upsert(key, SITE_BUCKET, content, 'http://dodgercms.com.s3-website-us-east-1.amazonaws.com/', s3);
+            dodgercms.entry.upsert(key, SITE_BUCKET, content, SITE_ENDPOINT, s3);
         };
 
         $folderData = $folder.data('entry-form-folder');
