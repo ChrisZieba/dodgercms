@@ -455,6 +455,31 @@ $(function() {
         return node;
     }
 
+    function block() {
+        // block the page
+        $.blockUI({ 
+            css: { 
+                'border': 'none',
+                'padding': '15px',
+                'backgroundColor': '#000',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                'opacity': .5,
+                'color': '#fff'
+            },
+            // styles for the overlay 
+            overlayCSS:  { 
+                'backgroundColor': '#000', 
+                'opacity': 0, 
+                'cursor': 'wait' 
+            }
+        }); 
+    }
+
+    function unblock() {
+        $.unblockUI();
+    }
+
     // A new entry is submitted or saved
     $(document).on("submit", "#entry-form", function(event) {
         event.preventDefault();
@@ -481,8 +506,7 @@ $(function() {
             return;
         }
 
-        // check for the root folder
-        var key = (folder !== '/') ? folder + slug : slug;
+        block();
 
         var callback = function() {
             // add the node to the tree (only added if it doesnt exist)
@@ -496,8 +520,13 @@ $(function() {
             $folder.data('entry-form-folder', folder);
 
             // Process the entry
-            dodgercms.entry.upsert(key, SITE_BUCKET, content, SITE_ENDPOINT, s3);
+            dodgercms.entry.upsert(key, SITE_BUCKET, content, SITE_ENDPOINT, s3, function() {
+                unblock();
+            });
         };
+
+        // check for the root folder
+        var key = (folder !== '/') ? folder + slug : slug;
 
         $folderData = $folder.data('entry-form-folder');
         $slugData = $slug.data('entry-form-slug');
@@ -710,10 +739,7 @@ $(function() {
 
             $(this).text('Write');
         }
-
     });
-
-
 
     $('#new-entry').click(function(event) {
         newEntry(null);
@@ -759,7 +785,6 @@ $(function() {
     }
 
     function getKeyContent(key, callback) {
-
         var params = {
             Bucket: DATA_BUCKET,
             Key: key
@@ -770,7 +795,6 @@ $(function() {
                 console.log(err, err.stack);
             } else {
                 loadKeyContent(key, data);
-                
             }
         });
     }
@@ -817,8 +841,14 @@ $(function() {
             key: key,
             content: marked(body)
         };
+
         var html = template(context);
         $("#main").html(html).data('key', key);
+
+        // highlight the code
+        $('#main .content-body pre code').each(function(i, block) {
+            hljs.highlightBlock(block);
+        });
     }
 
 });
