@@ -55,9 +55,11 @@ $(function() {
                         "text": '<span class="bucket">' + DATA_BUCKET + '</span>',
                         //"icon": "fa fa-folder-o",
                         "type": "folder", 
+                        "a_attr": {
+                            "title": DATA_BUCKET
+                        },
                         "li_attr": {
-                            "data-key": "/",
-                            "data-folder": true
+                            "data-key": "/"
                         },
                         "state": {
                             "opened": true
@@ -105,7 +107,7 @@ $(function() {
                             if (result.length) {
 
                                 // add the label if it wasnt already
-                                if ((parts.slice(0,j+1).join("/")  === parts.join('/')) && object.Metadata["label"]) {
+                                if ((parts.slice(0, j+1).join("/")  === parts.join('/')) && object.Metadata["label"]) {
                                     result[0].text = parts[j] + ' <span class="object-label">(' + object.Metadata["label"] + ')</span>';
                                     result[0].li_attr["data-label"] = object.Metadata["label"];
                                 }
@@ -123,7 +125,7 @@ $(function() {
                                     "parent" : parent, 
                                     "text" : parts[j],
                                     "type": (isFolder) ? "folder" : "file",
-                                    //"icon" : (isFolder) ? "fa fa-folder-o" : "fa fa-file-text-o",
+                                    "a_attr": {},
                                     "state": {
                                         "opened": true
                                     }
@@ -131,18 +133,22 @@ $(function() {
                                 // Only key ojects need the data aatrivute
                                 if (isFolder) {
                                     node.li_attr = {
-                                        "data-key": (j > 0) ? parts.slice(0,j+1).join("/") + '/' : parts[j] + '/',
-                                        // the last slash is removed when splitting the key so it is re-added here
-                                        "data-folder": true
+                                        "data-key": (j > 0) ? parts.slice(0,j+1).join("/") + '/' : parts[j] + '/'
                                     };
 
                                     // The last part of the key will have the label
                                     if ((parts.slice(0,j+1).join("/")  === parts.join('/')) && object.Metadata["label"]) {
                                         node.text = parts[j] + ' <span class="object-label">(' + object.Metadata["label"] + ')</span>';
                                         node.li_attr["data-label"] = object.Metadata["label"];
+                                        node.a_attr["title"] = object.Metadata["label"];
                                     } 
 
                                 } else {
+                                    // The last part of the key will have the title
+                                    if ((parts.slice(0,j+1).join("/")  === parts.join('/')) && object.Metadata["title"]) {
+                                        node.a_attr["title"] = object.Metadata["title"];
+                                    } 
+
                                     node.li_attr = {
                                         "data-key": key
                                     };
@@ -161,7 +167,7 @@ $(function() {
                         switch (action) {
                             case "select_node":
                                 // The key atribuete only exists on files, not folders
-                                if (node.type !== 'folder') {
+                                if (data.node.type !== 'folder') {
                                     var key = data.node.li_attr["data-key"];
                                     getKeyContent(key);
                                     $('#main').data('key', key);
@@ -193,7 +199,6 @@ $(function() {
 
                                 dodgercms.utils.newFolder(newKey, DATA_BUCKET, SITE_BUCKET, function(err, data) {
                                     addNode(newKey, key, input)
-                                    
                                 });
                             }
                         };
@@ -223,13 +228,15 @@ $(function() {
                             // Only update if different
                             if (input !== last) {
                                 block();
-                                dodgercms.entry.rename(key, input, DATA_BUCKET, SITE_BUCKET, function(err, data) {
+                                dodgercms.entry.rename(key, input, false, DATA_BUCKET, SITE_BUCKET, function(err, data) {
                                     unblock();
                                     if (err) {
                                         // TODO
                                         console.log(err);
                                     } else {
-                                        rebuildTree();
+                                        dodgercms.entry.menu(SITE_BUCKET, SITE_ENDPOINT, function(err) {
+                                            rebuildTree();
+                                        });
                                     }
                                 });
                             }
@@ -292,9 +299,12 @@ $(function() {
                                 if (err) {
                                     // TODO
                                 } else {
-                                    // remove from the tree
-                                    clearEntry(key);
-                                    $tree.jstree("delete_node", "#" + node.id);
+                                    dodgercms.entry.menu(SITE_BUCKET, SITE_ENDPOINT, function(err) {
+                                        // remove from the tree
+                                        clearEntry(key);
+                                        $tree.jstree("delete_node", "#" + node.id);
+                                    });
+
                                 }
                             });
                         };
@@ -434,19 +444,16 @@ $(function() {
             "type": (folder) ? "folder" : "file",
             "li_attr": {
                 "data-key": key
+            },
+            "state": {
+                "opened": true
             }
         };
 
-        if (folder) {
-            node.li_attr = {
-                "data-folder": true
-            };
-        }
         console.log(node);
 
         $tree = $('#tree');
         // Only add the node to the tree if it doesnt exist
-
 
         if (!doesTreeNodeExist(id)) {
             $tree.jstree("create_node", "#" + parent, node);
@@ -491,7 +498,7 @@ $(function() {
 
         var title = $.trim($title.val());
         var folder = $("option:selected", $folder).data('folder');
-        var slug = $.trim($slug.val());
+        var slug = $.trim($slug.val()).toLowerCase();
         var content = $.trim($content.val());
 
         // The title cannot be empty
@@ -531,17 +538,18 @@ $(function() {
         $folderData = $folder.data('entry-form-folder');
         $slugData = $slug.data('entry-form-slug');
 
-        // if the folder or slug has changed we need to move the object
-        if (($folderData && $folderData !== folder) ||
-            ($slugData && $slugData !== slug)) {
+        // if the folder or slug has changed we need to move the object.
+        // The reason for checkign if the slugData exists is to determine if the entry exists
+        if ($slugData && (($folderData && $folderData !== folder) || ($slugData !== slug))) {
 
             // This is the where the entry was originally located before the save
             var oldKey = ($folderData !== '/') ? $folderData + $slugData : $slugData;
 
-            dodgercms.s3.renameObject(oldKey, key, DATA_BUCKET, function(err, data) {
+            dodgercms.entry.rename(oldKey, key, ($folderData !== folder), DATA_BUCKET, SITE_BUCKET, function(err, data) {
                 if (err) {
-
+                    console.log(err);
                 } else {
+                    console.log(getTreeNodeId(oldKey));
                     $("#tree").jstree("delete_node", "#" + getTreeNodeId(oldKey));
                     callback();
                 }
@@ -596,12 +604,14 @@ $(function() {
                 } else {
                     var folders = dodgercms.utils.getFolders(list.Contents);
                     var slug = getSlug(key);
+                    var selectedFolder = (key.indexOf('/') > -1) ? key.substr(0, key.lastIndexOf('/') + 1) : '/';
+
                     var context = {
                         title: data.Metadata['title'],
                         modified: modified.toLocaleString(),
                         key: key,
                         folders: folders,
-                        selectedFolder: key.substr(0, key.lastIndexOf('/') + 1),
+                        selectedFolder: selectedFolder,
                         slug: slug,
                         content: body
                     };
@@ -638,12 +648,16 @@ $(function() {
 
     $(document).on("click", "#close-entry", function(event) {
         var key = $('#main').data('key');
-        getKeyContent(key);
+        if (key && key !== '/') {
+            getKeyContent(key);
+        } else {
+            clearEntry(key);
+        }
     });
 
     function clearEntry(key) {
         if (key === $('#main').data('key')) {
-            $('#main').empty().data('key', null); 
+            $('#main').empty().data('key', null);
         }
     }
 
