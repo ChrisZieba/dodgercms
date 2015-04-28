@@ -1,6 +1,8 @@
 <ul class="pure-menu-list">
-    <li class="pure-menu-item"><a href="#" class="pure-menu-link">{{label}}</a></li>
-    {{#children}}
-        {{> menu.html}}
-    {{/children}}
+	{{#unless index}}
+	    <li class="pure-menu-item {{#if children}}has-children{{/if}}"><a href="{{&endpoint}}{{key}}" class="pure-menu-link">{{label}}</a></li>
+	    {{#children}}
+	        {{> menu.html}}
+	    {{/children}}
+	{{/unless}}
 </ul>

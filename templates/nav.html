@@ -1,11 +1,13 @@
 <div class="pure-menu">
-    <a class="pure-menu-heading" href="#">Company</a>
+    <a class="pure-menu-heading" href="{{&endpoint}}"><img src="{{&endpoint}}.dodgercms/logo.png"></a>
     <ul class="pure-menu-list">
     {{#nav}}
-        <li class="pure-menu-item"><a href="#" class="pure-menu-link">{{label}}</a></li>
-        {{#children}}
-            {{> menu.html}}
-        {{/children}}
+    	{{#unless index}}
+	        <li class="pure-menu-item {{#if children}}has-children{{/if}}"><a href="{{&endpoint}}{{key}}" class="pure-menu-link">{{label}}</a></li>
+	        {{#children}}
+	            {{> menu.html}}
+	        {{/children}}
+	    {{/unless}}
     {{/nav}}
     </ul>
 </div>
