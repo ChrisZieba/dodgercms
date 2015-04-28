@@ -22,10 +22,6 @@
 .jstree-anchor:focus {
   outline: 0;
 }
-.jstree-node .object-label {
-  color: #999;
-  font-size: 80%;
-}
 .jstree-icon {
   display: inline-block;
   text-decoration: none;
