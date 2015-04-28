@@ -108,7 +108,6 @@ $(function() {
 
                                 // add the label if it wasnt already
                                 if ((parts.slice(0, j+1).join("/")  === parts.join('/')) && object.Metadata["label"]) {
-                                    result[0].text = parts[j] + ' <span class="object-label">(' + object.Metadata["label"] + ')</span>';
                                     result[0].li_attr["data-label"] = object.Metadata["label"];
                                 }
 
@@ -138,7 +137,6 @@ $(function() {
 
                                     // The last part of the key will have the label
                                     if ((parts.slice(0,j+1).join("/")  === parts.join('/')) && object.Metadata["label"]) {
-                                        node.text = parts[j] + ' <span class="object-label">(' + object.Metadata["label"] + ')</span>';
                                         node.li_attr["data-label"] = object.Metadata["label"];
                                         node.a_attr["title"] = object.Metadata["label"];
                                     } 
@@ -527,7 +525,7 @@ $(function() {
             $folder.data('entry-form-folder', folder);
 
             // Process the entry
-            dodgercms.entry.upsert(key, SITE_BUCKET, content, SITE_ENDPOINT, s3, function() {
+            dodgercms.entry.upsert(key, title, content, SITE_BUCKET, SITE_ENDPOINT, s3, function() {
                 unblock();
             });
         };
