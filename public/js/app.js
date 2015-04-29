@@ -118,7 +118,6 @@ $(function() {
                                     parent += '-folder';
                                 }
 
-                                console.log('parent=',parent);
                                 var node = {
                                     "id" : search, 
                                     "parent" : parent, 
@@ -129,6 +128,7 @@ $(function() {
                                         "opened": true
                                     }
                                 };
+
                                 // Only key ojects need the data aatrivute
                                 if (isFolder) {
                                     node.li_attr = {
@@ -146,6 +146,11 @@ $(function() {
                                     if ((parts.slice(0,j+1).join("/")  === parts.join('/')) && object.Metadata["title"]) {
                                         node.a_attr["title"] = object.Metadata["title"];
                                     } 
+
+                                    if (parts[j] === 'index') {
+                                        //node.text = '<span class=index-key>' + parts[j] + '</span>';
+                                        node.type = 'index';
+                                    }
 
                                     node.li_attr = {
                                         "data-key": key
@@ -226,7 +231,20 @@ $(function() {
                             // Only update if different
                             if (input !== last) {
                                 block();
-                                dodgercms.entry.rename(key, input, false, DATA_BUCKET, SITE_BUCKET, function(err, data) {
+
+                                // default to the user input
+                                var target = input;
+
+                                // if the key is a folder we need to pass in the input because many keys will need to change
+                                if (node.type !== 'folder') {
+                                    // replace the last element with the user input
+                                    parts.splice(-1, 1, input);
+
+                                    target = parts.join('/');
+                                } 
+
+
+                                dodgercms.entry.rename(key, target, DATA_BUCKET, SITE_BUCKET, function(err, data) {
                                     unblock();
                                     if (err) {
                                         // TODO
@@ -385,6 +403,9 @@ $(function() {
                             "file" : {
                                 "icon" : "fa fa-file-text-o"
                             },
+                            "index" : {
+                                "icon" : "fa fa-star-o"
+                            },
                             "folder" : {
                                 "icon" : "fa fa-folder-o"
                             }
@@ -398,10 +419,20 @@ $(function() {
                             var nodeA = this.get_node(a);
                             var nodeB = this.get_node(b);
 
+                            // move index files to the top
+
                             if (nodeA.type === nodeB.type) {
+                                // If the types are the same, sort by name
                                 return this.get_text(a) > this.get_text(b) ? 1 : -1; 
                             } else {
-                                return nodeA.type === 'file' ? 1 : -1; 
+                                if (nodeA.type === 'index') {
+                                    return -1;
+                                } else if (nodeB.type === 'index') {
+                                    return 1;
+                                } else {
+                                    return nodeA.type === 'file' ? 1 : -1; 
+                                }
+                                
                             }
                         }
                     });
@@ -410,11 +441,13 @@ $(function() {
         });
     }
 
-    $(document).bind('keydown', function(e) {
-      // if (e.ctrlKey && (e.which == 83)) {
-      //   e.preventDefault();
-      //   save();
-      // }
+    $(document).bind('keydown', function(event) {
+        if (event.ctrlKey && (event.which == 83)) {
+            // check if there is an entry loaded
+            if ($('#entry-form').is(':visible')) {
+                save(event);
+            }
+        }
     });
 
     function isFolder(key) {
@@ -430,11 +463,11 @@ $(function() {
     }
 
     function addNode(key, parent, text) {
-        console.log(key, text);
         //var parts = key.split('/');
         var folder = isFolder(key);
         var id = getTreeNodeId(key);
         var parent = getTreeNodeId(parent);
+
         var node = {
             "id" : id, 
             "parent" : parent, 
@@ -448,7 +481,9 @@ $(function() {
             }
         };
 
-        console.log(node);
+        if (text === 'index') {
+            node.type = text;
+        }
 
         $tree = $('#tree');
         // Only add the node to the tree if it doesnt exist
@@ -485,10 +520,9 @@ $(function() {
         $.unblockUI();
     }
 
-    // A new entry is submitted or saved
-    $(document).on("submit", "#entry-form", function(event) {
+    function save(event) {
         event.preventDefault();
-
+        
         var $title = $("#entry-form-title");
         var $folder = $("#entry-form-folder");
         var $slug = $("#entry-form-slug");
@@ -525,7 +559,7 @@ $(function() {
             $folder.data('entry-form-folder', folder);
 
             // Process the entry
-            dodgercms.entry.upsert(key, title, content, SITE_BUCKET, SITE_ENDPOINT, s3, function() {
+            dodgercms.entry.upsert(key, title, content, SITE_BUCKET, SITE_ENDPOINT, s3, function(err, data) {
                 unblock();
             });
         };
@@ -537,17 +571,19 @@ $(function() {
         $slugData = $slug.data('entry-form-slug');
 
         // if the folder or slug has changed we need to move the object.
-        // The reason for checkign if the slugData exists is to determine if the entry exists
-        if ($slugData && (($folderData && $folderData !== folder) || ($slugData !== slug))) {
+        // The reason for checkign if the slugData exists is to determine if the entry exists already (i.e, not new)
+        if ($slugData && $folderData && (($folderData !== folder) || ($slugData !== slug))) {
 
             // This is the where the entry was originally located before the save
             var oldKey = ($folderData !== '/') ? $folderData + $slugData : $slugData;
 
-            dodgercms.entry.rename(oldKey, key, ($folderData !== folder), DATA_BUCKET, SITE_BUCKET, function(err, data) {
+            // the rename is handled differently if the subdolder changed and not the key
+            var folderChange = ($folderData !== folder);
+
+            dodgercms.entry.rename(oldKey, key, DATA_BUCKET, SITE_BUCKET, function(err, data) {
                 if (err) {
                     console.log(err);
                 } else {
-                    console.log(getTreeNodeId(oldKey));
                     $("#tree").jstree("delete_node", "#" + getTreeNodeId(oldKey));
                     callback();
                 }
@@ -576,7 +612,10 @@ $(function() {
                 }
             });
         }
-    });
+    }
+
+    // A new entry is submitted or saved
+    $(document).on("submit", "#entry-form", save);
 
     $(document).on("click", "#edit-entry", function(event) {
         var key = $(this).data("key");
@@ -781,21 +820,6 @@ $(function() {
         return parts.pop();
     }
 
-
-
-    function save() {
-        // get the data key attached the textra
-
-        var key = $("#content").data("key");
-
-        // Nothing loaded in the textarea
-        if (typeof key === "undefined") {
-            return;
-        }
-
-        saveKeyContent(key);
-    }
-
     function getKeyContent(key, callback) {
         var params = {
             Bucket: DATA_BUCKET,
@@ -807,31 +831,6 @@ $(function() {
                 console.log(err, err.stack);
             } else {
                 loadKeyContent(key, data);
-            }
-        });
-    }
-
-    function saveKeyContent(key) {
-
-        var body = $("#entry-form-content").val();
-
-        var metadata = {
-            "Content-Type":  CONTENT_TYPE
-        }
-
-        var params = {
-            Bucket: DATA_BUCKET,
-            Key: key,
-            Body: body,
-            ContentType:  CONTENT_TYPE,
-            Metadata: metadata
-        };
-
-        s3.putObject(params, function(err, data) {
-            if (err) {
-                console.log(err, err.stack);
-            } else {
-                console.log(data);
             }
         });
     }
