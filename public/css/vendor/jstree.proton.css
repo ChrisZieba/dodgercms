@@ -19,6 +19,9 @@
   margin: 0;
   vertical-align: top;
 }
+.index-key {
+  font-weight: 600;
+}
 .jstree-anchor:focus {
   outline: 0;
 }

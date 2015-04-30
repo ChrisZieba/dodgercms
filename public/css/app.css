@@ -135,13 +135,16 @@ label.upload-image {
 }
     #nav .pure-menu-link:hover,
     #nav .pure-menu-link:focus {
-        background: rgb(55, 60, 90);
+        background: none;
     }
     #nav .pure-menu-link {
         color: #fff;
         margin-left: 0.5em;
         margin-right: 0.5em;
         padding-left: 1.75em;
+    }
+    #nav .pure-menu-link:hover {
+        color: #BECBD7;
     }
     #nav .pure-menu-heading {
         padding-left: 1.5em;

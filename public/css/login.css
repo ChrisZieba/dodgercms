@@ -20,7 +20,7 @@ a {
 }
 
 .container {
-    margin-top:3em;
+    margin-top:4em;
     width: 100%;
     margin-right: auto;
     margin-left: auto;
@@ -30,12 +30,14 @@ a {
     width:100%;
 }
 
+p.help {
+    font-size: 95%;
+    color:#666;
+}
+
 .login-form {
     margin-top:3em;
     margin-bottom: 2em;
-    padding:15px;
-    border: 1px solid #ddd;
-    background-color: #FFF;
     border-radius: 4px;
 }
 
@@ -56,6 +58,6 @@ a {
 @media (min-width: 48em) {
 
     .container  {
-        width: 32em;
+        width: 24em;
     }
 }
