@@ -41,8 +41,8 @@
             </p>
         </div>
         <div class="content-controls pure-u-1-4">
-            <button id="edit-entry" data-key="{{key}}" class="secondary-button pure-button">Edit</button>
-            <button id="delete-entry" data-key="{{key}}" class="secondary-button pure-button">Delete</button>
+            <button id="delete-entry" data-key="{{key}}" class="secondary-button pure-button" title="Delete"><i class="fa fa-trash"></i></button>
+            <button id="edit-entry" data-key="{{key}}" class="secondary-button pure-button" title="Edit"><i class="fa fa-edit"></i></button>
         </div>
     </div>
     <div class="content-body">{{&content}}</div>
@@ -58,10 +58,10 @@
             {{/if}}
         </div>
         <div class="content-controls pure-u-1-4">
-            <button id="close-entry" class="secondary-button pure-button">Close</button>
             {{#title}}
-                <button id="delete-entry" data-key="{{key}}" class="secondary-button pure-button">Delete</button>
+                <button id="delete-entry" data-key="{{key}}" class="secondary-button pure-button" title="Delete"><i class="fa fa-trash"></i></button>
             {{/title}}
+            <button id="close-entry" class="secondary-button pure-button" title="Close"><i class="fa fa-times"></i></button>
         </div>
     </div>
     <div class="content-body">
@@ -69,7 +69,7 @@
             <fieldset>
                 <div class="pure-g">
 
-                    <input id="entry-form-title" class="pure-u-1" type="text" placeholder="Title" data-entry-form-title="{{title}}" value="{{title}}">
+                    <input id="entry-form-title" class="pure-u-1" type="text" placeholder="Title" data-entry-form-title="{{title}}" value="{{title}}" required>
 
                     <div class="pure-u-1-2">
                         <select id="entry-form-folder" data-entry-form-folder="{{selectedFolder}}" class="pure-u-23-24">
@@ -79,7 +79,7 @@
                         </select>
                     </div>
 
-                    <input id="entry-form-slug" class="pure-u-1-2" type="text" placeholder="Slug" data-entry-form-slug="{{slug}}" value="{{slug}}">
+                    <input id="entry-form-slug" class="pure-u-1-2" type="text" placeholder="Slug" data-entry-form-slug="{{slug}}" value="{{slug}}" required>
 
                     <div class="pure-u-1">
                         <button type="button" id="preview-entry" class="toolbar-button pure-button">Preview</button>
