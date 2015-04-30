@@ -1,10 +1,8 @@
 [![DodgerCMS](http://i.imgur.com/EmVj8OL.png)](http://dodgercms.com/)
 
 [![Build Status](https://travis-ci.org/ChrisZieba/dodgercms.svg)](https://travis-ci.org/ChrisZieba/dodgercms)
-
-A static markdown CMS built ontop of S3.
  
-DodgerCMS is an alternative to heavy content management systems. No databases, deployments, or updates - just focus on writing your content (in markdown). Everything is stored in s3 and can be edited via the cloud manager which hosted in your own bucket.
+DodgerCMS is a static markdown CMS built on top of Amazon S3. It is a clean and simple alternative to heavy content management systems. There are no databases to manage, deployments to monitor, or massive configuration files. Just focus on writing your content and the results are live immediatly. 
 
 # Features
 
