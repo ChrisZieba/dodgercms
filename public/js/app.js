@@ -14,6 +14,10 @@ $(function() {
         return (option === value) ? ' selected="selected"' : '';
     });
 
+    Handlebars.registerHelper('raw-helper', function(options) {
+        return options.fn();
+    });
+
     $(document).on("click", ".pure-button", function() {
         // Removes focus of the button.
         $(this).blur();
@@ -24,7 +28,23 @@ $(function() {
     var secretAccessKey = sessionStorage.getItem("dodgercms-token-secret-access-key");
     var sessionToken = sessionStorage.getItem("dodgercms-token-session-token");
 
-    var s3 = dodgercms.s3.init(accessKeyId, secretAccessKey, sessionToken);
+    // init the s3 connection and pass in an error handler
+    dodgercms.s3.init(accessKeyId, secretAccessKey, sessionToken, function(code, message) {
+        // check if the token is expired
+        if (code === 'ExpiredToken') {
+            $.blockUI();
+            dodgercms.auth.login(function(err) {
+                // remove the page blocker
+                $.unblockUI();
+                if (err) {
+                    // redirect to the login page
+                    dodgercms.auth.redirect();
+                } else {
+                    rebuildTree();
+                }
+            });
+        }
+    });
 
     buildTree();
 
@@ -404,10 +424,11 @@ $(function() {
                                 "icon" : "fa fa-file-text-o"
                             },
                             "index" : {
-                                "icon" : "fa fa-star-o"
+                                "icon" : "fa fa-asterisk"
                             },
                             "folder" : {
-                                "icon" : "fa fa-folder-o"
+                                "icon" : "fa fa-folder-o",
+                                "select_node": false
                             }
                         },
                         "plugins" : ["unique", "contextmenu", "sort", "ui", "types"],
@@ -462,7 +483,7 @@ $(function() {
         return false;
     }
 
-    function addNode(key, parent, text) {
+    function addNode(key, parent, text, title) {
         //var parts = key.split('/');
         var folder = isFolder(key);
         var id = getTreeNodeId(key);
@@ -483,6 +504,12 @@ $(function() {
 
         if (text === 'index') {
             node.type = text;
+        }
+
+        if (title) {
+            node.a_attr = {
+                "title": title
+            }
         }
 
         $tree = $('#tree');
@@ -549,7 +576,7 @@ $(function() {
 
         var callback = function() {
             // add the node to the tree (only added if it doesnt exist)
-            addNode(key, folder, slug);
+            addNode(key, folder, slug, title);
            
             // update the data attributes
             $slug.attr('data-entry-form-slug', slug);
@@ -559,8 +586,14 @@ $(function() {
             $folder.data('entry-form-folder', folder);
 
             // Process the entry
-            dodgercms.entry.upsert(key, title, content, SITE_BUCKET, SITE_ENDPOINT, s3, function(err, data) {
-                unblock();
+            dodgercms.entry.upsert(key, title, content, SITE_BUCKET, SITE_ENDPOINT, function(err, data) {
+                if (err) {
+                    // TODO
+                } else {
+                    dodgercms.entry.menu(SITE_BUCKET, SITE_ENDPOINT, function() {
+                        unblock();
+                    });
+                }
             });
         };
 
@@ -604,12 +637,8 @@ $(function() {
             };
 
             // Put the object in its place
-            s3.putObject(params, function(err, data) {
-                if (err) {
-                    
-                } else {
-                    callback();
-                }
+            dodgercms.s3.putObject(params, function(err, data) {
+                callback();
             });
         }
     }
@@ -667,8 +696,7 @@ $(function() {
             return;
         }
 
-        var input = window.confirm("Are you sure?");
-        if (!input) {
+        if (!window.confirm("Are you sure?")) {
             return;
         }
 
@@ -676,9 +704,11 @@ $(function() {
             if (err) {
                 // TODO
             } else {
-                // remove from the tree
-                $("#tree").jstree("delete_node", "#" + getTreeNodeId(key));
-                clearEntry(key);
+                dodgercms.entry.menu(SITE_BUCKET, SITE_ENDPOINT, function() {
+                    // remove from the tree
+                    $("#tree").jstree("delete_node", "#" + getTreeNodeId(key));
+                    clearEntry(key);
+                });
             }
         });
     });
@@ -722,42 +752,41 @@ $(function() {
 
         var file = $("#upload-image")[0].files[0];
         var content = $('#entry-form-content');
-
         var types = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'];
 
-        if (file) {
-            // only images
-            if (types.indexOf(file.type) < 0) {
-                alert('Only images can be uploaded.');
-                return;
-            }
-            // repalce any illegal characters from the filename
-            var filename = 'images/' + file.name.replace(/\s|\\|\/|\(|\)/g,"-");
-            var link = 'http://' + ASSETS_BUCKET + '.' + S3_ENDPOINT + '/' + filename;
-            var params = {
-                Bucket: ASSETS_BUCKET,
-                Key: filename, 
-                ContentType: file.type, 
-                Body: file
-            };
-
-            // only upload if editing
-            if (content.length > 0 && content.is(':visible')) {
-                s3.upload(params, function(err, data) {
-                    if (err) {
-                        console.dir(err);
-                    } else {
-                        // Insert the markdown with the correct link into the document
-                        var cursorPosStart = content.prop('selectionStart');
-                        var cursorPosEnd = content.prop('selectionEnd');
-                        var v = content.val();
-                        var textBefore = v.substring(0,  cursorPosStart );
-                        var textAfter = v.substring( cursorPosEnd, v.length );
-                        content.val(textBefore + '![' + file.name + ']' + '(' + link + ')' + textAfter);
-                    }
-                });
-            }
+        if (!file || types.indexOf(file.type) < 0) {
+            alert('Only images can be uploaded.');
+            return;
         }
+
+        // only upload if editing
+        if (content.length <= 0 || !content.is(':visible')) {
+            return;
+        }
+
+        // repalce any illegal characters from the filename
+        var filename = 'images/' + file.name.replace(/\s|\\|\/|\(|\)/g,"-");
+        var link = 'http://' + ASSETS_BUCKET + '.' + S3_ENDPOINT + '/' + filename;
+        var params = {
+            Bucket: ASSETS_BUCKET,
+            Key: filename, 
+            ContentType: file.type, 
+            Body: file
+        };
+
+        dodgercms.s3.upload(params, function(err, data) {
+            if (err) {
+                console.dir(err);
+            } else {
+                // Insert the markdown with the correct link into the document
+                var cursorPosStart = content.prop('selectionStart');
+                var cursorPosEnd = content.prop('selectionEnd');
+                var v = content.val();
+                var textBefore = v.substring(0,  cursorPosStart );
+                var textAfter = v.substring( cursorPosEnd, v.length );
+                content.val(textBefore + '![' + file.name + ']' + '(' + link + ')' + textAfter);
+            }
+        });
     });
 
     $(document).on("click", "#preview-entry", function(event) {
@@ -769,10 +798,12 @@ $(function() {
 
         // if the content is already being previewed, display the editor again
         if (preview.length > 0) {
-            // remove the preview contented and show the editor
+            // remove the preview content and show the editor
             preview.remove();
             content.show();
-            $(this).text('Preview');
+            $(this).html('<i class="fa fa-search"></i>');
+            $(this).prop('title', 'Preview');
+            $('label[for=upload-image]').removeClass('none');
         } else {
             var md = content.val();
             var html = '<div id="content-preview">' + marked(md) + '</div>';
@@ -788,7 +819,11 @@ $(function() {
                 hljs.highlightBlock(block);
             });
 
-            $(this).text('Write');
+            $(this).html('<i class="fa fa-pencil"></i>');
+            $(this).prop('title', 'Write');
+
+            // remove the upload image icon
+            $('label[for=upload-image]').addClass('none');
         }
     });
 
@@ -821,12 +856,7 @@ $(function() {
     }
 
     function getKeyContent(key, callback) {
-        var params = {
-            Bucket: DATA_BUCKET,
-            Key: key
-        };
-
-        s3.getObject(params, function(err, data) {
+        dodgercms.s3.getObject(key, DATA_BUCKET, function(err, data) {
             if (err) {
                 console.log(err, err.stack);
             } else {
