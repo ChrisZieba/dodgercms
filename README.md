@@ -1,10 +1,12 @@
-![DodgerCMS](http://i.imgur.com/EmVj8OL.png)
+[![DodgerCMS](http://i.imgur.com/EmVj8OL.png)](http://dodgercms.com/)
 
-A simple CMS using AWS Lambda and S3 for storage. Markdown files are created and edited in the editor, and then converted to markdown by a Lambda function. 
+[![Build Status](https://travis-ci.org/ChrisZieba/dodgercms.svg)](https://travis-ci.org/ChrisZieba/dodgercms)
 
-# Use Cases
+A static markdown CMS built ontop of S3.
+ 
+DodgerCMS is an alternative to heavy content management systems. No databases, deployments, or updates - just focus on writing your content (in markdown). Everything is stored in s3 and can be edited via the cloud manager which hosted in your own bucket.
 
-DodgerCMS was built to create documentation as quickly as possible.
+# Features
 
 # Installation
 
@@ -75,13 +77,20 @@ You will want to do is create an IAM user who can upload and modify the data (`d
                 "s3:ListBucket",
                 "s3:GetObject",
                 "s3:DeleteObject",
-                "s3:PutObject"
+                "s3:PutObject",
+                "s3:GetBucketWebsite",
+                "s3:PutBucketWebsite",
+                "s3:GetBucketLogging",
+                "s3:GetBucketVersioning",
+                "s3:GetBucketLocation"
             ],
             "Resource": [
                 "arn:aws:s3:::data.domain.com",
                 "arn:aws:s3:::data.domain.com/*",
                 "arn:aws:s3:::assets.domain.com",
-                "arn:aws:s3:::assets.domain.com/*"
+                "arn:aws:s3:::assets.domain.com/*",
+                "arn:aws:s3:::domain.com/*",
+                "arn:aws:s3:::domain.com/*"
             ]
         },
         {
@@ -93,9 +102,13 @@ You will want to do is create an IAM user who can upload and modify the data (`d
 }
 ```
 
-# Libraries 
+# Made possible by:
 
 - highlightjs
 - marked
 - aws sdk
 - jstree
+= purecss
+- handlebars
+- font awesome
+- jquery
