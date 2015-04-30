@@ -33,35 +33,34 @@ module.exports = function(grunt) {
             compile: {
                 options: {
                     namespace: "dodgercms.templates",
-                    partialsUseNamespace: false,
-                    partialRegex: /.*/,
-                    partialsPathRegex: /templates\/partials\//,
-                    processPartialName: function(filePath) {
-                        var pieces = filePath.split("/");
-                        return pieces[pieces.length - 1];
-                    },
+                    //partialsUseNamespace: false,
+                    //partialRegex: /.*/,
+                    //partialsPathRegex: /templates\/partials\//,
+                    // processPartialName: function(filePath) {
+                    //     var pieces = filePath.split("/");
+                    //     return pieces[pieces.length - 1];
+                    // },
                     processName: function(filePath) {
                         var pieces = filePath.split("/");
                         return pieces[pieces.length - 1];
                     }
                 },
                 files: {
-                    "templates/compiled/entry.html.js": "templates/entry.html",
-                    "templates/compiled/nav.html.js": "templates/nav.html",
-                    "templates/compiled/menu.html.js": "templates/partials/menu.html"
+                    "templates/compiled/entry.html.js": "templates/entry.html"
+                    // "templates/compiled/nav.html.js": "templates/nav.html",
+                    // "templates/compiled/menu.html.js": "templates/partials/menu.html"
                 }
             }
         }
     });
 
 
-    //grunt.loadNpmTasks('grunt-contrib-jshint');
-    //grunt.loadNpmTasks('grunt-contrib-uglify');
+    // grunt.loadNpmTasks('grunt-contrib-jshint');
+    // grunt.loadNpmTasks('grunt-contrib-uglify');
 
-    //grunt.registerTask('default', ['jshint', 'uglify']);
-
+    // grunt.registerTask('default', ['jshint', 'uglify']);
     grunt.loadNpmTasks('grunt-contrib-handlebars');
-   // grunt.loadNpmTasks('grunt-contrib-uglify');
+    // grunt.loadNpmTasks('grunt-contrib-uglify');
 
     grunt.registerTask('default', ['handlebars']);
 };
