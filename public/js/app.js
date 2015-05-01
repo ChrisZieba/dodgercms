@@ -9,6 +9,19 @@ $(function() {
     var CONTENT_TYPE = 'text/plain; charset=UTF-8';
     var S3_ENDPOINT = 's3.amazonaws.com';
 
+    var markedOptions = {
+        renderer: new marked.Renderer(),
+        gfm: true,
+        tables: true,
+        breaks: false,
+        pedantic: false,
+        sanitize: true,
+        smartLists: true,
+        smartypants: true,
+        highlight: function(code) {
+            return hljs.highlightAuto(code).value;
+        }
+    };
 
     Handlebars.registerHelper('selected', function(option, value) {
         return (option === value) ? ' selected="selected"' : '';
@@ -806,7 +819,7 @@ $(function() {
             $('label[for=upload-image]').removeClass('none');
         } else {
             var md = content.val();
-            var html = '<div id="content-preview">' + marked(md) + '</div>';
+            var html = '<div id="content-preview">' + marked(md, markedOptions) + '</div>';
 
             // hide the textarea
             content.hide();
@@ -880,7 +893,7 @@ $(function() {
             // provide a link to the actual resource
             link: '',
             key: key,
-            content: marked(body)
+            content: marked(body, markedOptions)
         };
 
         var html = template(context);
