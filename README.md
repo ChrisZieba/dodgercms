@@ -100,13 +100,13 @@ You will want to do is create an IAM user who can upload and modify the data (`d
 }
 ```
 
-# Made possible by:
+# Third Party:
 
 - highlightjs
 - marked
 - aws sdk
 - jstree
-= purecss
+- purecss
 - handlebars
 - font awesome
 - jquery
