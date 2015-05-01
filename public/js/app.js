@@ -285,6 +285,7 @@ $(function() {
                                     } else {
                                         dodgercms.entry.menu(SITE_BUCKET, SITE_ENDPOINT, function(err) {
                                             rebuildTree();
+                                            $('#main').data('key', key);
                                         });
                                     }
                                 });
@@ -310,7 +311,6 @@ $(function() {
 
                             // Only update if different
                             if (input !== label) {
-
                                 var params = {
                                     Bucket: DATA_BUCKET,
                                     Key: key,
@@ -319,12 +319,9 @@ $(function() {
                                     }
                                 };
 
-                                s3.putObject(params, function(err, data) {
+                                dodgercms.s3.putObject(params, function(err, data) {
                                     if (err) {
                                         console.log(err, err.stack);
-                                    } else {
-                                        console.log(data)
-                                        //tree.jstree("refresh");
                                     }
                                 });
                             }
@@ -587,7 +584,10 @@ $(function() {
 
         block();
 
-        var callback = function() {
+        var callback = function(key, folder, slug, title) {
+            // Update the key
+            $('#main').data('key', key);
+
             // add the node to the tree (only added if it doesnt exist)
             addNode(key, folder, slug, title);
            
@@ -631,7 +631,7 @@ $(function() {
                     console.log(err);
                 } else {
                     $("#tree").jstree("delete_node", "#" + getTreeNodeId(oldKey));
-                    callback();
+                    callback(key, folder, slug, title);
                 }
             })
         } else {
@@ -651,7 +651,7 @@ $(function() {
 
             // Put the object in its place
             dodgercms.s3.putObject(params, function(err, data) {
-                callback();
+                callback(key, folder, slug, title);
             });
         }
     }
