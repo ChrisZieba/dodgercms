@@ -10,15 +10,15 @@
     <meta name="description" content="{{description}}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="shortcut icon" href="{{&endpoint}}favicon.ico" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="{{&endpoint}}apple-touch-icon.png" />
-    <link rel="apple-touch-icon" sizes="57x57" href="{{&endpoint}}apple-touch-icon-57x57.png" />
-    <link rel="apple-touch-icon" sizes="72x72" href="{{&endpoint}}apple-touch-icon-72x72.png" />
-    <link rel="apple-touch-icon" sizes="76x76" href="{{&endpoint}}apple-touch-icon-76x76.png" />
-    <link rel="apple-touch-icon" sizes="114x114" href="{{&endpoint}}apple-touch-icon-114x114.png" />
-    <link rel="apple-touch-icon" sizes="120x120" href="{{&endpoint}}apple-touch-icon-120x120.png" />
-    <link rel="apple-touch-icon" sizes="144x144" href="{{&endpoint}}apple-touch-icon-144x144.png" />
-    <link rel="apple-touch-icon" sizes="152x152" href="{{&endpoint}}apple-touch-icon-152x152.png" />
+    <link rel="shortcut icon" href="{{&endpoint}}.dodgercms/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="{{&endpoint}}.dodgercms/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="57x57" href="{{&endpoint}}.dodgercms/apple-touch-icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="{{&endpoint}}.dodgercms/apple-touch-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="{{&endpoint}}.dodgercms/apple-touch-icon-76x76.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="{{&endpoint}}.dodgercms/apple-touch-icon-114x114.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="{{&endpoint}}.dodgercms/apple-touch-icon-120x120.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="{{&endpoint}}.dodgercms/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="{{&endpoint}}.dodgercms/apple-touch-icon-152x152.png" />
 
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
@@ -38,7 +38,7 @@
         <script id="menu-partial" type="text/x-handlebars-template">
             <ul class="pure-menu-list">
                 {{#unless index}}
-                    <li class="pure-menu-item {{#if children}}has-children{{/if}}"><a href="{{&endpoint}}{{key}}" class="pure-menu-link">{{label}}</a></li>
+                    <li class="pure-menu-item {{#if children}}has-children{{/if}}"><a href="/{{key}}" class="pure-menu-link">{{label}}</a></li>
                     {{#children}}
                         {{> menu}}
                     {{/children}}
@@ -50,11 +50,11 @@
     {{{{raw-helper}}}}
         <script id="nav-template" type="text/x-handlebars-template">
             <div class="pure-menu">
-                <a class="pure-menu-heading" href="{{&endpoint}}"><img src="{{&endpoint}}.dodgercms/logo.png"></a>
+                <a class="pure-menu-heading" href="/"><img src="{{&endpoint}}.dodgercms/logo.png"></a>
                 <ul class="pure-menu-list">
                 {{#nav}}
                     {{#unless index}}
-                        <li class="pure-menu-item {{#if children}}has-children{{/if}}"><a href="{{&endpoint}}{{key}}" class="pure-menu-link">{{label}}</a></li>
+                        <li class="pure-menu-item {{#if children}}has-children{{/if}}"><a href="/{{key}}" class="pure-menu-link">{{label}}</a></li>
                         {{#children}}
                             {{> menu}}
                         {{/children}}
@@ -74,9 +74,8 @@
                             {{#if @last}}
                                 <span class="menu-slug">{{label}}</span>
                             {{else}}
-                                <a href="#" class="pure-menu-link">{{label}}</a>» 
+                                <a href="/{{key}}" class="pure-menu-link">{{label}}</a>&raquo;
                             {{/if}}
-                           
                         </li>
                     {{/breadcrumbs}}
                 </ul>
@@ -88,6 +87,14 @@
         body {
             color: #777;
             font-family: "Arimo", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        code {
+            padding: 0.25em;
+            color: #333;
+            background: #f3f3f3;
+            -webkit-text-size-adjust: none;
+            border-radius: 3px;
         }
 
         .pure-img-responsive {
@@ -190,6 +197,10 @@
             font-size: 100%;
         }
 
+        .title .last-edited {
+            font-style: italic;
+        }
+
         /*
             The `#menu` `<div>` is the parent `<div>` that contains the `.pure-menu` that
             appears on the left side of the page.
@@ -217,7 +228,7 @@
 
         #menu ul.pure-menu-list .has-children {
             text-transform: uppercase;
-            padding-top: 0.5em;
+            padding-top: 0.25em;
         }
 
         #menu ul.pure-menu-list .has-children a {
@@ -226,13 +237,13 @@
         }
 
         #menu ul.pure-menu-list li {
-            padding-top:0.15em;
-            padding-bottom:0.15em;
+            padding-top:0.25em;
+            padding-bottom:0.25em;
         }
 
         #menu ul.pure-menu-list ul { 
-            margin-left: 0.25em; 
-            padding-left: 0.25em; 
+            margin-left: 0.5em; 
+            padding-left: 0.5em; 
         }
 
         #menu ul.pure-menu-list ul > li:first { 
@@ -413,8 +424,8 @@
 
             <article id="entry">
                 <div class="title">
-                    <h1>Title</h1>
-                    <p>Last edited on {{data}}</p>
+                    <h1>{{title}}</h1>
+                    <p>Last edited on <span class="last-edited">{{modified}}</span></p>
                 </div>
 
                 <!-- The converted markdown content. -->
