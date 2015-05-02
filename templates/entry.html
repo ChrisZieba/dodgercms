@@ -69,6 +69,7 @@
         <script id="header-template" type="text/x-handlebars-template">
             <div class="pure-menu pure-menu-horizontal breadcrumbs">
                 <ul class="pure-menu-list">
+                    <li class="pure-menu-item"><a href="/" class="pure-menu-link">Home</a>&raquo;</li>
                     {{#breadcrumbs}}
                         <li class="pure-menu-item">
                             {{#if @last}}
@@ -87,6 +88,14 @@
         body {
             color: #777;
             font-family: "Arimo", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        h1 {
+            color: #5e5e5e;
+        }
+
+        h2 {
+            color: #6a6a6a;
         }
 
         code {
@@ -184,7 +193,7 @@
 
         .title h1 {
             margin: 0 0 0.1em 0;
-            font-size: 2.25em;
+            font-size: 2.5em;
             color: #404040;
             font-weight: 400;
             overflow:hidden;
@@ -337,7 +346,7 @@
             z-index: 10;
             width: 1em;
             height: auto;
-            padding: 2.1em 1.6em;
+            padding: 1.5em;
         }
 
         .menu-link:hover,
@@ -361,12 +370,12 @@
         .menu-link span:before,
         .menu-link span:after {
             position: absolute;
-            margin-top: -0.6em;
+            margin-top: -0.5em;
             content: " ";
         }
 
         .menu-link span:after {
-            margin-top: 0.6em;
+            margin-top: 0.5em;
         }
 
 
