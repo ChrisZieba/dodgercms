@@ -32,7 +32,7 @@ $(function() {
     });
 
     $(document).on("click", ".pure-button", function() {
-        // Removes focus of the button.
+        // Removes focus of the button
         $(this).blur();
     });
 
@@ -42,11 +42,18 @@ $(function() {
     var sessionToken = sessionStorage.getItem("dodgercms-token-session-token");
 
     // init the s3 connection and pass in an error handler
-    dodgercms.s3.init(accessKeyId, secretAccessKey, sessionToken, function(code, message) {
+    dodgercms.s3.init(accessKeyId, secretAccessKey, sessionToken);
+
+    buildTree();
+
+    function errorHandler(err) {
+        var code = err.code;
+        var message = err.message;
+
         // check if the token is expired
         if (code === 'ExpiredToken') {
             $.blockUI();
-            dodgercms.auth.login(function(err) {
+            dodgercms.auth.login(function(err, data) {
                 // remove the page blocker
                 $.unblockUI();
                 if (err) {
@@ -57,9 +64,7 @@ $(function() {
                 }
             });
         }
-    });
-
-    buildTree();
+    }
 
     function rebuildTree() {
         // remove from the tree
@@ -71,10 +76,9 @@ $(function() {
     }
 
     function buildTree() {
-
         dodgercms.s3.listObjects(DATA_BUCKET, function(err, data) {
             if (err) {
-                // TODO
+                errorHandler(err);
             } else {
                 dodgercms.s3.headObjects(data.Contents, DATA_BUCKET, function(err, data) {
 
@@ -280,12 +284,15 @@ $(function() {
                                 dodgercms.entry.rename(key, target, DATA_BUCKET, SITE_BUCKET, function(err, data) {
                                     unblock();
                                     if (err) {
-                                        // TODO
-                                        console.log(err);
+                                        errorHandler(err);
                                     } else {
                                         dodgercms.entry.menu(SITE_BUCKET, SITE_ENDPOINT, function(err) {
-                                            rebuildTree();
-                                            $('#main').data('key', key);
+                                            if (err) {
+                                                errorHandler(err);
+                                            } else {
+                                                rebuildTree();
+                                                $('#main').data('key', key);
+                                            }
                                         });
                                     }
                                 });
@@ -321,7 +328,7 @@ $(function() {
 
                                 dodgercms.s3.putObject(params, function(err, data) {
                                     if (err) {
-                                        console.log(err, err.stack);
+                                        errorHandler(err);
                                     }
                                 });
                             }
@@ -343,7 +350,7 @@ $(function() {
 
                             dodgercms.entry.remove(key, DATA_BUCKET, SITE_BUCKET, function(err, data) {
                                 if (err) {
-                                    // TODO
+                                    errorHandler(err);
                                 } else {
                                     dodgercms.entry.menu(SITE_BUCKET, SITE_ENDPOINT, function(err) {
                                         // remove from the tree
@@ -601,7 +608,7 @@ $(function() {
             // Process the entry
             dodgercms.entry.upsert(key, title, content, SITE_BUCKET, SITE_ENDPOINT, function(err, data) {
                 if (err) {
-                    // TODO
+                    errorHandler(err);
                 } else {
                     dodgercms.entry.menu(SITE_BUCKET, SITE_ENDPOINT, function() {
                         unblock();
@@ -628,7 +635,7 @@ $(function() {
 
             dodgercms.entry.rename(oldKey, key, DATA_BUCKET, SITE_BUCKET, function(err, data) {
                 if (err) {
-                    console.log(err);
+                    errorHandler(err);
                 } else {
                     $("#tree").jstree("delete_node", "#" + getTreeNodeId(oldKey));
                     callback(key, folder, slug, title);
@@ -679,7 +686,7 @@ $(function() {
             // TODO: cache the objects from list
             dodgercms.s3.listObjects(DATA_BUCKET, function(err, list) {
                 if (err) {
-                    console.log(err);
+                    errorHandler(err);
                 } else {
                     var folders = dodgercms.utils.getFolders(list.Contents);
                     var slug = getSlug(key);
@@ -715,7 +722,7 @@ $(function() {
 
         dodgercms.entry.remove(key, DATA_BUCKET, SITE_BUCKET, function(err, data) {
             if (err) {
-                // TODO
+                errorHandler(err);
             } else {
                 dodgercms.entry.menu(SITE_BUCKET, SITE_ENDPOINT, function() {
                     // remove from the tree
@@ -789,7 +796,7 @@ $(function() {
 
         dodgercms.s3.upload(params, function(err, data) {
             if (err) {
-                console.dir(err);
+                errorHandler(err);
             } else {
                 // Insert the markdown with the correct link into the document
                 var cursorPosStart = content.prop('selectionStart');
@@ -847,7 +854,7 @@ $(function() {
     function newEntry(folder) {
         dodgercms.s3.listObjects(DATA_BUCKET, function(err, data) {
             if (err) {
-                // TODO: handle error
+                errorHandler(err);
             } else {
                 var folders = dodgercms.utils.getFolders(data.Contents);
 
@@ -871,7 +878,7 @@ $(function() {
     function getKeyContent(key, callback) {
         dodgercms.s3.getObject(key, DATA_BUCKET, function(err, data) {
             if (err) {
-                console.log(err, err.stack);
+                errorHandler(err);
             } else {
                 loadKeyContent(key, data);
             }
