@@ -1,23 +1,23 @@
 {
-    "name": "dodgercms",
-    "version": "0.0.1",
-    "description": "A static markdown CMS built on top of Amazon S3.",
-    "author": {
-        "name": "Chris Zieba",
-        "email": "zieba.chris@gmail.com"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git@github.com:ChrisZieba/dodgercms.git"
-    },
-    "devDependencies": {
-        "grunt": "~0.4.2",
-        "grunt-contrib-jshint": "~0.6.3",
-        "grunt-contrib-nodeunit": "~0.2.0",
-        "grunt-contrib-uglify": "~0.2.2",
-        "grunt-contrib-concat": "~0.3.0",
-        "grunt-contrib-handlebars": "~0.10.1",
-        "grunt-contrib-coffee": "~0.13.0",
-        "grunt-contrib-qunit": "~0.7.0"
-    }
+  "name": "dodgercms",
+  "version": "0.0.1",
+  "description": "A static markdown CMS built on top of Amazon S3.",
+  "author": {
+    "name": "Chris Zieba",
+    "email": "zieba.chris@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:ChrisZieba/dodgercms.git"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-jshint": "~0.6.3",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-handlebars": "~0.10.1",
+    "grunt-mocha": "~0.4.6",
+    "mocha": "~1.14.0",
+    "chai": "~1.8.1"
+  }
 }
