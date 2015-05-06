@@ -48,7 +48,7 @@ $(function() {
   });
 
   // Pass the credentials to an s3 object
-  s3init();
+  s3init(false);
 
   // Pulls a list of all files from s3 and builds a tree
   buildTree();
@@ -58,13 +58,13 @@ $(function() {
    *
    * @param {Object} err The error object from the response
   */
-  function s3init() {
+  function s3init(force) {
     var accessKeyId = sessionStorage.getItem("dodgercms-token-access-key-id");
     var secretAccessKey = sessionStorage.getItem("dodgercms-token-secret-access-key");
     var sessionToken = sessionStorage.getItem("dodgercms-token-session-token");
 
     // init the s3 connection and pass in an error handler
-    dodgercms.s3.init(accessKeyId, secretAccessKey, sessionToken);
+    dodgercms.s3.init(accessKeyId, secretAccessKey, sessionToken, force);
   }
 
   /**
@@ -90,7 +90,7 @@ $(function() {
           // Redirect to the login page
           dodgercms.auth.redirect();
         } else {
-          s3init();
+          s3init(true);
           rebuildTree();
         }
       });
@@ -361,6 +361,14 @@ $(function() {
                 dodgercms.s3.putObject(params, function(err, data) {
                   if (err) {
                     errorHandler(err);
+                  } else {
+                    // Update the bucket
+                    params.Bucket = SITE_BUCKET;
+                    dodgercms.s3.putObject(params, function(err, data) {
+                      if (err) {
+                        errorHandler(err);
+                      }
+                    });
                   }
                 });
               }
@@ -524,7 +532,7 @@ $(function() {
   }
 
   function doesTreeNodeExist(id) {
-    if ($tree.jstree("get_node", id)) {
+    if ($("#tree").jstree("get_node", id)) {
       return true;
     }
 
@@ -532,7 +540,6 @@ $(function() {
   }
 
   function addNode(key, parent, text, title) {
-    //var parts = key.split('/');
     var folder = isFolder(key);
     var id = getTreeNodeId(key);
     var parent = getTreeNodeId(parent);
@@ -560,11 +567,9 @@ $(function() {
       }
     }
 
-    $tree = $('#tree');
     // Only add the node to the tree if it doesnt exist
-
     if (!doesTreeNodeExist(id)) {
-      $tree.jstree("create_node", "#" + parent, node);
+      $('#tree').jstree("create_node", "#" + parent, node);
     }
     
     return node;
@@ -651,8 +656,8 @@ $(function() {
     // check for the root folder
     var key = (folder !== '/') ? folder + slug : slug;
 
-    $folderData = $folder.data('entry-form-folder');
-    $slugData = $slug.data('entry-form-slug');
+    var $folderData = $folder.data('entry-form-folder');
+    var $slugData = $slug.data('entry-form-slug');
 
     // if the folder or slug has changed we need to move the object.
     // The reason for checkign if the slugData exists is to determine if the entry exists already (i.e, not new)
@@ -815,8 +820,9 @@ $(function() {
       return;
     }
 
-    // repalce any illegal characters from the filename
+    // replace any illegal characters from the filename
     var filename = 'images/' + file.name.replace(/\s|\\|\/|\(|\)/g,"-");
+
     var link = 'http://' + ASSETS_BUCKET + '.' + S3_ENDPOINT + '/' + filename;
     var params = {
       Bucket: ASSETS_BUCKET,
@@ -902,7 +908,7 @@ $(function() {
   }
 
   function getSlug(key) {
-    parts = key.split('/');
+    var parts = key.split('/');
     return parts.pop();
   }
 
