@@ -2,152 +2,150 @@
 
 <html>
 <head>
-    <title>DodgerCMS</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>DodgerCMS</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="public/css/vendor/jstree.proton.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/styles/github.min.css" />
-    <link rel="stylesheet" href="public/css/app.css" />
-    
-    <link rel="shortcut icon" href="public/img/icons/favicon.ico" type="image/x-icon" />
-    <link rel="apple-touch-icon" sizes="57x57" href="public/img/icons/apple-touch-icon-57x57.png" />
-    <link rel="apple-touch-icon" sizes="72x72" href="public/img/icons/apple-touch-icon-72x72.png" />
-    <link rel="apple-touch-icon" sizes="76x76" href="public/img/icons/apple-touch-icon-76x76.png" />
-    <link rel="apple-touch-icon" sizes="114x114" href="public/img/icons/apple-touch-icon-114x114.png" />
-    <link rel="apple-touch-icon" sizes="120x120" href="public/img/icons/apple-touch-icon-120x120.png" />
-    <link rel="apple-touch-icon" sizes="144x144" href="public/img/icons/apple-touch-icon-144x144.png" />
-    <link rel="apple-touch-icon" sizes="152x152" href="public/img/icons/apple-touch-icon-152x152.png" />
+	<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+	<link rel="stylesheet" href="public/css/vendor/jstree.proton.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/styles/github.min.css" />
+	<link rel="stylesheet" href="public/css/app.css" />
+	
+	<link rel="shortcut icon" href="public/img/icons/favicon.ico" type="image/x-icon" />
+	<link rel="apple-touch-icon" sizes="57x57" href="public/img/icons/apple-touch-icon-57x57.png" />
+	<link rel="apple-touch-icon" sizes="72x72" href="public/img/icons/apple-touch-icon-72x72.png" />
+	<link rel="apple-touch-icon" sizes="76x76" href="public/img/icons/apple-touch-icon-76x76.png" />
+	<link rel="apple-touch-icon" sizes="114x114" href="public/img/icons/apple-touch-icon-114x114.png" />
+	<link rel="apple-touch-icon" sizes="120x120" href="public/img/icons/apple-touch-icon-120x120.png" />
+	<link rel="apple-touch-icon" sizes="144x144" href="public/img/icons/apple-touch-icon-144x144.png" />
+	<link rel="apple-touch-icon" sizes="152x152" href="public/img/icons/apple-touch-icon-152x152.png" />
 
-    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
-    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.20.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/jstree.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/async/0.9.0/async.min.js"></script>
+	<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.20.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/jstree.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/async/0.9.0/async.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.66.0-2013.10.09/jquery.blockUI.min.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
-    <script src="public/js/vendor/jquery.blockUI.min.js"></script>
+	<script src="templates/compiled/entry.html.js"></script>
 
-    <script src="templates/compiled/entry.html.js"></script>
-
-
-    <script src="lib/auth.js"></script>
-    <script src="lib/entry.js"></script>
-    <script src="lib/s3.js"></script>
-    <script src="lib/utils.js"></script>
-    <script src="public/js/app.js"></script>
+	<script src="lib/auth.js"></script>
+	<script src="lib/entry.js"></script>
+	<script src="lib/s3.js"></script>
+	<script src="lib/utils.js"></script>
+	<script src="public/js/app.js"></script>
 
 </head>
 <body>
 
 <script id="entry-template" type="text/x-handlebars-template">
-    <div class="content-header content-header-div pure-g">
-        <div class="pure-u-3-4">
-            <h1 class="content-title">{{title}}</h1>
-            <p class="content-subtitle">
-                Last modified <a href="{{link}}" target="_blank">{{key}}</a> at <span>{{modified}}</span>
-            </p>
-        </div>
-        <div class="content-controls pure-u-1-4">
-            <button id="delete-entry" data-key="{{key}}" class="secondary-button pure-button" title="Delete"><i class="fa fa-trash"></i></button>
-            <button id="edit-entry" data-key="{{key}}" class="secondary-button pure-button" title="Edit"><i class="fa fa-edit"></i></button>
-        </div>
-    </div>
-    <div class="content-body">{{&content}}</div>
+	<div class="content-header content-header-div pure-g">
+		<div class="pure-u-3-4">
+			<h1 class="content-title">{{title}}</h1>
+			<p class="content-subtitle">
+				Last modified <a href="{{link}}" target="_blank">{{key}}</a> at <span>{{modified}}</span>
+			</p>
+		</div>
+		<div class="content-controls pure-u-1-4">
+			<button id="delete-entry" data-key="{{key}}" class="secondary-button pure-button" title="Delete"><i class="fa fa-trash"></i></button>
+			<button id="edit-entry" data-key="{{key}}" class="secondary-button pure-button" title="Edit"><i class="fa fa-edit"></i></button>
+		</div>
+	</div>
+	<div class="content-body">{{&content}}</div>
 </script>
 
 <script id="edit-entry-template" type="text/x-handlebars-template">
-    <div class="content-header pure-g">
-        <div class="pure-u-3-4">
-            {{#if title}}
-                <h1 class="content-title">Editing <span>{{title}}</span></h1>
-            {{else}}
-                <h1 class="content-title">New Entry</h1>
-            {{/if}}
-        </div>
-        <div class="content-controls pure-u-1-4">
-            {{#title}}
-                <button id="delete-entry" data-key="{{key}}" class="secondary-button pure-button" title="Delete"><i class="fa fa-trash"></i></button>
-            {{/title}}
-            <button id="close-entry" class="secondary-button pure-button" title="Close"><i class="fa fa-times"></i></button>
-        </div>
-    </div>
-    <div class="content-body">
-        <form id="entry-form" class="pure-form pure-form-stacked entry-form">
-            <fieldset>
-                <div class="pure-g">
+	<div class="content-header pure-g">
+		<div class="pure-u-3-4">
+			{{#if title}}
+				<h1 class="content-title">Editing <span>{{title}}</span></h1>
+			{{else}}
+				<h1 class="content-title">New Entry</h1>
+			{{/if}}
+		</div>
+		<div class="content-controls pure-u-1-4">
+			{{#title}}
+				<button id="delete-entry" data-key="{{key}}" class="secondary-button pure-button" title="Delete"><i class="fa fa-trash"></i></button>
+			{{/title}}
+			<button id="close-entry" class="secondary-button pure-button" title="Close"><i class="fa fa-times"></i></button>
+		</div>
+	</div>
+	<div class="content-body">
+		<form id="entry-form" class="pure-form pure-form-stacked entry-form">
+			<fieldset>
+				<div class="pure-g">
 
-                    <input id="entry-form-title" class="pure-u-1" type="text" placeholder="Title" data-entry-form-title="{{title}}" value="{{title}}" required>
+					<input id="entry-form-title" class="pure-u-1" type="text" placeholder="Title" data-entry-form-title="{{title}}" value="{{title}}" required>
 
-                    <div class="pure-u-1-2">
-                        <select id="entry-form-folder" data-entry-form-folder="{{selectedFolder}}" class="pure-u-23-24">
-                            {{#each folders}}
-                                <option value="{{this}}" data-folder="{{this}}" {{selected this ../selectedFolder}}>{{this}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
+					<div class="pure-u-1-2">
+						<select id="entry-form-folder" data-entry-form-folder="{{selectedFolder}}" class="pure-u-23-24">
+							{{#each folders}}
+								<option value="{{this}}" data-folder="{{this}}" {{selected this ../selectedFolder}}>{{this}}</option>
+							{{/each}}
+						</select>
+					</div>
 
-                    <input id="entry-form-slug" class="pure-u-1-2" type="text" placeholder="Slug" data-entry-form-slug="{{slug}}" value="{{slug}}" required>
+					<input id="entry-form-slug" class="pure-u-1-2" type="text" placeholder="Slug" data-entry-form-slug="{{slug}}" value="{{slug}}" required>
 
-                    <div class="pure-u-1">
-                        <div class="toolbar">
-                            <button type="button" id="preview-entry" class="button-small pure-button" title="Preview"><i class="fa fa-search"></i></button>
-                            <label for="upload-image" class="button-small pure-button upload-image" title="Upload Image"><i class="fa fa-cloud-upload"></i></label>
-                            <input id="upload-image" type="file" class="file-upload" />
-                        </div>
-                    </div>
+					<div class="pure-u-1">
+						<div class="toolbar">
+							<button type="button" id="preview-entry" class="button-small pure-button" title="Preview"><i class="fa fa-search"></i></button>
+							<label for="upload-image" class="button-small pure-button upload-image" title="Upload Image"><i class="fa fa-cloud-upload"></i></label>
+							<input id="upload-image" type="file" class="file-upload" />
+						</div>
+					</div>
 
-                    <div id="content-body-container" class="pure-u-1">
-                        <textarea id="entry-form-content" class="pure-u-1 content-textarea" rows="25">{{content}}</textarea>
-                    </div>
+					<div id="content-body-container" class="pure-u-1">
+						<textarea id="entry-form-content" class="pure-u-1 content-textarea" rows="25">{{content}}</textarea>
+					</div>
 
-                    <div class="content-footer-controls pure-u-1">
-                        <button type="submit" class="pure-button primary-button">Save</button>
-                    </div>
-                </div>
-            </fieldset>
+					<div class="content-footer-controls pure-u-1">
+						<button type="submit" class="pure-button primary-button">Save</button>
+					</div>
+				</div>
+			</fieldset>
 
-        </form>
-    </div>
+		</form>
+	</div>
 </script>  
 
 
 <div id="layout" class="content pure-g">
-    <div id="nav" class="pure-u">
-        <a href="#" class="nav-menu-button">Menu</a>
+	<div id="nav" class="pure-u">
+		<a href="#" class="nav-menu-button">Menu</a>
 
-        <div class="nav-inner">
-            <button id="new-entry" class="primary-button pure-button new-entry-button"><i class="fa fa-plus-circle"></i> Entry</button>
+		<div class="nav-inner">
+			<button id="new-entry" class="primary-button pure-button new-entry-button"><i class="fa fa-plus-circle"></i> Entry</button>
 
-            <div class="pure-menu">
-                <ul class="pure-menu-list">
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">Recent</a></li>
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">Draft</a></li>
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">Trash</a></li>
-                    <li class="pure-menu-heading">Tags <i class="fa fa-plus-o"></i></li>
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link"><span class="email-label-personal"></span>Personal</a></li>
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link"><span class="email-label-work"></span>Work</a></li>
-                    <li class="pure-menu-item"><a href="#" class="pure-menu-link"><span class="email-label-travel"></span>Travel</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
+			<div class="pure-menu">
+				<ul class="pure-menu-list">
+					<li class="pure-menu-item"><a href="#" class="pure-menu-link">Recent</a></li>
+					<li class="pure-menu-item"><a href="#" class="pure-menu-link">Draft</a></li>
+					<li class="pure-menu-item"><a href="#" class="pure-menu-link">Trash</a></li>
+					<li class="pure-menu-heading">Tags <i class="fa fa-plus-o"></i></li>
+					<li class="pure-menu-item"><a href="#" class="pure-menu-link"><span class="email-label-personal"></span>Personal</a></li>
+					<li class="pure-menu-item"><a href="#" class="pure-menu-link"><span class="email-label-work"></span>Work</a></li>
+					<li class="pure-menu-item"><a href="#" class="pure-menu-link"><span class="email-label-travel"></span>Travel</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
 
-    <div id="list" class="pure-u-1">
+	<div id="list" class="pure-u-1">
 
-        <div id="tree" class="tree"></div>
-            
-    </div>
+		<div id="tree" class="tree"></div>
+			
+	</div>
 
-    <div id="main" class="pure-u-1" data-key></div>
+	<div id="main" class="pure-u-1" data-key></div>
 </div>
 
 <script type="text/javascript">
-    $(document).on("click", ".nav-menu-button", function(event) {
-        $('#nav').toggleClass('active');
-    });
+	$(document).on("click", ".nav-menu-button", function(event) {
+		$('#nav').toggleClass('active');
+	});
 </script>
 
 </body>
