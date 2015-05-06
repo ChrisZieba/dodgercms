@@ -40,7 +40,7 @@
         {{#unless index}}
           <li class="pure-menu-item {{#if children}}has-children{{/if}}">
             {{#if link}}
-              <a href="/{{key}}" class="pure-menu-link">{{label}}</a>
+              <a href="/{{link}}" class="pure-menu-link">{{label}}</a>
             {{else}}
               <span class="menu-folder-slug">{{label}}</span>
             {{/if}}
@@ -62,7 +62,7 @@
           {{#unless index}}
             <li class="pure-menu-item {{#if children}}has-children{{/if}}">
               {{#if link}}
-                <a href="/{{key}}" class="pure-menu-link">{{label}}</a>
+                <a href="/{{link}}" class="pure-menu-link">{{label}}</a>
               {{else}}
                 <span class="menu-folder-slug">{{label}}</span>
               {{/if}}
