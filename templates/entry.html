@@ -1,573 +1,573 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    <title>{{title}}</title>
-    
-    <meta name="description" content="{{description}}">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{title}}</title>
+  
+  <meta name="description" content="{{description}}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="shortcut icon" href="{{&endpoint}}.dodgercms/favicon.ico" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="{{&endpoint}}.dodgercms/apple-touch-icon.png" />
-    <link rel="apple-touch-icon" sizes="57x57" href="{{&endpoint}}.dodgercms/apple-touch-icon-57x57.png" />
-    <link rel="apple-touch-icon" sizes="72x72" href="{{&endpoint}}.dodgercms/apple-touch-icon-72x72.png" />
-    <link rel="apple-touch-icon" sizes="76x76" href="{{&endpoint}}.dodgercms/apple-touch-icon-76x76.png" />
-    <link rel="apple-touch-icon" sizes="114x114" href="{{&endpoint}}.dodgercms/apple-touch-icon-114x114.png" />
-    <link rel="apple-touch-icon" sizes="120x120" href="{{&endpoint}}.dodgercms/apple-touch-icon-120x120.png" />
-    <link rel="apple-touch-icon" sizes="144x144" href="{{&endpoint}}.dodgercms/apple-touch-icon-144x144.png" />
-    <link rel="apple-touch-icon" sizes="152x152" href="{{&endpoint}}.dodgercms/apple-touch-icon-152x152.png" />
+  <link rel="shortcut icon" href="{{&endpoint}}.dodgercms/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="{{&endpoint}}.dodgercms/apple-touch-icon.png" />
+  <link rel="apple-touch-icon" sizes="57x57" href="{{&endpoint}}.dodgercms/apple-touch-icon-57x57.png" />
+  <link rel="apple-touch-icon" sizes="72x72" href="{{&endpoint}}.dodgercms/apple-touch-icon-72x72.png" />
+  <link rel="apple-touch-icon" sizes="76x76" href="{{&endpoint}}.dodgercms/apple-touch-icon-76x76.png" />
+  <link rel="apple-touch-icon" sizes="114x114" href="{{&endpoint}}.dodgercms/apple-touch-icon-114x114.png" />
+  <link rel="apple-touch-icon" sizes="120x120" href="{{&endpoint}}.dodgercms/apple-touch-icon-120x120.png" />
+  <link rel="apple-touch-icon" sizes="144x144" href="{{&endpoint}}.dodgercms/apple-touch-icon-144x144.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="{{&endpoint}}.dodgercms/apple-touch-icon-152x152.png" />
 
-    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
-    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/styles/github.min.css">
+  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/styles/github.min.css">
 
-    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.min.js"></script>
+  <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.min.js"></script>
 
-    <script>hljs.initHighlightingOnLoad();</script>
+  <script>hljs.initHighlightingOnLoad();</script>
 
-    <script>var KEY = '{{&key}}';</script>
-    <script>var BUCKET = '{{&bucket}}';</script>
-    <script>var ENDPOINT = '{{&endpoint}}';</script>
+  <script>var KEY = '{{&key}}';</script>
+  <script>var BUCKET = '{{&bucket}}';</script>
+  <script>var ENDPOINT = '{{&endpoint}}';</script>
 
-    {{{{raw-helper}}}}
-        <script id="menu-partial" type="text/x-handlebars-template">
-            <ul class="pure-menu-list">
-                {{#unless index}}
-                    <li class="pure-menu-item {{#if children}}has-children{{/if}}"><a href="/{{key}}" class="pure-menu-link">{{label}}</a></li>
-                    {{#children}}
-                        {{> menu}}
-                    {{/children}}
-                {{/unless}}
-            </ul>
-        </script>
-    {{{{/raw-helper}}}}
+  {{{{raw-helper}}}}
+    <script id="menu-partial" type="text/x-handlebars-template">
+      <ul class="pure-menu-list">
+        {{#unless index}}
+          <li class="pure-menu-item {{#if children}}has-children{{/if}}"><a href="/{{key}}" class="pure-menu-link">{{label}}</a></li>
+          {{#children}}
+            {{> menu}}
+          {{/children}}
+        {{/unless}}
+      </ul>
+    </script>
+  {{{{/raw-helper}}}}
 
-    {{{{raw-helper}}}}
-        <script id="nav-template" type="text/x-handlebars-template">
-            <div class="pure-menu">
-                <a class="pure-menu-heading" href="/"><img src="{{&endpoint}}.dodgercms/logo.png"></a>
-                <ul class="pure-menu-list">
-                {{#nav}}
-                    {{#unless index}}
-                        <li class="pure-menu-item {{#if children}}has-children{{/if}}"><a href="/{{key}}" class="pure-menu-link">{{label}}</a></li>
-                        {{#children}}
-                            {{> menu}}
-                        {{/children}}
-                    {{/unless}}
-                {{/nav}}
-                </ul>
-            </div>
-        </script>
-    {{{{/raw-helper}}}}
+  {{{{raw-helper}}}}
+    <script id="nav-template" type="text/x-handlebars-template">
+      <div class="pure-menu">
+        <a class="pure-menu-heading" href="/"><img src="{{&endpoint}}.dodgercms/logo.png"></a>
+        <ul class="pure-menu-list">
+        {{#nav}}
+          {{#unless index}}
+            <li class="pure-menu-item {{#if children}}has-children{{/if}}"><a href="/{{key}}" class="pure-menu-link">{{label}}</a></li>
+            {{#children}}
+              {{> menu}}
+            {{/children}}
+          {{/unless}}
+        {{/nav}}
+        </ul>
+      </div>
+    </script>
+  {{{{/raw-helper}}}}
 
-    {{{{raw-helper}}}}
-        <script id="header-template" type="text/x-handlebars-template">
-            <div class="pure-menu pure-menu-horizontal breadcrumbs">
-                <ul class="pure-menu-list">
-                    <li class="pure-menu-item"><a href="/" class="pure-menu-link">Home</a>&raquo;</li>
-                    {{#breadcrumbs}}
-                        <li class="pure-menu-item">
-                            {{#if @last}}
-                                <span class="menu-slug">{{label}}</span>
-                            {{else}}
-                                {{#if link}}
-                                    <a href="/{{key}}" class="pure-menu-link">{{label}}</a>&raquo;
-                                {{else}}
-                                    <span class="menu-folder-slug">{{label}}</span>&raquo;
-                                {{/if}}
-                            {{/if}}
-                        </li>
-                    {{/breadcrumbs}}
-                </ul>
-            </div>
-        </script>
-    {{{{/raw-helper}}}}
-    
-    <style>
-        body {
-            color: #777;
-            font-family: "Arimo", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
-        }
+  {{{{raw-helper}}}}
+    <script id="header-template" type="text/x-handlebars-template">
+      <div class="pure-menu pure-menu-horizontal breadcrumbs">
+        <ul class="pure-menu-list">
+          <li class="pure-menu-item"><a href="/" class="pure-menu-link">Home</a>&raquo;</li>
+          {{#breadcrumbs}}
+            <li class="pure-menu-item">
+              {{#if @last}}
+                <span class="menu-slug">{{label}}</span>
+              {{else}}
+                {{#if link}}
+                  <a href="/{{key}}" class="pure-menu-link">{{label}}</a>&raquo;
+                {{else}}
+                  <span class="menu-folder-slug">{{label}}</span>&raquo;
+                {{/if}}
+              {{/if}}
+            </li>
+          {{/breadcrumbs}}
+        </ul>
+      </div>
+    </script>
+  {{{{/raw-helper}}}}
+  
+  <style>
+    body {
+      color: #777;
+      font-family: "Arimo", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
 
-        h1 {
-            color: #5e5e5e;
-        }
+    h1 {
+      color: #5e5e5e;
+    }
 
-        h2 {
-            color: #6a6a6a;
-        }
+    h2 {
+      color: #6a6a6a;
+    }
 
-        code {
-            padding: 0.25em;
-            color: #333;
-            background: #f3f3f3;
-            -webkit-text-size-adjust: none;
-            border-radius: 3px;
-        }
+    code {
+      padding: 0.25em;
+      color: #333;
+      background: #f3f3f3;
+      -webkit-text-size-adjust: none;
+      border-radius: 3px;
+    }
 
-        .pure-img-responsive {
-            max-width: 100%;
-            height: auto;
-        }
+    .pure-img-responsive {
+      max-width: 100%;
+      height: auto;
+    }
 
-        /*
-            Add transition to containers so they can push in and out.
-        */
-        #layout,
-        #menu,
-        .menu-link {
-            -webkit-transition: all 0.2s ease-out;
-            -moz-transition: all 0.2s ease-out;
-            -ms-transition: all 0.2s ease-out;
-            -o-transition: all 0.2s ease-out;
-            transition: all 0.2s ease-out;
-        }
+    /*
+      Add transition to containers so they can push in and out.
+    */
+    #layout,
+    #menu,
+    .menu-link {
+      -webkit-transition: all 0.2s ease-out;
+      -moz-transition: all 0.2s ease-out;
+      -ms-transition: all 0.2s ease-out;
+      -o-transition: all 0.2s ease-out;
+      transition: all 0.2s ease-out;
+    }
 
-        #entry {
-            padding:1.5em 3.25em;
-        }
+    #entry {
+      padding:1.5em 3.25em;
+    }
 
-        #entry .content img {
-            max-width: 100%;
-        }
+    #entry .content img {
+      max-width: 100%;
+    }
 
-        /*
-            This is the parent `<div>` that contains the menu and the content area.
-        */
-            #layout {
-            position: relative;
-            padding-left: 0;
-        }
+    /*
+      This is the parent `<div>` that contains the menu and the content area.
+    */
+      #layout {
+      position: relative;
+      padding-left: 0;
+    }
 
-        #layout.active #menu {
-            left: 350px;
-            width: 350px;
-        }
+    #layout.active #menu {
+      left: 350px;
+      width: 350px;
+    }
 
-        #layout.active .menu-link {
-            left: 350px;
-        }
+    #layout.active .menu-link {
+      left: 350px;
+    }
 
-        /*
-            The content `<div>` is where all your content goes.
-        */
-        .content {
-            margin: 0;
-            padding: 0;
-            margin-bottom: 50px;
-            line-height: 1.8em;
-        }
+    /*
+      The content `<div>` is where all your content goes.
+    */
+    .content {
+      margin: 0;
+      padding: 0;
+      margin-bottom: 50px;
+      line-height: 1.8em;
+    }
 
-        .header {
-            margin: 0;
-            padding: 0;
-            border-bottom: 1px solid #e1e1e1;
-            height:75px;
-            background-color: #f7f7f7;
-        }
+    .header {
+      margin: 0;
+      padding: 0;
+      border-bottom: 1px solid #e1e1e1;
+      height:75px;
+      background-color: #f7f7f7;
+    }
 
-        .header .breadcrumbs {
-            padding: 1.75em 3.25em 0 3.25em;
-        }
+    .header .breadcrumbs {
+      padding: 1.75em 3.25em 0 3.25em;
+    }
 
-        .header .breadcrumbs .pure-menu-link {
-            padding: 0 0.25em 0 0 ;
-            color: #2980B9;
-            display: inline-block;
-        }
+    .header .breadcrumbs .pure-menu-link {
+      padding: 0 0.25em 0 0 ;
+      color: #2980B9;
+      display: inline-block;
+    }
 
-        .header .breadcrumbs .pure-menu-link:hover {
-            text-decoration: none;
-            color:#146092;
-        }
+    .header .breadcrumbs .pure-menu-link:hover {
+      text-decoration: none;
+      color:#146092;
+    }
 
-        .header .breadcrumbs .menu-slug {
-            color: #404040;
-        }
+    .header .breadcrumbs .menu-slug {
+      color: #404040;
+    }
 
-        .header .breadcrumbs .menu-folder-slug {
-            padding: 0 0.25em 0 0;
-            color: #404040;
-            display: inline-block;
-        }
+    .header .breadcrumbs .menu-folder-slug {
+      padding: 0 0.25em 0 0;
+      color: #404040;
+      display: inline-block;
+    }
 
-        .header .breadcrumbs .pure-menu-link:hover {
-            background: none;
-        }
+    .header .breadcrumbs .pure-menu-link:hover {
+      background: none;
+    }
 
-        .title {
-            margin: 0 0 2em 0;
-            padding-bottom: 0.75em;
-            border-bottom: 1px solid #f0f0f0;
-        }
+    .title {
+      margin: 0 0 2em 0;
+      padding-bottom: 0.75em;
+      border-bottom: 1px solid #f0f0f0;
+    }
 
-        .title h1 {
-            margin: 0 0 0.1em 0;
-            font-size: 2.5em;
-            color: #404040;
-            font-weight: 400;
-            overflow:hidden;
-        }
+    .title h1 {
+      margin: 0 0 0.1em 0;
+      font-size: 2.5em;
+      color: #404040;
+      font-weight: 400;
+      overflow:hidden;
+    }
 
-        .title p {
-            color: #9d9d9d;
-            padding: 0.25em 0;
-            margin: 0;
-            font-size: 100%;
-        }
+    .title p {
+      color: #9d9d9d;
+      padding: 0.25em 0;
+      margin: 0;
+      font-size: 100%;
+    }
 
-        .title .last-edited {
-            font-style: italic;
-        }
+    .title .last-edited {
+      font-style: italic;
+    }
 
-        /*
-            The `#menu` `<div>` is the parent `<div>` that contains the `.pure-menu` that
-            appears on the left side of the page.
-        */
+    /*
+      The `#menu` `<div>` is the parent `<div>` that contains the `.pure-menu` that
+      appears on the left side of the page.
+    */
 
-        #menu {
-            margin-left: -350px; /* "#menu" width */
-            width: 350px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            z-index: 1000; /* so the menu or its navicon stays above all content */
-            background: #191818;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overflow-x:hidden;
-            font-size: 0.95em;
-        }
+    #menu {
+      margin-left: -350px; /* "#menu" width */
+      width: 350px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 1000; /* so the menu or its navicon stays above all content */
+      background: #191818;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overflow-x:hidden;
+      font-size: 0.95em;
+    }
 
-        #menu ul.pure-menu-list {
-            margin-left: 0; 
-            padding-left: 1.5em; 
-        }
+    #menu ul.pure-menu-list {
+      margin-left: 0; 
+      padding-left: 1.5em; 
+    }
 
-        #menu ul.pure-menu-list .has-children {
-            text-transform: uppercase;
-            padding-top: 0.25em;
-        }
+    #menu ul.pure-menu-list .has-children {
+      text-transform: uppercase;
+      padding-top: 0.25em;
+    }
 
-        #menu ul.pure-menu-list .has-children a {
-            font-weight: 600;
-            color: #999;
-        }
+    #menu ul.pure-menu-list .has-children a {
+      font-weight: 600;
+      color: #999;
+    }
 
-        #menu ul.pure-menu-list li {
-            padding-top:0.25em;
-            padding-bottom:0.25em;
-        }
+    #menu ul.pure-menu-list li {
+      padding-top:0.25em;
+      padding-bottom:0.25em;
+    }
 
-        #menu ul.pure-menu-list ul { 
-            margin-left: 0.5em; 
-            padding-left: 0.5em; 
-        }
+    #menu ul.pure-menu-list ul { 
+      margin-left: 0.5em; 
+      padding-left: 0.5em; 
+    }
 
-        #menu ul.pure-menu-list ul > li:first { 
-            text-transform: uppercase;
-        }
+    #menu ul.pure-menu-list ul > li:first { 
+      text-transform: uppercase;
+    }
 
-        /*
-            All anchors inside the menu should be styled like this.
-        */
-        #menu .pure-menu-list a {
-            color: #797979;
-            border: none;
-            padding: 0.0em 0 0.0em 0.1em;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            font-weight: 300;
-        }
+    /*
+      All anchors inside the menu should be styled like this.
+    */
+    #menu .pure-menu-list a {
+      color: #797979;
+      border: none;
+      padding: 0.0em 0 0.0em 0.1em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 300;
+    }
 
-        /*
-            Remove all background/borders, since we are applying them to #menu.
-        */
-        #menu .pure-menu,
-        #menu .pure-menu ul {
-            border: none;
-            background: transparent;
-        }
+    /*
+      Remove all background/borders, since we are applying them to #menu.
+    */
+    #menu .pure-menu,
+    #menu .pure-menu ul {
+      border: none;
+      background: transparent;
+    }
 
-        /*
-            Change color of the anchor links on hover/focus.
-        */
-        #menu .pure-menu li a:hover,
-        #menu .pure-menu li a:focus {
-            text-decoration: underline;
-            color: #929292;
-            background: none;
-        }
+    /*
+      Change color of the anchor links on hover/focus.
+    */
+    #menu .pure-menu li a:hover,
+    #menu .pure-menu li a:focus {
+      text-decoration: underline;
+      color: #929292;
+      background: none;
+    }
 
-        #menu .pure-menu li.has-children a:hover,
-        #menu .pure-menu li.has-children a:focus {
-            text-decoration: none;
-            color: #afafaf;
-            background: none;
-        }
+    #menu .pure-menu li.has-children a:hover,
+    #menu .pure-menu li.has-children a:focus {
+      text-decoration: none;
+      color: #afafaf;
+      background: none;
+    }
 
-        /*
-            This styles the selected menu item `<li>`.
-        */
-        #menu .pure-menu-selected,
-        #menu .pure-menu-heading {
-            background: #1f8dd6;
-        }
+    /*
+      This styles the selected menu item `<li>`.
+    */
+    #menu .pure-menu-selected,
+    #menu .pure-menu-heading {
+      background: #1f8dd6;
+    }
 
-        /*
-            This styles a link within a selected menu item `<li>`.
-        */
-        #menu .pure-menu-selected a {
-            color: #fff;
-        }
+    /*
+      This styles a link within a selected menu item `<li>`.
+    */
+    #menu .pure-menu-selected a {
+      color: #fff;
+    }
 
-        /*
-            This styles the menu heading.
-        */
-        #menu .pure-menu-heading {
-            color: #fff;
-            margin: 0 0 1.5em 0;
-            padding: 0;
-            height:75px;
-            overflow: hidden;
-            border-bottom: 1px solid #107AC0;
-        }
+    /*
+      This styles the menu heading.
+    */
+    #menu .pure-menu-heading {
+      color: #fff;
+      margin: 0 0 1.5em 0;
+      padding: 0;
+      height:75px;
+      overflow: hidden;
+      border-bottom: 1px solid #107AC0;
+    }
 
-        /* -- Dynamic Button For Responsive Menu -------------------------------------*/
+    /* -- Dynamic Button For Responsive Menu -------------------------------------*/
 
-        /*
-            The button to open/close the Menu is custom-made and not part of Pure. Here's
-            how it works:
-        */
+    /*
+      The button to open/close the Menu is custom-made and not part of Pure. Here's
+      how it works:
+    */
 
-        /*
-            `.menu-link` represents the responsive menu toggle that shows/hides on
-            small screens.
-        */
-        .menu-link {
-            position: fixed;
-            display: block; /* show this only on small screens */
-            top: 0;
-            left: 0; /* "#menu width" */
-            background: #000;
-            background: rgba(0,0,0,0.7);
-            font-size: 10px; /* change this value to increase/decrease button size */
-            z-index: 10;
-            width: 1em;
-            height: auto;
-            padding: 1.5em;
-        }
+    /*
+      `.menu-link` represents the responsive menu toggle that shows/hides on
+      small screens.
+    */
+    .menu-link {
+      position: fixed;
+      display: block; /* show this only on small screens */
+      top: 0;
+      left: 0; /* "#menu width" */
+      background: #000;
+      background: rgba(0,0,0,0.7);
+      font-size: 10px; /* change this value to increase/decrease button size */
+      z-index: 10;
+      width: 1em;
+      height: auto;
+      padding: 1.5em;
+    }
 
-        .menu-link:hover,
-        .menu-link:focus {
-            background: #000;
-        }
+    .menu-link:hover,
+    .menu-link:focus {
+      background: #000;
+    }
 
-        .menu-link span {
-            position: relative;
-            display: block;
-        }
+    .menu-link span {
+      position: relative;
+      display: block;
+    }
 
-        .menu-link span,
-        .menu-link span:before,
-        .menu-link span:after {
-            background-color: #fff;
-            width: 100%;
-            height: 0.2em;
-        }
+    .menu-link span,
+    .menu-link span:before,
+    .menu-link span:after {
+      background-color: #fff;
+      width: 100%;
+      height: 0.2em;
+    }
 
-        .menu-link span:before,
-        .menu-link span:after {
-            position: absolute;
-            margin-top: -0.5em;
-            content: " ";
-        }
+    .menu-link span:before,
+    .menu-link span:after {
+      position: absolute;
+      margin-top: -0.5em;
+      content: " ";
+    }
 
-        .menu-link span:after {
-            margin-top: 0.5em;
-        }
+    .menu-link span:after {
+      margin-top: 0.5em;
+    }
 
 
-        /* -- Responsive Styles (Media Queries) ------------------------------------- */
+    /* -- Responsive Styles (Media Queries) ------------------------------------- */
 
-        /*
-            Hides the menu at `48em`, but modify this based on your app's needs.
-        */
-        @media (min-width: 48em) {
+    /*
+      Hides the menu at `48em`, but modify this based on your app's needs.
+    */
+    @media (min-width: 48em) {
 
-            #layout {
-                padding-left: 350px; /* left col width "#menu" */
-                left: 0;
-            }
-            #menu {
-                left: 350px;
-            }
+      #layout {
+        padding-left: 350px; /* left col width "#menu" */
+        left: 0;
+      }
+      #menu {
+        left: 350px;
+      }
 
-            .menu-link {
-                position: fixed;
-                left: 350px;
-                display: none;
-            }
+      .menu-link {
+        position: fixed;
+        left: 350px;
+        display: none;
+      }
 
-            #layout.active .menu-link {
-                left: 350px;
-            }
-        }
+      #layout.active .menu-link {
+        left: 350px;
+      }
+    }
 
-        @media (max-width: 48em) {
-            /* Only apply this when the window is small. Otherwise, the following
-            * case results in extra padding on the left:
-            * Make the window small.
-            * Tap the menu to trigger the active state.
-            * Make the window large again.
-            */
-            #layout.active {
-                position: relative;
-                left: 350px;
-            }
-        }
-    </style>
+    @media (max-width: 48em) {
+      /* Only apply this when the window is small. Otherwise, the following
+      * case results in extra padding on the left:
+      * Make the window small.
+      * Tap the menu to trigger the active state.
+      * Make the window large again.
+      */
+      #layout.active {
+        position: relative;
+        left: 350px;
+      }
+    }
+  </style>
 </head>
-    <body>
-        <div id="layout">
-            <a href="#menu" id="menuLink" class="menu-link">
-                <!-- Hamburger icon -->
-                <span></span>
-            </a>
+  <body>
+    <div id="layout">
+      <a href="#menu" id="menuLink" class="menu-link">
+        <!-- Hamburger icon -->
+        <span></span>
+      </a>
 
-            <!-- Menu gets loaded dynamically -->
-            <nav id="menu"></nav>
+      <!-- Menu gets loaded dynamically -->
+      <nav id="menu"></nav>
 
-            <div id="header" class="header"></div>
+      <div id="header" class="header"></div>
 
-            <article id="entry">
-                <div class="title">
-                    <h1>{{title}}</h1>
-                    <p>Last edited on <span class="last-edited">{{modified}}</span></p>
-                </div>
-
-                <!-- The converted markdown content. -->
-                <div class="content">{{&body}}</div>
-            </article>
-
-            <footer>
-
-            </footer>
+      <article id="entry">
+        <div class="title">
+          <h1>{{title}}</h1>
+          <p>Last edited on <span class="last-edited">{{modified}}</span></p>
         </div>
 
-        <script>
-            (function (window, document) {
-                // retrieve the json file with menu data
-                $.get("{{&endpoint}}{{dataKey}}", function(data) {
-                    var parts = KEY.split('/');
-                    var breadcrumbs = [];
+        <!-- The converted markdown content. -->
+        <div class="content">{{&body}}</div>
+      </article>
 
-                    // use the menu json to build a tree list
-                    buildFromSegments(data, breadcrumbs, parts);
+      <footer>
 
-                    var navTemplate = $("#nav-template").html();
-                    var nav = Handlebars.compile(navTemplate);
-                    var menuPartial = $("#menu-partial").html();
-                    var menu = Handlebars.compile(menuPartial);
+      </footer>
+    </div>
 
-                    // register the partial so it can be used in the nav template
-                    Handlebars.registerPartial({
-                        menu: menu
-                    });
+    <script>
+      (function (window, document) {
+        // retrieve the json file with menu data
+        $.get("{{&endpoint}}{{dataKey}}", function(data) {
+          var parts = KEY.split('/');
+          var breadcrumbs = [];
 
-                    var navContext = {
-                        nav: data,
-                        endpoint: ENDPOINT
-                    };
-                    var navHtml = nav(navContext);
-                    $("nav").html(navHtml);
+          // use the menu json to build a tree list
+          buildFromSegments(data, breadcrumbs, parts);
+
+          var navTemplate = $("#nav-template").html();
+          var nav = Handlebars.compile(navTemplate);
+          var menuPartial = $("#menu-partial").html();
+          var menu = Handlebars.compile(menuPartial);
+
+          // register the partial so it can be used in the nav template
+          Handlebars.registerPartial({
+            menu: menu
+          });
+
+          var navContext = {
+            nav: data,
+            endpoint: ENDPOINT
+          };
+          var navHtml = nav(navContext);
+          $("nav").html(navHtml);
 
 
-                    // breadcrumbs
-                    var headerTemplate = $("#header-template").html();
-                    var header = Handlebars.compile(headerTemplate);
-                    var headerContext = {
-                        breadcrumbs: breadcrumbs
-                    };
+          // breadcrumbs
+          var headerTemplate = $("#header-template").html();
+          var header = Handlebars.compile(headerTemplate);
+          var headerContext = {
+            breadcrumbs: breadcrumbs
+          };
 
-                    var headerHtml = header(headerContext);
-                    $("#header").html(headerHtml);
-                });
+          var headerHtml = header(headerContext);
+          $("#header").html(headerHtml);
+        });
 
-                function buildFromSegments(scope, breadcrumbs, pathSegments) {
-                    // Remove the first segment from the path
-                    var current = pathSegments.shift();
+        function buildFromSegments(scope, breadcrumbs, pathSegments) {
+          // Remove the first segment from the path
+          var current = pathSegments.shift();
 
-                    // See if that segment already exists in the current scope
-                    var found = findInScope(scope, current);
+          // See if that segment already exists in the current scope
+          var found = findInScope(scope, current);
 
-                    // If we did not find a match, create the new object for this path segment
-                    if (found) {
-                        breadcrumbs.push({
-                            label: found.label
-                        });
-                    
-                        // If there are still path segments left, we need to go deeper
-                        if (pathSegments.length) {
-                            found.children = found.children || [];
-                            buildFromSegments(found.children, breadcrumbs, pathSegments);
-                        }
-                    }
-                }
+          // If we did not find a match, create the new object for this path segment
+          if (found) {
+            breadcrumbs.push({
+              label: found.label
+            });
+          
+            // If there are still path segments left, we need to go deeper
+            if (pathSegments.length) {
+              found.children = found.children || [];
+              buildFromSegments(found.children, breadcrumbs, pathSegments);
+            }
+          }
+        }
 
-                // Attempts to find a path segment in the current scope
-                function findInScope(scope, find) {
-                    for (var i = 0; i < scope.length; i++) {
-                        if (scope[i].part === find) {
-                            return scope[i];
-                        }
-                    }
-                }
-            }(this, this.document));
-        </script>
+        // Attempts to find a path segment in the current scope
+        function findInScope(scope, find) {
+          for (var i = 0; i < scope.length; i++) {
+            if (scope[i].part === find) {
+              return scope[i];
+            }
+          }
+        }
+      }(this, this.document));
+    </script>
 
-        <script>
-            (function (window, document) {
+    <script>
+      (function (window, document) {
 
-                var layout = document.getElementById('layout'),
-                    menu = document.getElementById('menu'),
-                    menuLink = document.getElementById('menuLink');
+        var layout = document.getElementById('layout'),
+          menu = document.getElementById('menu'),
+          menuLink = document.getElementById('menuLink');
 
-                function toggleClass(element, className) {
-                    var classes = element.className.split(/\s+/),
-                        length = classes.length;
+        function toggleClass(element, className) {
+          var classes = element.className.split(/\s+/),
+            length = classes.length;
 
-                    for (var i = 0; i < length; i++) {
-                        if (classes[i] === className) {
-                            classes.splice(i, 1);
-                            break;
-                        }
-                    }
-                    
-                    // The className is not found
-                    if (length === classes.length) {
-                        classes.push(className);
-                    }
+          for (var i = 0; i < length; i++) {
+            if (classes[i] === className) {
+              classes.splice(i, 1);
+              break;
+            }
+          }
+          
+          // The className is not found
+          if (length === classes.length) {
+            classes.push(className);
+          }
 
-                    element.className = classes.join(' ');
-                }
+          element.className = classes.join(' ');
+        }
 
-                menuLink.onclick = function (e) {
-                    var active = 'active';
+        menuLink.onclick = function (e) {
+          var active = 'active';
 
-                    e.preventDefault();
-                    toggleClass(layout, active);
-                    toggleClass(menu, active);
-                    toggleClass(menuLink, active);
-                };
+          e.preventDefault();
+          toggleClass(layout, active);
+          toggleClass(menu, active);
+          toggleClass(menuLink, active);
+        };
 
-            }(this, this.document));
-        </script>
-    </body>
+      }(this, this.document));
+    </script>
+  </body>
 </html>
