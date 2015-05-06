@@ -75,7 +75,11 @@
                             {{#if @last}}
                                 <span class="menu-slug">{{label}}</span>
                             {{else}}
-                                <a href="/{{key}}" class="pure-menu-link">{{label}}</a>&raquo;
+                                {{#if link}}
+                                    <a href="/{{key}}" class="pure-menu-link">{{label}}</a>&raquo;
+                                {{else}}
+                                    <span class="menu-folder-slug">{{label}}</span>&raquo;
+                                {{/if}}
                             {{/if}}
                         </li>
                     {{/breadcrumbs}}
@@ -172,13 +176,24 @@
         }
 
         .header .breadcrumbs .pure-menu-link {
-            padding: 0 0.5em 0 0 ;
+            padding: 0 0.25em 0 0 ;
             color: #2980B9;
             display: inline-block;
         }
 
+        .header .breadcrumbs .pure-menu-link:hover {
+            text-decoration: none;
+            color:#146092;
+        }
+
         .header .breadcrumbs .menu-slug {
             color: #404040;
+        }
+
+        .header .breadcrumbs .menu-folder-slug {
+            padding: 0 0.25em 0 0;
+            color: #404040;
+            display: inline-block;
         }
 
         .header .breadcrumbs .pure-menu-link:hover {
