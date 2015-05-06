@@ -6,7 +6,7 @@ DodgerCMS is a static markdown CMS built on top of Amazon S3. It is a clean and 
 
 # Demo
 
-The documentation for [DodgerCMS](http://dodgercms.com) is itself build with `DodgerCMS`. 
+The documentation for [DodgerCMS](http://dodgercms.com) is itself build with DodgerCMS. 
 
 # Features
 
