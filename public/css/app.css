@@ -3,50 +3,50 @@
  * Most of these are inherited from Base, but I want to change a few.
  */
 body {
-    color: #333;
-    font-size:16px;
+  color: #333;
+  font-size:16px;
 }
 
 a {
-    text-decoration: none;
-    color: #1b98f8;
+  text-decoration: none;
+  color: #1b98f8;
 }
 
 a:hover {
-    color: #265778;
+  color: #265778;
 }
 
 input[type=file].file-upload {
-    display:none;
+  display:none;
 }
 
 label.upload-image {
-    display: inline-block;
-    margin:0;
+  display: inline-block;
+  margin:0;
 }
 
 .new-entry-button {
-    margin-left:1.5em !important;
+  margin-left:1.5em !important;
 }
 
 .none {
-    display: none !important;
+  display: none !important;
 }
 
 .bucket {
-    font-weight: 700;
+  font-weight: 700;
 }
 
 .login-form {
-    margin-top: 100px;
-    padding:55px 15px;
-    border: 1px solid #e1e1e1;
-    background-color: #f7f7f7;
-    border-radius: 3px;
+  margin-top: 100px;
+  padding:55px 15px;
+  border: 1px solid #e1e1e1;
+  background-color: #f7f7f7;
+  border-radius: 3px;
 }
 
 .login-submit {
-    float:right;
+  float:right;
 }
 /*
  * -- HELPER STYLES --
@@ -55,22 +55,22 @@ label.upload-image {
 .primary-button,
 .secondary-button,
 .save-button {
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-    border-radius: 20px;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  border-radius: 20px;
 }
 .primary-button {
-    color: #fff;
-    background: #1b98f8;
-    margin: 1em 0;
+  color: #fff;
+  background: #1b98f8;
+  margin: 1em 0;
 }
 .secondary-button {
-    background: #fff;
-    border: 1px solid #ddd;
-    color: #666;
-    padding: 0.5em 2em;
-    font-size: 80%;
+  background: #fff;
+  border: 1px solid #ddd;
+  color: #666;
+  padding: 0.5em 2em;
+  font-size: 80%;
 }
 
 /*
@@ -78,49 +78,49 @@ label.upload-image {
  * This layout consists of three main elements, `#nav` (navigation bar), `#list` (email list), and `#main` (email content). All 3 elements are within `#layout`
  */
 #layout, #nav, #list, #main {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 #list {
-    background-color: #f5f5f5;
-    border-bottom: 1px solid #ddd;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ddd;
 }
 
 .tree {
-    padding:2em 1em;
-    font-size: 0.9em;
+  padding:2em 1em;
+  font-size: 0.9em;
 }
 
 /* Make the navigation 100% width on phones */
 #nav {
-    width: 100%;
-    height: 40px;
-    position: relative;
-    background: rgb(37, 42, 58);
+  width: 100%;
+  height: 40px;
+  position: relative;
+  background: rgb(37, 42, 58);
 
 }
 /* Show the "Menu" button on phones */
 #nav .nav-menu-button {
-    display: block;
-    top: 0.5em;
-    right: 0.5em;
-    position: absolute;
+  display: block;
+  top: 0.5em;
+  right: 0.5em;
+  position: absolute;
 }
 
 /* When "Menu" is clicked, the navbar should be 80% height */
 #nav.active {
-    height: 80%;
+  height: 80%;
 }
 /* Don't show the navigation items... */
 .nav-inner {
-    display: none;
+  display: none;
 }
 
 /* ...until the "Menu" button is clicked */
 #nav.active .nav-inner {
-    display: block;
-    padding: 2em 0;
+  display: block;
+  padding: 2em 0;
 }
 
 
@@ -129,144 +129,140 @@ label.upload-image {
  * Styling the default .pure-menu to look a little more unique.
  */
 #nav .pure-menu {
-    background: transparent;
-    border: none;
-    text-align: left;
+  background: transparent;
+  border: none;
+  text-align: left;
 }
-    #nav .pure-menu-link:hover,
-    #nav .pure-menu-link:focus {
-        background: none;
-    }
-    #nav .pure-menu-link {
-        color: #fff;
-        margin-left: 0.5em;
-        margin-right: 0.5em;
-        padding-left: 1.75em;
-    }
-    #nav .pure-menu-link:hover {
-        color: #BECBD7;
-    }
-    #nav .pure-menu-heading {
-        padding-left: 1.5em;
-        border-bottom: none;
-        font-size: 110%;
-        color: rgb(75, 113, 151);
-    }
+#nav .pure-menu-link:hover,
+#nav .pure-menu-link:focus {
+  background: none;
+}
+#nav .pure-menu-link {
+  color: #fff;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+  padding-left: 1.75em;
+}
+#nav .pure-menu-link:hover {
+  color: #BECBD7;
+}
+#nav .pure-menu-heading {
+  padding-left: 1.5em;
+  border-bottom: none;
+  font-size: 110%;
+  color: rgb(75, 113, 151);
+}
 
 
 #content-preview {
-    padding:1em;
-    margin: 0.25em 0;
-    border: 1px dashed #e1e1e1;
-    border-radius: 4px;
+  padding:1em;
+  margin: 0.25em 0;
+  border: 1px dashed #e1e1e1;
+  border-radius: 4px;
 }
 .content-header, .content-body, .content-footer {
-    padding: 1em 2em 0 2em;
+  padding: 1em 2em 0 2em;
 }
 .content-footer-controls {
-    margin: 0.25em 0;
-    text-align: right;
+  margin: 0.25em 0;
+  text-align: right;
 }
 .content-header-div {
-    border-bottom: 1px dashed #e1e1e1;
-    padding-bottom:2em;
+  border-bottom: 1px dashed #e1e1e1;
+  padding-bottom:2em;
 }
-        .content-title {
-            margin: 0.4em 0 0.2em 0;
-        }
-            .content-title span {
-               font-style: italic;
-               padding: 0.15em 0.25em;
-               border-radius: 3px;
-               background-color: #f3f3f3;
-            }
-        p.content-subtitle {
-            font-size: 1em;
-            margin: 0;
-            font-weight: normal;
-        }
-            .content-subtitle span {
-                color: #999;
-                font-style: italic;
-            }
-
-    .content-controls {
-        margin-top: 1.5em;
-        text-align: right;
-    }
-        .content-controls .secondary-button {
-            margin-bottom: 0.3em;
-        }
-
+.content-title {
+  margin: 0.4em 0 0.2em 0;
+}
+.content-title span {
+   font-style: italic;
+   padding: 0.15em 0.25em;
+   border-radius: 3px;
+   background-color: #f3f3f3;
+}
+p.content-subtitle {
+  font-size: 1em;
+  margin: 0;
+  font-weight: normal;
+}
+.content-subtitle span {
+  color: #999;
+  font-style: italic;
+}
+.content-controls {
+  margin-top: 1.5em;
+  text-align: right;
+}
+.content-controls .secondary-button {
+  margin-bottom: 0.3em;
+}
 .content-textarea {
-    line-height: 1.5em;
+  line-height: 1.5em;
 }
-
 .toolbar {
-    margin: 0.25em 0;
+  margin: 0.25em 0;
 }
 .toolbar-button {
-    background: #ededed;
+  background: #ededed;
+}
+.button-small {
+  font-size: 0.85em;
 }
 
-.button-small {
-    font-size: 0.85em;
-}
 /*
  * -- TABLET (AND UP) MEDIA QUERIES --
  * On tablets and other medium-sized devices, we want to customize some
  * of the mobile styles.
  */
 @media (min-width: 40em) {
+  /* Move the layout over so we can fit the nav + list in on the left */
+  #layout {
+    padding-left:450px; /* "left col (nav + list)" width */
+    position: relative;
+  }
 
-    /* Move the layout over so we can fit the nav + list in on the left */
-    #layout {
-        padding-left:450px; /* "left col (nav + list)" width */
-        position: relative;
-    }
+  /* These are position:fixed; elements that will be in the left 500px of the screen */
+  #nav, #list {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+  }
+  #nav {
+    margin-left:-450px; /* "left col (nav + list)" width */
+    width:150px;
+    height: 100%;
+  }
 
-    /* These are position:fixed; elements that will be in the left 500px of the screen */
-    #nav, #list {
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        overflow: auto;
-    }
-    #nav {
-        margin-left:-450px; /* "left col (nav + list)" width */
-        width:150px;
-        height: 100%;
-    }
+  /* Show the menu items on the larger screen */
+  .nav-inner {
+    display: block;
+    padding: 1em 0;
+  }
 
-    /* Show the menu items on the larger screen */
-    .nav-inner {
-        display: block;
-        padding: 1em 0;
-    }
+  /* Hide the "Menu" button on larger screens */
+  #nav .nav-menu-button {
+    display: none;
+  }
 
-    /* Hide the "Menu" button on larger screens */
-    #nav .nav-menu-button {
-        display: none;
-    }
+  #list {
+    margin-left: -300px;
+    width: 100%;
+    height: 33%;
+    border-bottom: 1px solid #ddd;
+  }
 
-    #list {
-        margin-left: -300px;
-        width: 100%;
-        height: 33%;
-        border-bottom: 1px solid #ddd;
-    }
-
-    #main {
-        position: fixed;
-        top: 33%;
-        right: 0;
-        bottom: 0;
-        left: 150px;
-        overflow-x: hidden;
-        overflow-y: auto;
-        width: auto;
-       /* so that it's not 100% */
-    }
+  #main {
+    position: fixed;
+    top: 33%;
+    right: 0;
+    bottom: 0;
+    left: 150px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: auto;
+     /* so that it's not 100% */
+  }
 
 }
 
@@ -277,32 +273,31 @@ label.upload-image {
  */
 @media (min-width: 60em) {
 
-    /* This will take up the entire height, and be a little thinner */
-    #list {
-        margin-left: -300px;
-        width:300px;
-        height: 100%;
-        border-right: 1px solid #ddd;
-    }
+  /* This will take up the entire height, and be a little thinner */
+  #list {
+    margin-left: -300px;
+    width:300px;
+    height: 100%;
+    border-right: 1px solid #ddd;
+  }
 
-    /* This will now take up it's own column, so don't need position: fixed; */
-    #main {
-        position: static;
-        margin: 0;
-        padding: 0;
-        width: 100%;
-    }
+  /* This will now take up it's own column, so don't need position: fixed; */
+  #main {
+    position: static;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
 
-    .offset-u-1-2 {
-      margin-left: 50%;
-    }
+  .offset-u-1-2 {
+    margin-left: 50%;
+  }
 
-    .offset-u-1-4 {
-      margin-left: 25%;
-    }
+  .offset-u-1-4 {
+    margin-left: 25%;
+  }
 
-    .offset-u-3-8 {
-      margin-left: 37.5%;
-    }
+  .offset-u-3-8 {
+    margin-left: 37.5%;
+  }
 }
-
