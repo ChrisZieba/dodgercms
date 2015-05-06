@@ -38,7 +38,13 @@
     <script id="menu-partial" type="text/x-handlebars-template">
       <ul class="pure-menu-list">
         {{#unless index}}
-          <li class="pure-menu-item {{#if children}}has-children{{/if}}"><a href="/{{key}}" class="pure-menu-link">{{label}}</a></li>
+          <li class="pure-menu-item {{#if children}}has-children{{/if}}">
+            {{#if link}}
+              <a href="/{{key}}" class="pure-menu-link">{{label}}</a>
+            {{else}}
+              <span class="menu-folder-slug">{{label}}</span>
+            {{/if}}
+          </li>
           {{#children}}
             {{> menu}}
           {{/children}}
@@ -54,7 +60,13 @@
         <ul class="pure-menu-list">
         {{#nav}}
           {{#unless index}}
-            <li class="pure-menu-item {{#if children}}has-children{{/if}}"><a href="/{{key}}" class="pure-menu-link">{{label}}</a></li>
+            <li class="pure-menu-item {{#if children}}has-children{{/if}}">
+              {{#if link}}
+                <a href="/{{key}}" class="pure-menu-link">{{label}}</a>
+              {{else}}
+                <span class="menu-folder-slug">{{label}}</span>
+              {{/if}}
+            </li>
             {{#children}}
               {{> menu}}
             {{/children}}
@@ -78,7 +90,7 @@
                 {{#if link}}
                   <a href="/{{key}}" class="pure-menu-link">{{label}}</a>&raquo;
                 {{else}}
-                  <span class="menu-folder-slug">{{label}}</span>&raquo;
+                  <span class="breadcrumbs-folder-slug">{{label}}</span>&raquo;
                 {{/if}}
               {{/if}}
             </li>
@@ -190,13 +202,13 @@
       color: #404040;
     }
 
-    .header .breadcrumbs .menu-folder-slug {
+    .breadcrumbs .breadcrumbs-folder-slug {
       padding: 0 0.25em 0 0;
       color: #404040;
       display: inline-block;
     }
 
-    .header .breadcrumbs .pure-menu-link:hover {
+    .breadcrumbs .breadcrumbs-folder-slug:hover {
       background: none;
     }
 
@@ -248,6 +260,13 @@
     #menu ul.pure-menu-list {
       margin-left: 0; 
       padding-left: 1.5em; 
+    }
+
+    #menu ul.pure-menu-list span.menu-folder-slug {
+      text-transform: uppercase;
+      padding-top: 0.25em;
+      font-weight: 600;
+      color: #999;
     }
 
     #menu ul.pure-menu-list .has-children {
