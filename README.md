@@ -26,8 +26,6 @@ DodgerCMS is simple by design. There are no requirements except Amazon S3. It is
 
 Please take a look at the [installation guide](http://dodgercms.com/help/installation).
 
-#Development
-
 # License
 
 ```
