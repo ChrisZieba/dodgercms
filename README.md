@@ -15,10 +15,12 @@ The documentation for [DodgerCMS](http://dodgercms.com) is itself build with `Do
 - [Handles changes in URL structure](http://dodgercms.com/features/)
 - [Easily extendible](http://dodgercms.com/features/)
 - [Access via your S3 bucket](http://dodgercms.com/features/)
+- [Custom layouts](http://dodgercms.com/features/)
+- [Updates in real time](http://dodgercms.com/features/)
 
 # Use Cases
 
-DodgerCMS is simple by design. It is well suited for small blogs, and documentation.
+DodgerCMS is simple by design. There are no requirements except Amazon S3. It is well suited for small blogs, documentation, and any static site that benefits from the simple syntax of markdown.
 
 # Installation
 
