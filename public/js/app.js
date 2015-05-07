@@ -7,6 +7,8 @@
  * Author: Chris Zieba (zieba.chris@gmail.com)
 */
 
+/* global dodgercms: true */
+
 $(function() {
   'use strict';
 
@@ -14,8 +16,6 @@ $(function() {
   var ASSETS_BUCKET = localStorage.getItem('dodgercms-assets-bucket');
   var SITE_BUCKET = localStorage.getItem('dodgercms-site-bucket');
   var SITE_ENDPOINT = localStorage.getItem('dodgercms-site-endpoint');
-  var ENCODING_TYPE = 'url';
-  var API_VERSION = '2011-06-15';
   var CONTENT_TYPE = 'text/plain; charset=UTF-8';
   var S3_ENDPOINT = 's3.amazonaws.com';
 
@@ -42,7 +42,7 @@ $(function() {
     return options.fn();
   });
 
-  $(document).on("click", ".pure-button", function() {
+  $(document).on('click', '.pure-button', function() {
     // Removes focus of the button
     $(this).blur();
   });
@@ -59,9 +59,9 @@ $(function() {
    * @param {Object} err The error object from the response
   */
   function s3init(force) {
-    var accessKeyId = sessionStorage.getItem("dodgercms-token-access-key-id");
-    var secretAccessKey = sessionStorage.getItem("dodgercms-token-secret-access-key");
-    var sessionToken = sessionStorage.getItem("dodgercms-token-session-token");
+    var accessKeyId = sessionStorage.getItem('dodgercms-token-access-key-id');
+    var secretAccessKey = sessionStorage.getItem('dodgercms-token-secret-access-key');
+    var sessionToken = sessionStorage.getItem('dodgercms-token-session-token');
 
     // init the s3 connection and pass in an error handler
     dodgercms.s3.init(accessKeyId, secretAccessKey, sessionToken, force);
@@ -74,7 +74,6 @@ $(function() {
   */
   function errorHandler(err) {
     var code = err.code;
-    var message = err.message;
 
     // Check if the token is expired
     if (code === 'ExpiredToken') {
@@ -104,7 +103,7 @@ $(function() {
   */
   function rebuildTree() {
     // Remove the old tree
-    $("#tree").jstree("destroy");
+    $('#tree').jstree('destroy');
     $('#list').empty().html('<div id="tree" class="tree""></div>');
     buildTree();
   }
@@ -115,27 +114,30 @@ $(function() {
         errorHandler(err);
       } else {
         dodgercms.s3.headObjects(data.Contents, DATA_BUCKET, function(err, data) {
-
-          var $tree = $("#tree");
+          var $tree = $('#tree');
           var tree = [];
 
-          // push the bucket
+          // Push the bucket onto the array as the root
           tree.push({
-            "id": "s3--root", 
-            "parent": '#', 
-            "text": '<span class="bucket">' + DATA_BUCKET + '</span>',
-            //"icon": "fa fa-folder-o",
-            "type": "folder", 
-            "a_attr": {
-              "title": DATA_BUCKET
+            'id': 's3--root', 
+            'parent': '#', 
+            'text': '<span class="bucket">' + DATA_BUCKET + '</span>',
+            'type': 'folder', 
+            'a_attr': {
+              'title': DATA_BUCKET
             },
-            "li_attr": {
-              "data-key": "/"
+            'li_attr': {
+              'data-key': '/'
             },
-            "state": {
-              "opened": true
+            'state': {
+              'opened': true
             }
           });
+
+          // Used when searching the tree for an id
+          var searchFn = function(e) {
+            return e.id === search;
+          };
 
           // Loop through each object
           for (var i = 0; i < data.length; i+=1) {
@@ -144,25 +146,25 @@ $(function() {
 
             if (key.substr(-1) !== '/') {
               // anything other than a directory or text/plain (markdown) will be ignored
-              if (object.ContentType !== 'text/plain; charset=UTF-8') {
+              if (object.ContentType !== CONTENT_TYPE) {
                 continue;
               }
             }
 
-            // split and remove last slash for directory
-            var parts = key.replace(/\/\s*$/, "").split('/');
+            // Split and remove last slash for directory
+            var parts = key.replace(/\/\s*$/, '').split('/');
 
             for (var j = 0; j < parts.length; j+=1) {
               var isFolder = false;
 
-              // if the last part in the key has a trailing slash or if the part 
-              // is in not the last elemenet it is a path
+              // If the last part in the key has a trailing slash or if the part 
+              // is in not the last element it is a path
               if ((j === parts.length-1 && key.substr(-1) === '/') || j !== parts.length-1) {
                 isFolder = true;
               }
 
 
-              var search =  's3-' + ((j > 0) ? parts.slice(0,j+1).join("-") : parts[j]);
+              var search =  's3-' + ((j > 0) ? parts.slice(0,j+1).join('-') : parts[j]);
 
               // Need to prepend folder so confusion between file with the same name as folder is avoided
               if (isFolder) {
@@ -170,52 +172,50 @@ $(function() {
               }
               
               // Check to see if the id exists in the tree already
-              var result = $.grep(tree, function(e) { 
-                return e.id === search; 
-              });
+              var result = $.grep(tree, searchFn);
 
               // Only want to push a new node onto the tree if unique
               if (result.length) {
 
                 // add the label if it wasnt already
-                if ((parts.slice(0, j+1).join("/")  === parts.join('/')) && object.Metadata["label"]) {
-                  result[0].li_attr["data-label"] = object.Metadata["label"];
+                if ((parts.slice(0, j+1).join('/')  === parts.join('/')) && object.Metadata.label) {
+                  result[0].li_attr['data-label'] = object.Metadata.label;
                 }
 
               } else {
-                var parent = (j > 0) ? 's3-' + parts.slice(0,j).join("-") : 's3--root';
+                var parent = (j > 0) ? 's3-' + parts.slice(0,j).join('-') : 's3--root';
                 
                 if (parent !== 's3--root') {
                   parent += '-folder';
                 }
 
                 var node = {
-                  "id" : search, 
-                  "parent" : parent, 
-                  "text" : parts[j],
-                  "type": (isFolder) ? "folder" : "file",
-                  "a_attr": {},
-                  "state": {
-                    "opened": true
+                  'id' : search, 
+                  'parent' : parent, 
+                  'text' : parts[j],
+                  'type': (isFolder) ? 'folder' : 'file',
+                  'a_attr': {},
+                  'state': {
+                    'opened': true
                   }
                 };
 
                 // Only key ojects need the data aatrivute
                 if (isFolder) {
                   node.li_attr = {
-                    "data-key": (j > 0) ? parts.slice(0,j+1).join("/") + '/' : parts[j] + '/'
+                    'data-key': (j > 0) ? parts.slice(0,j+1).join('/') + '/' : parts[j] + '/'
                   };
 
                   // The last part of the key will have the label
-                  if ((parts.slice(0,j+1).join("/")  === parts.join('/')) && object.Metadata["label"]) {
-                    node.li_attr["data-label"] = object.Metadata["label"];
-                    node.a_attr["title"] = object.Metadata["label"];
+                  if ((parts.slice(0,j+1).join('/')  === parts.join('/')) && object.Metadata.label) {
+                    node.li_attr['data-label'] = object.Metadata.label;
+                    node.a_attr.title = object.Metadata.label;
                   } 
 
                 } else {
                   // The last part of the key will have the title
-                  if ((parts.slice(0,j+1).join("/")  === parts.join('/')) && object.Metadata["title"]) {
-                    node.a_attr["title"] = object.Metadata["title"];
+                  if ((parts.slice(0,j+1).join('/')  === parts.join('/')) && object.Metadata.title) {
+                    node.a_attr.title = object.Metadata.title;
                   } 
 
                   if (parts[j] === 'index') {
@@ -224,7 +224,7 @@ $(function() {
                   }
 
                   node.li_attr = {
-                    "data-key": key
+                    'data-key': key
                   };
                 }
 
@@ -237,10 +237,10 @@ $(function() {
             var action = data.action;
 
             switch (action) {
-              case "select_node":
+              case 'select_node':
                 // The key atribuete only exists on files, not folders
                 if (data.node.type !== 'folder') {
-                  var key = data.node.li_attr["data-key"];
+                  var key = data.node.li_attr['data-key'];
                   getKeyContent(key);
                   $('#main').data('key', key);
                 }
@@ -252,12 +252,12 @@ $(function() {
           var customMenu = function(node) {
             var newFolder = function(elem) {
               var input = '';
-              var key = node.li_attr["data-key"];
+              var key = node.li_attr['data-key'];
 
               // Don't let them pass without valid input
               while (!/^([a-zA-Z0-9-_]){1,32}$/.test(input)) {
                 // store the user input
-                input = window.prompt("Enter the name of the new folder.");
+                input = window.prompt('Enter the name of the new folder.');
                 // The hit cancel
                 if (input === null) {
                   return;
@@ -270,21 +270,22 @@ $(function() {
                 var newKey = (key === '/') ? input + '/' : key + input + '/';
 
                 dodgercms.utils.newFolder(newKey, DATA_BUCKET, SITE_BUCKET, function(err, data) {
-                  addNode(newKey, key, input)
+                  addNode(newKey, key, input);
                 });
               }
             };
 
             var renameItem = function(elem) {
-              var key = node.li_attr["data-key"];
+              var key = node.li_attr['data-key'];
 
               // remove the last slash if present
-              var parts = key.replace(/\/\s*$/, "").split('/');
-              var last = parts[parts.length-1]
+              var parts = key.replace(/\/\s*$/, '').split('/');
+              var last = parts[parts.length-1];
               var input = last;
+              var msg;
 
               do {
-                msg = (node.type === 'folder') ? "Enter the new name for folder: " + input : "Enter the new name for entry: " + input;
+                msg = (node.type === 'folder') ? 'Enter the new name for folder: ' + input : 'Enter the new name for entry: ' + input;
 
                 // store the user input
                 input = window.prompt(msg, input);
@@ -332,12 +333,12 @@ $(function() {
             };
 
             var editLabel = function(elem) {
-              var label = node.li_attr["data-label"];
-              var key = node.li_attr["data-key"];
+              var label = node.li_attr['data-label'];
+              var key = node.li_attr['data-key'];
               var input, msg;
 
               do {
-                msg = (label) ? "Enter the name of the new label for the directory: " + key : "Enter the label (used for the frontend menu) for the directory: " + key;
+                msg = (label) ? 'Enter the name of the new label for the directory: ' + key : 'Enter the label (used for the frontend menu) for the directory: ' + key;
 
                 // store the user input
                 input = (label) ? window.prompt(msg, label) : window.prompt(msg);
@@ -354,7 +355,7 @@ $(function() {
                   Bucket: DATA_BUCKET,
                   Key: key,
                   Metadata: {
-                    "label": input,
+                    'label': input,
                   }
                 };
 
@@ -376,17 +377,16 @@ $(function() {
 
 
             var editItem = function(elem) {
-              var key = node.li_attr["data-key"];
+              var key = node.li_attr['data-key'];
               editEntry(key);
             };
 
             var removeItem = function(elem) {
-              console.log(node);
-              input = window.confirm("Are you sure?");
+              var input = window.confirm('Are you sure?');
               if (input === null) {
                 return;
               }
-              var key = node.li_attr["data-key"];
+              var key = node.li_attr['data-key'];
 
               dodgercms.entry.remove(key, DATA_BUCKET, SITE_BUCKET, function(err, data) {
                 if (err) {
@@ -395,15 +395,14 @@ $(function() {
                   dodgercms.entry.menu(SITE_BUCKET, SITE_ENDPOINT, function(err) {
                     // remove from the tree
                     clearEntry(key);
-                    $tree.jstree("delete_node", "#" + node.id);
+                    $tree.jstree('delete_node', '#' + node.id);
                   });
-
                 }
               });
             };
 
             var newItem = function(elem) {
-              var key = node.li_attr["data-key"];
+              var key = node.li_attr['data-key'];
               if (node.type === 'folder') {
                 newEntry(key);
               }
@@ -413,37 +412,37 @@ $(function() {
             var items = {
               editLabel: {},
               newEntry: {
-                label: "New Entry",
+                label: 'New Entry',
                 action: newItem
               },
               editEntry: {
-                label: "Edit",
+                label: 'Edit',
                 action: editItem
               },
               newFolder: {
-                label: "New Folder",
+                label: 'New Folder',
                 separator_after: true,
                 action: newFolder
               },
               renameItem: {
-                label: "Rename",
+                label: 'Rename',
                 action: renameItem
               },
               removeItem: {
-                label: "Delete",
+                label: 'Delete',
                 action: removeItem
               }
             };
             
             if (node.type === 'folder') {
-              var label = node.li_attr["data-label"];
+              var label = node.li_attr['data-label'];
               var labelText = (label) ? 'Edit Label': 'Add Label';
 
               items.editLabel = {
                 label: labelText,
                 separator_after: true,
                 action: editLabel
-              }
+              };
               delete items.editEntry;
             } else {
               items.newEntry._disabled = true;
@@ -463,37 +462,37 @@ $(function() {
           // Render the jstree
           $tree.on('changed.jstree', onTreeChange)
           .jstree({
-            "core" : {
-              "check_callback": true,
-              "themes" : {
-                "dots" : true,
-                "name": 'proton',
-                "responsive": false
+            'core' : {
+              'check_callback': true,
+              'themes' : {
+                'dots' : true,
+                'name': 'proton',
+                'responsive': false
               },
-              "animation" : false,
-              "data": tree
+              'animation' : false,
+              'data': tree
             },
-            "types" : {
-              "default" : {
-                "icon" : "fa"
+            'types' : {
+              'default' : {
+                'icon' : 'fa'
               },
-              "file" : {
-                "icon" : "fa fa-file-text-o"
+              'file' : {
+                'icon' : 'fa fa-file-text-o'
               },
-              "index" : {
-                "icon" : "fa fa-asterisk"
+              'index' : {
+                'icon' : 'fa fa-asterisk'
               },
-              "folder" : {
-                "icon" : "fa fa-folder-o",
-                "select_node": false
+              'folder' : {
+                'icon' : 'fa fa-folder-o',
+                'select_node': false
               }
             },
-            "plugins" : ["unique", "contextmenu", "sort", "ui", "types"],
-            "contextmenu": {
-              "items": customMenu,
-              "select_node": false
+            'plugins' : ['unique', 'contextmenu', 'sort', 'ui', 'types'],
+            'contextmenu': {
+              'items': customMenu,
+              'select_node': false
             },
-            "sort": function(a, b) {
+            'sort': function(a, b) {
               var nodeA = this.get_node(a);
               var nodeB = this.get_node(b);
 
@@ -532,7 +531,7 @@ $(function() {
   }
 
   function doesTreeNodeExist(id) {
-    if ($("#tree").jstree("get_node", id)) {
+    if ($('#tree').jstree('get_node', id)) {
       return true;
     }
 
@@ -542,18 +541,18 @@ $(function() {
   function addNode(key, parent, text, title) {
     var folder = isFolder(key);
     var id = getTreeNodeId(key);
-    var parent = getTreeNodeId(parent);
+    parent = getTreeNodeId(parent);
 
     var node = {
-      "id" : id, 
-      "parent" : parent, 
-      "text" : text,
-      "type": (folder) ? "folder" : "file",
-      "li_attr": {
-        "data-key": key
+      'id' : id, 
+      'parent' : parent, 
+      'text' : text,
+      'type': (folder) ? 'folder' : 'file',
+      'li_attr': {
+        'data-key': key
       },
-      "state": {
-        "opened": true
+      'state': {
+        'opened': true
       }
     };
 
@@ -563,13 +562,13 @@ $(function() {
 
     if (title) {
       node.a_attr = {
-        "title": title
-      }
+        'title': title
+      };
     }
 
     // Only add the node to the tree if it doesnt exist
     if (!doesTreeNodeExist(id)) {
-      $('#tree').jstree("create_node", "#" + parent, node);
+      $('#tree').jstree('create_node', '#' + parent, node);
     }
     
     return node;
@@ -584,7 +583,7 @@ $(function() {
         'backgroundColor': '#000',
         '-webkit-border-radius': '10px',
         '-moz-border-radius': '10px',
-        'opacity': .5,
+        'opacity': 0.5,
         'color': '#fff'
       },
       // styles for the overlay 
@@ -603,25 +602,25 @@ $(function() {
   function save(event) {
     event.preventDefault();
     
-    var $title = $("#entry-form-title");
-    var $folder = $("#entry-form-folder");
-    var $slug = $("#entry-form-slug");
-    var $content = $("#entry-form-content");
+    var $title = $('#entry-form-title');
+    var $folder = $('#entry-form-folder');
+    var $slug = $('#entry-form-slug');
+    var $content = $('#entry-form-content');
 
     var title = $.trim($title.val());
-    var folder = $("option:selected", $folder).data('folder');
+    var folder = $('option:selected', $folder).data('folder');
     var slug = $.trim($slug.val()).toLowerCase();
     var content = $.trim($content.val());
 
     // The title cannot be empty
     if (!title.length || title.length > 64) {
-      alert("The title needs to be between 1 and 64 characters.");
+      alert('The title needs to be between 1 and 64 characters.');
       return;
     }
 
     // the slug needs to be between 1 and 32 characters
     if (!/^([a-zA-Z0-9-_]){1,32}$/.test(slug)) {
-      alert("The url slug must be at most 32 characters, and can only contain letters, numbers, dashes, underscores.");
+      alert('The url slug must be at most 32 characters, and can only contain letters, numbers, dashes, underscores.');
       return;
     }
 
@@ -637,7 +636,7 @@ $(function() {
       // update the data attributes
       $slug.attr('data-entry-form-slug', slug);
       $slug.data('entry-form-slug', slug);
-      $slug.val(slug)
+      $slug.val(slug);
       $folder.attr('data-entry-form-folder', folder);
       $folder.data('entry-form-folder', folder);
 
@@ -653,32 +652,29 @@ $(function() {
       });
     };
 
-    // check for the root folder
+    // Check for the root folder
     var key = (folder !== '/') ? folder + slug : slug;
 
     var $folderData = $folder.data('entry-form-folder');
     var $slugData = $slug.data('entry-form-slug');
 
-    // if the folder or slug has changed we need to move the object.
-    // The reason for checkign if the slugData exists is to determine if the entry exists already (i.e, not new)
+    // If the folder or slug has changed we need to move the object. The reason for checking
+    // if the slugData exists is to determine if the entry exists already (i.e, not new).
     if ($slugData && $folderData && (($folderData !== folder) || ($slugData !== slug))) {
 
       // This is the where the entry was originally located before the save
       var oldKey = ($folderData !== '/') ? $folderData + $slugData : $slugData;
 
-      // the rename is handled differently if the subdolder changed and not the key
-      var folderChange = ($folderData !== folder);
-
       dodgercms.entry.rename(oldKey, key, DATA_BUCKET, SITE_BUCKET, function(err, data) {
         if (err) {
           errorHandler(err);
         } else {
-          $("#tree").jstree("delete_node", "#" + getTreeNodeId(oldKey));
+          $('#tree').jstree('delete_node', '#' + getTreeNodeId(oldKey));
           callback(key, folder, slug, title);
         }
-      })
+      });
     } else {
-      // create the new key in s3
+      // Create the new key in s3
       var params = {
         Bucket: DATA_BUCKET,
         Key: key,
@@ -686,9 +682,9 @@ $(function() {
         ContentEncoding: 'utf-8',
         ContentType:  CONTENT_TYPE,
         Expires: 0,
-        CacheControl: "public, max-age=0, no-cache",
+        CacheControl: 'public, max-age=0, no-cache',
         Metadata: {
-          "title": title,
+          'title': title,
         }
       };
 
@@ -700,12 +696,12 @@ $(function() {
   }
 
   // A new entry is submitted or saved
-  $(document).on("submit", "#entry-form", save);
+  $(document).on('submit', '#entry-form', save);
 
-  $(document).on("click", "#edit-entry", function(event) {
-    var key = $(this).data("key");
+  $(document).on('click', '#edit-entry', function(event) {
+    var key = $(this).data('key');
 
-    if (typeof key === "undefined") {
+    if (typeof key === 'undefined') {
       return;
     } else {
       editEntry(key);
@@ -715,7 +711,7 @@ $(function() {
   function editEntry(key) {
     dodgercms.s3.getObject(key, DATA_BUCKET, function(err, data) {
       var body = data.Body.toString();
-      var source = $("#edit-entry-template").html();
+      var source = $('#edit-entry-template').html();
       var template = Handlebars.compile(source);
       var modified = new Date(data.LastModified);
 
@@ -729,7 +725,7 @@ $(function() {
           var selectedFolder = (key.indexOf('/') > -1) ? key.substr(0, key.lastIndexOf('/') + 1) : '/';
 
           var context = {
-            title: data.Metadata['title'],
+            title: data.Metadata.title,
             modified: modified.toLocaleString(),
             key: key,
             folders: folders,
@@ -739,20 +735,20 @@ $(function() {
           };
 
           var html = template(context);
-          $("#main").html(html);
+          $('#main').html(html);
         }
       });
     });
   }
 
-  $(document).on("click", "#delete-entry", function(event) {
-    var key = $(this).data("key");
+  $(document).on('click', '#delete-entry', function(event) {
+    var key = $(this).data('key');
 
-    if (typeof key === "undefined") {
+    if (typeof key === 'undefined') {
       return;
     }
 
-    if (!window.confirm("Are you sure?")) {
+    if (!window.confirm('Are you sure?')) {
       return;
     }
 
@@ -762,14 +758,14 @@ $(function() {
       } else {
         dodgercms.entry.menu(SITE_BUCKET, SITE_ENDPOINT, function() {
           // remove from the tree
-          $("#tree").jstree("delete_node", "#" + getTreeNodeId(key));
+          $('#tree').jstree('delete_node', '#' + getTreeNodeId(key));
           clearEntry(key);
         });
       }
     });
   });
 
-  $(document).on("click", "#close-entry", function(event) {
+  $(document).on('click', '#close-entry', function(event) {
     var key = $('#main').data('key');
     if (key && key !== '/') {
       getKeyContent(key);
@@ -790,7 +786,7 @@ $(function() {
     }
 
     // remove the last slash
-    var parts = key.replace(/\/\s*$/, "").split('/');
+    var parts = key.replace(/\/\s*$/, '').split('/');
     var prefix = 's3-';
     var folderSuffix = '-folder';
     var id;
@@ -804,9 +800,9 @@ $(function() {
     return id;
   }
 
-  $(document).on("change", "#upload-image", function(event) {
+  $(document).on('change', '#upload-image', function(event) {
 
-    var file = $("#upload-image")[0].files[0];
+    var file = $('#upload-image')[0].files[0];
     var content = $('#entry-form-content');
     var types = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'];
 
@@ -821,7 +817,7 @@ $(function() {
     }
 
     // replace any illegal characters from the filename
-    var filename = 'images/' + file.name.replace(/\s|\\|\/|\(|\)/g,"-");
+    var filename = 'images/' + file.name.replace(/\s|\\|\/|\(|\)/g,'-');
 
     var link = 'http://' + ASSETS_BUCKET + '.' + S3_ENDPOINT + '/' + filename;
     var params = {
@@ -846,7 +842,7 @@ $(function() {
     });
   });
 
-  $(document).on("click", "#preview-entry", function(event) {
+  $(document).on('click', '#preview-entry', function(event) {
 
     // the content-preview div exists only if in preview mode
     var preview = $('#content-preview');
@@ -869,7 +865,7 @@ $(function() {
       content.hide();
 
       // append the markdown to the container
-      $("#content-body-container").append(html);
+      $('#content-body-container').append(html);
 
       // highlight the code
       $('#content-preview pre code').each(function(i, block) {
@@ -899,10 +895,10 @@ $(function() {
           folders: folders,
           selectedFolder: (folder) ? folder : null
         };
-        var source = $("#edit-entry-template").html();
+        var source = $('#edit-entry-template').html();
         var template = Handlebars.compile(source);
         var html = template(context);
-        $("#main").html(html);
+        $('#main').html(html);
       }
     });
   }
@@ -927,12 +923,12 @@ $(function() {
     var body = content.Body.toString();
 
     // check if the file is a markdown file, we dont wantt o load any images, etc
-    var source   = $("#entry-template").html();
+    var source   = $('#entry-template').html();
     var template = Handlebars.compile(source);
     var modified = new Date(content.LastModified);
 
     var context = {
-      title: content.Metadata['title'],
+      title: content.Metadata.title,
       modified: modified.toLocaleString(),
       // TODO: provide a link to the actual resource
       link: '',
@@ -941,7 +937,7 @@ $(function() {
     };
 
     var html = template(context);
-    $("#main").html(html).data('key', key);
+    $('#main').html(html).data('key', key);
 
     // highlight the code
     $('#main .content-body pre code').each(function(i, block) {
