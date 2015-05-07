@@ -76,7 +76,7 @@ $(function() {
       if (err) {
         alert(err);
       } else {
-        // Redirects the manager
+        // Redirects to the manager
         window.location.replace(location.protocol + '//' + location.host);
       }
     });
