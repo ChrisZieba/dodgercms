@@ -16,7 +16,7 @@ The documentation for [DodgerCMS](http://dodgercms.com) is itself build with Dod
 - [Easily extendible](http://dodgercms.com/features/)
 - [Access via your S3 bucket](http://dodgercms.com/features/)
 - [Custom layouts](http://dodgercms.com/features/)
-- [Updates in real time](http://dodgercms.com/features/)
+- [Live updates](http://dodgercms.com/features/)
 
 # Use Cases
 
