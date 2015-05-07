@@ -2,20 +2,9 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
-      files: [
-        'src/**/*.js'
-      ],
+      files: ['lib/**/*.js', 'public/js/*.js'],
       options: {
-        ignores: [],
-        curly: true,
-        eqnull: true,
-        browser: true,
-        globals: {
-          jQuery: true,
-          console: true,
-          exports: true,
-          require: true
-        },
+        jshintrc: '.jshintrc'
       }
     },
     uglify: {
@@ -25,7 +14,7 @@ module.exports = function(grunt) {
       },
       build: {
         files: {
-          'dist/blackjack-<%= pkg.version %>.min.js': ['src/**/*.js']
+          'public/js/dist/dodgercms.min.js': ['lib/**/*.js', 'public/js/*.js']
         }
       },
     },
@@ -33,34 +22,40 @@ module.exports = function(grunt) {
       compile: {
         options: {
           namespace: "dodgercms.templates",
-          //partialsUseNamespace: false,
-          //partialRegex: /.*/,
-          //partialsPathRegex: /templates\/partials\//,
-          // processPartialName: function(filePath) {
-          //     var pieces = filePath.split("/");
-          //     return pieces[pieces.length - 1];
-          // },
           processName: function(filePath) {
             var pieces = filePath.split("/");
             return pieces[pieces.length - 1];
           }
         },
         files: {
-          "templates/compiled/entry.html.js": "templates/entry.html"
-          // "templates/compiled/nav.html.js": "templates/nav.html",
-          // "templates/compiled/menu.html.js": "templates/partials/menu.html"
+          "public/js/dist/entry.min.js": "templates/entry.html"
+        }
+      }
+    },
+    mocha: {
+      all: {
+        src: ['test/runner.html'],
+      },
+      options: {
+        run: true
+      }
+    },
+    watch: {
+      scripts: {
+        files: ['lib/**/*.js', 'public/js/*.js'],
+        tasks: ['uglify'],
+        options: {
+          spawn: false,
         }
       }
     }
   });
 
-
-  // grunt.loadNpmTasks('grunt-contrib-jshint');
-  // grunt.loadNpmTasks('grunt-contrib-uglify');
-
-  // grunt.registerTask('default', ['jshint', 'uglify']);
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
-  // grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-mocha');
 
-  grunt.registerTask('default', ['handlebars']);
+  grunt.registerTask('default', ['handlebars', 'mocha', 'jshint', 'uglify']);
 };
