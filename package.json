@@ -19,6 +19,7 @@
     "grunt-contrib-handlebars": "~0.10.1",
     "grunt-mocha": "~0.4.6",
     "mocha": "~1.14.0",
-    "chai": "~1.8.1"
+    "chai": "~1.8.1",
+    "sinon": "~1.14.1"
   }
 }
