@@ -48,6 +48,7 @@ label.upload-image {
 .login-submit {
   float:right;
 }
+
 /*
  * -- HELPER STYLES --
  * Over-riding some of the .pure-button styles to make my buttons look unique
@@ -60,11 +61,13 @@ label.upload-image {
   box-shadow: none;
   border-radius: 20px;
 }
+
 .primary-button {
   color: #fff;
   background: #1b98f8;
   margin: 1em 0;
 }
+
 .secondary-button {
   background: #fff;
   border: 1px solid #ddd;
@@ -123,7 +126,6 @@ label.upload-image {
   padding: 2em 0;
 }
 
-
 /*
  * -- NAV BAR STYLES --
  * Styling the default .pure-menu to look a little more unique.
@@ -133,19 +135,23 @@ label.upload-image {
   border: none;
   text-align: left;
 }
+
 #nav .pure-menu-link:hover,
 #nav .pure-menu-link:focus {
   background: none;
 }
+
 #nav .pure-menu-link {
   color: #fff;
   margin-left: 0.5em;
   margin-right: 0.5em;
   padding-left: 1.75em;
 }
+
 #nav .pure-menu-link:hover {
   color: #BECBD7;
 }
+
 #nav .pure-menu-heading {
   padding-left: 1.5em;
   border-bottom: none;
@@ -153,58 +159,70 @@ label.upload-image {
   color: rgb(75, 113, 151);
 }
 
-
 #content-preview {
   padding:1em;
   margin: 0.25em 0;
   border: 1px dashed #e1e1e1;
   border-radius: 4px;
 }
+
 .content-header, .content-body, .content-footer {
   padding: 1em 2em 0 2em;
 }
+
 .content-footer-controls {
   margin: 0.25em 0;
   text-align: right;
 }
+
 .content-header-div {
   border-bottom: 1px dashed #e1e1e1;
   padding-bottom:2em;
 }
+
 .content-title {
   margin: 0.4em 0 0.2em 0;
 }
+
 .content-title span {
    font-style: italic;
    padding: 0.15em 0.25em;
    border-radius: 3px;
    background-color: #f3f3f3;
 }
+
 p.content-subtitle {
   font-size: 1em;
   margin: 0;
   font-weight: normal;
 }
+
 .content-subtitle span {
   color: #999;
   font-style: italic;
 }
+
 .content-controls {
   margin-top: 1.5em;
   text-align: right;
 }
+
 .content-controls .secondary-button {
   margin-bottom: 0.3em;
 }
+
 .content-textarea {
   line-height: 1.5em;
 }
+
 .toolbar {
   margin: 0.25em 0;
 }
+
 .toolbar-button {
   background: #ededed;
 }
+
 .button-small {
   font-size: 0.85em;
 }
@@ -228,6 +246,7 @@ p.content-subtitle {
     bottom: 0;
     overflow: auto;
   }
+
   #nav {
     margin-left:-450px; /* "left col (nav + list)" width */
     width:150px;
@@ -263,7 +282,6 @@ p.content-subtitle {
     width: auto;
      /* so that it's not 100% */
   }
-
 }
 
 /*
@@ -272,7 +290,6 @@ p.content-subtitle {
  * of the mobile styles.
  */
 @media (min-width: 60em) {
-
   /* This will take up the entire height, and be a little thinner */
   #list {
     margin-left: -300px;
