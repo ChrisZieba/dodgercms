@@ -1,5 +1,5 @@
-describe('getFolders', function() {
-  it('should return list of folders', function() {
+describe('getFolders()', function() {
+  it('should return the correct list of folders', function() {
     var objects = [
       { Key: '/' },
       { Key: 'test/' },
@@ -10,9 +10,13 @@ describe('getFolders', function() {
     chai.expect(dodgercms.utils.getFolders(objects)).to.have.members(['/', 'test/', 'test/test/', 'test/a/']);
   });
 
+  it('should return the root folder if the array is empty', function() {
+    var objects = [];
+    chai.expect(dodgercms.utils.getFolders(objects)).to.have.members(['/']);
+  });
 });
 
-describe('newFolder', function(){
+describe('newFolder()', function(){
   before(function(done) {
     sinon
       .stub(dodgercms.s3, 'putObject')
