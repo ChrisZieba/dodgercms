@@ -43,7 +43,7 @@ $(function() {
     return options.fn();
   });
 
-  // Pass the credentials to an s3 object
+  // Setup connection to S3
   s3init(false);
 
   // Pulls a list of all files from s3 and builds a tree
