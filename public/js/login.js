@@ -14,7 +14,9 @@ $(function() {
 
   autofill();
 
-  // Fill in the form values if they exist locally
+  /**
+   * Fill in the form values if they exist locally.
+  */
   function autofill() {
     $('#login-form-access-key').val(localStorage.getItem('dodgercms-access-key-id') || '');
     $('#login-form-access-secret').val(localStorage.getItem('dodgercms-secret-access-key') || '');
@@ -23,7 +25,7 @@ $(function() {
     $('#login-form-site-bucket').val(localStorage.getItem('dodgercms-site-bucket') || '');
   }
 
-  // Login functionality
+  // Event handler for the login submit button
   $('#login-form').submit(function(event) {
     // Don't want the form to submit
     event.preventDefault();
