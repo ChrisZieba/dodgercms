@@ -57,3 +57,15 @@ describe('isFolder()', function() {
     chai.assert(!dodgercms.utils.isFolder('/folder/key'));
   });
 });
+
+describe('getSlug()', function() {
+  it('should return "slug" from the test folder', function() {
+    chai.assert.equal(dodgercms.utils.getSlug('/test/slug'), 'slug');
+  });
+  it('should return "slug"', function() {
+    chai.assert.equal(dodgercms.utils.getSlug('slug'), 'slug');
+  });
+  it('should return empty string', function() {
+    chai.assert.equal(dodgercms.utils.getSlug(''), '');
+  });
+});
