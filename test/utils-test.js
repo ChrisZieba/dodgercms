@@ -16,7 +16,7 @@ describe('getFolders()', function() {
   });
 });
 
-describe('newFolder()', function(){
+describe('newFolder()', function() {
   before(function(done) {
     sinon
       .stub(dodgercms.s3, 'putObject')
@@ -29,7 +29,7 @@ describe('newFolder()', function(){
     done();
   });
 
-  it('should match the given key', function(done){
+  it('should match the given key', function(done) {
     dodgercms.utils.newFolder('index', 'dataBucket','siteBucket', function(err, key) {
       if (err) {
         return done(err);
