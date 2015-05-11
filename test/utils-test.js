@@ -50,4 +50,10 @@ describe('isFolder()', function() {
   it('should return true for nested folder', function() {
     chai.assert(dodgercms.utils.isFolder('/folder/test/folder/'));
   });
+  it('should return false for key', function() {
+    chai.assert(!dodgercms.utils.isFolder('key'));
+  });
+  it('should return false for key inside folder', function() {
+    chai.assert(!dodgercms.utils.isFolder('/folder/key'));
+  });
 });
