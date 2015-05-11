@@ -39,3 +39,15 @@ describe('newFolder()', function() {
     });
   });
 });
+
+describe('isFolder()', function() {
+  it('should return true for root', function() {
+    chai.assert(dodgercms.utils.isFolder('/'));
+  });
+  it('should return true for folder', function() {
+    chai.assert(dodgercms.utils.isFolder('/folder/'));
+  });
+  it('should return true for nested folder', function() {
+    chai.assert(dodgercms.utils.isFolder('/folder/test/folder/'));
+  });
+});
