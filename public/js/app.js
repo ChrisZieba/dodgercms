@@ -12,12 +12,12 @@
 $(function() {
   'use strict';
 
-  const DATA_BUCKET = localStorage.getItem('dodgercms-data-bucket');
-  const ASSETS_BUCKET = localStorage.getItem('dodgercms-assets-bucket');
-  const SITE_BUCKET = localStorage.getItem('dodgercms-site-bucket');
-  const SITE_ENDPOINT = localStorage.getItem('dodgercms-site-endpoint');
-  const CONTENT_TYPE = 'text/plain; charset=UTF-8';
-  const S3_ENDPOINT = 's3.amazonaws.com';
+  var DATA_BUCKET = localStorage.getItem('dodgercms-data-bucket');
+  var ASSETS_BUCKET = localStorage.getItem('dodgercms-assets-bucket');
+  var SITE_BUCKET = localStorage.getItem('dodgercms-site-bucket');
+  var SITE_ENDPOINT = localStorage.getItem('dodgercms-site-endpoint');
+  var CONTENT_TYPE = 'text/plain; charset=UTF-8';
+  var S3_ENDPOINT = 's3.amazonaws.com';
 
   // Options for the markdown converter
   var markedOptions = {
