@@ -88,7 +88,7 @@
                 <span class="menu-slug">{{label}}</span>
               {{else}}
                 {{#if link}}
-                  <a href="/{{key}}" class="pure-menu-link">{{label}}</a>&raquo;
+                  <a href="/{{link}}" class="pure-menu-link">{{label}}</a>&raquo;
                 {{else}}
                   <span class="breadcrumbs-folder-slug">{{label}}</span>&raquo;
                 {{/if}}
@@ -482,12 +482,12 @@
 
     <script>
       (function (window, document) {
-        // retrieve the json file with menu data
+        // Retrieve the json file with menu data
         $.get("{{&endpoint}}{{dataKey}}", function(data) {
           var parts = KEY.split('/');
           var breadcrumbs = [];
 
-          // use the menu json to build a tree list
+          // Use the menu json to build a tree list
           buildFromSegments(data, breadcrumbs, parts);
 
           var navTemplate = $("#nav-template").html();
@@ -495,7 +495,7 @@
           var menuPartial = $("#menu-partial").html();
           var menu = Handlebars.compile(menuPartial);
 
-          // register the partial so it can be used in the nav template
+          // Register the partial so it can be used in the nav template
           Handlebars.registerPartial({
             menu: menu
           });
@@ -508,7 +508,7 @@
           $("nav").html(navHtml);
 
 
-          // breadcrumbs
+          // Breadcrumbs
           var headerTemplate = $("#header-template").html();
           var header = Handlebars.compile(headerTemplate);
           var headerContext = {
@@ -529,9 +529,10 @@
           // If we did not find a match, create the new object for this path segment
           if (found) {
             breadcrumbs.push({
-              label: found.label
+              label: found.label,
+              link: found.link
             });
-          
+
             // If there are still path segments left, we need to go deeper
             if (pathSegments.length) {
               found.children = found.children || [];
