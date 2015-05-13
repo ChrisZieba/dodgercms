@@ -170,6 +170,12 @@ label.upload-image {
   padding: 1em 2em 0 2em;
 }
 
+.content-body img {
+  max-width: 100%;
+  border: 1px solid #f0f0f0;
+  padding: 0.05em;
+}
+
 .content-footer-controls {
   margin: 0.25em 0;
   text-align: right;

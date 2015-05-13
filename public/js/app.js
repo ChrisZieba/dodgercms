@@ -59,6 +59,10 @@ $(function() {
     var secretAccessKey = sessionStorage.getItem('dodgercms-token-secret-access-key');
     var sessionToken = sessionStorage.getItem('dodgercms-token-session-token');
 
+    if (!accessKeyId || !secretAccessKey || !sessionToken) {
+      dodgercms.auth.redirect();
+    }
+    
     // Init the s3 connection
     dodgercms.s3.init(accessKeyId, secretAccessKey, sessionToken, force);
   }
@@ -178,6 +182,7 @@ $(function() {
                 // add the label if it wasn't already
                 if ((parts.slice(0, j+1).join('/')  === parts.join('/')) && object.Metadata.label) {
                   result[0].li_attr['data-label'] = object.Metadata.label;
+                  result[0].a_attr.title = object.Metadata.label;
                 }
               } else {
                 var parent = (j > 0) ? 's3-' + parts.slice(0,j).join('-') : 's3--root';
