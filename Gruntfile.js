@@ -23,8 +23,9 @@ module.exports = function(grunt) {
     cssmin: {
       combine: {
         files: {
-          'public/css/dist/login.min.css' : ['public/css/login.css'],
-          'public/css/dist/app.min.css' : ['public/css/app.css', 'public/css/vendor/jstree.proton.css']
+          'public/css/dist/login.min.css': 'public/css/login.css',
+          'public/css/dist/app.min.css': 'public/css/app.css',
+          'public/css/vendor/jstree.proton.min.css': 'public/css/vendor/jstree.proton.css'
         }
       }
     },
