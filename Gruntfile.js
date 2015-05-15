@@ -14,9 +14,19 @@ module.exports = function(grunt) {
       },
       build: {
         files: {
-          'public/js/dist/dodgercms.min.js': ['lib/**/*.js', 'public/js/*.js']
+          'public/js/dist/login.min.js': 'public/js/login.js',
+          'public/js/dist/app.min.js': 'public/js/app.js',
+          'public/js/dist/dodgercms.min.js': 'lib/**/*.js'
         }
       },
+    },
+    cssmin: {
+      combine: {
+        files: {
+          'public/css/dist/login.min.css' : ['public/css/login.css'],
+          'public/css/dist/app.min.css' : ['public/css/app.css', 'public/css/vendor/jstree.proton.css']
+        }
+      }
     },
     handlebars: {
       compile: {
@@ -54,8 +64,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-mocha');
 
-  grunt.registerTask('default', ['handlebars', 'mocha', 'jshint', 'uglify']);
+  grunt.registerTask('default', ['handlebars', 'mocha', 'jshint', 'cssmin', 'uglify']);
 };
