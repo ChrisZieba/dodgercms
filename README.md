@@ -24,7 +24,5 @@ Please take a look at the [installation guide](http://dodgercms.com/help/install
 
 ## License
 
-```
-MIT License (MIT)
+`MIT License` (MIT)
 Copyright (c) 2015 Chris Zieba
-```
