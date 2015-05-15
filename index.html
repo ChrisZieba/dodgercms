@@ -13,7 +13,7 @@
   <link rel="apple-touch-icon" sizes="144x144" href="public/img/icons/apple-touch-icon-144x144.png" />
   <link rel="apple-touch-icon" sizes="152x152" href="public/img/icons/apple-touch-icon-152x152.png" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="robots" content="nofollow,noindex"/>
 
   <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css" />
@@ -109,14 +109,11 @@
   </div>
 </script>  
 
-
 <div id="layout" class="content pure-g">
   <div id="nav" class="pure-u">
     <a href="#" class="nav-menu-button">Menu</a>
-
     <div class="nav-inner">
       <button id="new-entry" class="primary-button pure-button new-entry-button"><i class="fa fa-plus-circle"></i> Entry</button>
-
       <div class="pure-menu">
         <ul class="pure-menu-list">
           <li class="pure-menu-item"><a href="#" class="pure-menu-link">Recent</a></li>
@@ -128,20 +125,16 @@
   </div>
 
   <div id="list" class="pure-u-1">
-
     <div id="tree" class="tree"></div>
-      
   </div>
-
   <div id="main" class="pure-u-1" data-key></div>
 </div>
 
 <script type="text/javascript">
-  $(document).on("click", ".nav-menu-button", function(event) {
+  $(document).on("click", ".nav-menu-button", function(event){
     $('#nav').toggleClass('active');
   });
 </script>
 
 </body>
-
 </html>
