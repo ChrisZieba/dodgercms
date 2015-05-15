@@ -1,10 +1,14 @@
 {
   "name": "dodgercms",
+  "homepage": "https://dodgercms.com",
   "version": "0.0.1",
   "description": "A static markdown CMS built on top of Amazon S3.",
+  "keywords": ["markdown", "cms", "amazon", "s3"],
+  "license" : "MIT",
   "author": {
     "name": "Chris Zieba",
-    "email": "zieba.chris@gmail.com"
+    "email": "zieba.chris@gmail.com",
+    "url" : "http://chriszieba.com"
   },
   "repository": {
     "type": "git",
@@ -15,6 +19,7 @@
     "grunt-contrib-watch": "~0.6.1",
     "grunt-contrib-jshint": "~0.6.3",
     "grunt-contrib-uglify": "~0.2.2",
+    "grunt-contrib-cssmin": "~0.12.3",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-handlebars": "~0.10.1",
     "grunt-mocha": "~0.4.6",
