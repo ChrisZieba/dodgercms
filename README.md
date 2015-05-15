@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/ChrisZieba/dodgercms.svg)](https://travis-ci.org/ChrisZieba/dodgercms)
  
-[DodgerCMS](http://dodgercms.com) is a static markdown CMS built on top of [Amazon S3](http://aws.amazon.com/s3/). It is a clean and *simple* alternative to heavy content management systems. There are no databases to manage, deployments to monitor, or massive configuration files. Just focus on writing your content and the results are live immediatly.
+[DodgerCMS](http://dodgercms.com) is a static markdown CMS built on top of [Amazon S3](http://aws.amazon.com/s3/). It is a clean and *simple* alternative to heavy content management systems. There are no databases to manage, deployments to monitor, or massive configuration files. Just focus on writing your content and the results are live immediately.
 
 ## Features
 
@@ -16,7 +16,7 @@
 
 ## Documentation
 
-The documentation for [DodgerCMS](http://dodgercms.com) is itself build with DodgerCMS. 
+The documentation for [DodgerCMS](http://dodgercms.com) is itself built with DodgerCMS. 
 
 ## Installation
 
@@ -24,5 +24,5 @@ Please take a look at the [installation guide](http://dodgercms.com/help/install
 
 ## License
 
-`MIT License` (MIT)
+`MIT License` (MIT) 
 Copyright (c) 2015 Chris Zieba
