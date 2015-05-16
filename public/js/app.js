@@ -78,13 +78,14 @@ $(function() {
     // Check if the token is expired
     if (code === 'ExpiredToken') {
       // Display a message and prevent any page interaction
-      $.blockUI();
+      block();
 
       // Checks if there are enough credentials saved (local storage) to login.
       // If a login is not possible, the user is redirected to the login page.
       dodgercms.auth.login(function(err, data) {
         // Remove the page blocker
-        $.unblockUI();
+        unblock();
+        
         if (err) {
           // Redirect to the login page
           dodgercms.auth.redirect();
