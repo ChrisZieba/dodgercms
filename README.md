@@ -7,12 +7,11 @@
 ## Features
 
 - [Full markdown editor](http://dodgercms.com/features/editor)
-- [Uploads images directly to the cloud](http://dodgercms.com/features/)
-- [Handles changes in URL structure](http://dodgercms.com/features/)
-- [Easily extendible](http://dodgercms.com/features/)
-- [Access via your S3 bucket](http://dodgercms.com/features/)
-- [Custom layouts](http://dodgercms.com/features/)
-- [Live updates](http://dodgercms.com/features/)
+- [Uploads images directly to the cloud](http://dodgercms.com/features/images)
+- [Handles changes in URL structure](http://dodgercms.com/features/menu)
+- [Access via your S3 bucket](http://dodgercms.com/features/cloud)
+- [Custom layouts](http://dodgercms.com/features/layouts)
+- [Live updates](http://dodgercms.com/features/live)
 
 ## Documentation
 
@@ -21,6 +20,10 @@ The documentation for [DodgerCMS](http://dodgercms.com) is itself built with Dod
 ## Installation
 
 Please take a look at the [installation guide](http://dodgercms.com/help/installation).
+
+## Development
+
+DodgerCMS is still very early in its development. Please take a look at the development guide for more information on how to [contribute](http://dodgercms.com/development/contributing).
 
 ## License
 
