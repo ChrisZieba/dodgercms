@@ -6,7 +6,7 @@
 
 ## Demo
 
-The [documentation](http://dodgercms.com) for DodgerCMS is itself built with DodgerCMS. 
+The [demo](http://dodgercms.com) is used to siaply the documentation for DodgetrCMS. It displays the default layout and style of the front end. To see screenshots of the backend manager take a look [here]() 
 
 ## Features
 
@@ -19,7 +19,7 @@ The [documentation](http://dodgercms.com) for DodgerCMS is itself built with Dod
 
 ## Documentation
 
-The documentation for [DodgerCMS](http://dodgercms.com) is itself built with DodgerCMS. 
+The [documentation](http://dodgercms.com) for DodgerCMS is itself built with DodgerCMS.
 
 ## Installation
 
