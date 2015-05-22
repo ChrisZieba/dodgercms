@@ -1,7 +1,7 @@
 {
   "name": "dodgercms",
   "homepage": "https://dodgercms.com",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A static markdown CMS built on top of Amazon S3.",
   "keywords": ["markdown", "cms", "amazon", "s3"],
   "license" : "MIT",
