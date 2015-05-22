@@ -6,7 +6,7 @@
 
 ## Demo
 
-The [demo](http://dodgercms.com) is used to display the documentation for DodgerCMS. It displays the default layout and style of the front end. To see screen shots of the backend manager, please take a look [here](http://dodgercms.com/#screenshots).
+The [demo](http://dodgercms.com) is used to display the documentation for DodgerCMS. It displays the default layout and style of the front end. To see screenshots of the backend manager, please take a look [here](http://dodgercms.com/#screenshots).
 
 ## Features
 
