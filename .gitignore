@@ -16,6 +16,9 @@ coverage
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 
+# AWS creds for deploying DodgerCMS to bucket
+grunt-aws.json
+
 # node-waf configuration
 .lock-wscript
 

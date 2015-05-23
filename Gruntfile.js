@@ -59,6 +59,39 @@ module.exports = function(grunt) {
           spawn: false,
         }
       }
+    },
+    aws: grunt.file.readJSON('./grunt-aws.json'),
+    s3: {
+      options: {
+        key: '<%= aws.key %>',
+        secret: '<%= aws.secret %>',
+        bucket: '<%= aws.bucket %>',
+        access: 'private'
+      },
+      dev: {
+        upload: [
+          {
+            src: 'index.html',
+            dest: 'index.html'
+          },
+          {
+            src: 'login.html',
+            dest: 'login.html'
+          },
+          {
+            src: 'lib/**',
+            dest: 'lib/**'
+          },
+          {
+            src: 'templates/**',
+            dest: 'templates/**'
+          },
+          {
+            src: 'public/**',
+            dest: 'public/**'
+          },
+        ]
+      }
     }
   });
 
@@ -68,6 +101,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-mocha');
+  grunt.loadNpmTasks('grunt-s3');
 
   grunt.registerTask('default', ['handlebars', 'mocha', 'jshint', 'cssmin', 'uglify']);
+  grunt.registerTask('deploy', ['default', 's3']);
 };
