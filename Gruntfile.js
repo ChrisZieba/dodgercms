@@ -79,14 +79,6 @@ module.exports = function(grunt) {
             dest: 'login.html'
           },
           {
-            src: 'lib/**',
-            dest: 'lib/**'
-          },
-          {
-            src: 'templates/**',
-            dest: 'templates/**'
-          },
-          {
             src: 'public/**',
             dest: 'public/**'
           },
