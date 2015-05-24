@@ -1,0 +1,1 @@
+The changes you make to entries are available live. That means you do not to redeploy anything, or upload any files anywhere. Every time an entry is saved the `HTML` is regenerated and uploaded to your site bucket automatically. Any users visiting your site will get the fresh content as soon as it's saved.
