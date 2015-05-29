@@ -755,7 +755,7 @@ $(function() {
       var template = Handlebars.compile(source);
       var modified = new Date(data.LastModified);
 
-      // TODO: cache the objects from list
+      // TODO: cache the s3 objects
       dodgercms.s3.listObjects(DATA_BUCKET, function(err, list) {
         if (err) {
           errorHandler(err);
