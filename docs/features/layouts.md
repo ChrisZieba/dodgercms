@@ -23,9 +23,7 @@ The default layout (what you currently see) can be modified quite simply. The `H
         <div class="content">{{&body}}</div>
       </article>
 
-      <footer>
-
-      </footer>
+      <footer></footer>
     </div>
 </body>
 ```
@@ -35,7 +33,7 @@ The default layout (what you currently see) can be modified quite simply. The `H
 The template is passed a few variables you can use when displaying content.
 
 - `key`  
-  The `S3` key of the current document, which can be used as a relative link.
+  The S3 key of the current document, which can be used as a relative link.
 
 - `bucket`   
   The name of the site bucket where the rendered `HTML` is stored.
@@ -44,7 +42,7 @@ The template is passed a few variables you can use when displaying content.
   The `url` of the site bucket which depends on what region the bucket resides.
 
 - `dataKey`  
-  This is the path location in `S3` of the `JSON` data file that contains the tree structure of all entries. By default it is set to `.dodgercms/data.json`.
+  This is the path location in S3 of the `JSON` data file that contains the tree structure of all entries. By default it is set to `.dodgercms/data.json`.
 
 - `title`  
   The title given to the entry in the editor.

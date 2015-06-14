@@ -1,12 +1,12 @@
 **DodgerCMS** is a static markdown CMS built on top of [Amazon S3](http://aws.amazon.com/s3/). It is a clean and simple alternative to heavy content management systems. There are no databases to manage, deployments to monitor, or massive configuration files. Just focus on writing your content and the results are live immediately.
 
-The only requirement for DodgerCMS is an account with [Amazon Web Services](http://aws.amazon.com/). It is well suited for small blogs, documentation, and any static website that benefits from the simplicity of markdown. Content is uploaded into the manager and then converted to `HTML` each time the document is updated. DodgerCMS also keeps a data `JSON` file with up to date `URL`'s for each entry that can be used to build a menu system.
+The only requirement for DodgerCMS is an account with [Amazon Web Services](http://aws.amazon.com/). It is well-suited for small blogs, documentation, and any static website that benefits from the simplicity of markdown. Content is uploaded into the manager and then converted to `HTML` each time the document is updated. DodgerCMS also keeps a data `JSON` file with up-to-date `url`'s for each entry that can be used to build a menu system.
 
 ## Features
 
 - [Full markdown editor](http://dodgercms.com/features/editor)
   - Simple toolbar and easy file manipulation
-  - [Github flavored markdown](https://help.github.com/articles/github-flavored-markdown/) with syntax highlighting
+  - [GitHub flavored markdown](https://help.github.com/articles/github-flavored-markdown/) with syntax highlighting
 - [Upload images directly to the cloud](http://dodgercms.com/features/images)
   - Upload and insert images directly into your document
 - [Handle changes in `url` structure automatically](http://dodgercms.com/features/menu)
@@ -32,7 +32,7 @@ The only requirement for DodgerCMS is an account with [Amazon Web Services](http
 
 ### How does authentication work?
 
-> A federated token is created from a user with enough credentials to access the buckets in s3. This token renews every `36` hours, if the `access key` and `secret` are stored in local browser storage. For more information see [here](http://dodgercms.com/help/installation#user-account).
+> A federated token is created from a user with enough credentials to access the buckets in S3. This token renews every `36` hours, if the `access key` and `secret` are stored in local browser storage. For more information see [here](http://dodgercms.com/help/installation#user-account).
 
 ### How does the menu work?
 
