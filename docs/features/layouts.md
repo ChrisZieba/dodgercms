@@ -23,9 +23,7 @@ The default layout (what you currently see) can be modified quite simply. The `H
         <div class="content">{{&body}}</div>
       </article>
 
-      <footer>
-
-      </footer>
+      <footer></footer>
     </div>
 </body>
 ```
