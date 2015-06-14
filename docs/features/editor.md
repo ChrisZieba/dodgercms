@@ -14,11 +14,11 @@ The toolbar only contains a few items. In the future, more items may be added to
   The preview button allows you to easily view the rendered result of your entry. Quickly toggle between `edit` and `preview` mode to get a bird's eye view of the working document.
 
 - **Upload Image**  
-  Images can be uploaded directly to your `S3` bucket and then inserted directly into your document with a single click. This makes working with images extremely fast and efficient. 
+  Images can be uploaded directly to your S3 bucket and then inserted directly into your document with a single click. This makes working with images extremely fast and efficient. 
 
 ## Syntax Highlighting
 
-DodgerCMS uses [highlightjs](https://highlightjs.org/) for all syntax highlighting, which supports up to 118 languages.
+DodgerCMS uses [highlight.js](https://highlightjs.org/) for all syntax highlighting, which supports up to 118 languages.
 
 ```html
 <!DOCTYPE html>
@@ -31,7 +31,7 @@ DodgerCMS uses [highlightjs](https://highlightjs.org/) for all syntax highlighti
 </script>
 
 <body>
-  <p checked class="title" id='title'>Title</p>
+  <p checked class="title" id="title">Title</p>
   <!-- here goes the rest of the page -->
 </body>
 ```

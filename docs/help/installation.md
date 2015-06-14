@@ -116,7 +116,7 @@ DodgerCMS requires a static website bucket in S3 for the frontend website, and a
 
 ## User Account
 
-Create a user account in AWS for the application. **You should not give this user permissions to anything other than the `S3` buckets needed for this application.** The user does not need sign-in credentials to the console, but it does need an **access key** for the authentication to the manager. These credentials are exchanged for the federated token and are not stored by the application, unless explicitly chosen.
+Create a user account in AWS for the application. **You should not give this user permissions to anything other than the S3 buckets needed for this application.** The user does not need sign-in credentials to the console, but it does need an **access key** for the authentication to the manager. These credentials are exchanged for the federated token and are not stored by the application, unless explicitly chosen.
 
 ### Sample Policy
 
