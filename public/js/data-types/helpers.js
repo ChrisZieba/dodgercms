@@ -6,7 +6,6 @@ Handlebars.registerHelper('before_after_split', function(id, wysiwyg){
   var $context = $.parseHTML(this.content);
   var el = _.findWhere($context, {id: id});
   $(el).find('.before, .after').remove();
-  console.log(wysiwyg);
   if(wysiwyg !== 'wysiwyg'){
     return $(el).text();
   }
@@ -52,7 +51,7 @@ Handlebars.registerHelper('multiples_text', function(id){
       html += '<div><input type="text" value="'+$(this).text()+'" id="'+$(this).attr('id')+'"/>';
       if($(this).attr('id') != id+'_0'){
         //add a delete button
-        html += '<button class="button-xsmall pure-button remove-multiple" data-target="'+id+'"><i class="fa fa-times"></i></button>';
+        html += '<button class="button-xsmall pure-button remove-multiple"><i class="fa fa-times"></i></button>';
       }
       html += '</div>';
     }); ;

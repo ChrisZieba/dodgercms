@@ -846,6 +846,7 @@ $(function() {
           addDataTypeSelector(null);
           setVisibilitySelect(data.Metadata.visibility);
           addBeforeAfterText();
+          addAttachmentInputs(body);
           //set the datatype selector to the document's datatype
           $('#datatype').val(data.Metadata.datatype);
 
@@ -1071,22 +1072,24 @@ $(function() {
   // Event listener for the upload image toolbar button
   $(document).on('change', '#upload-image', function(event) {
     var file = $('#upload-image')[0].files[0];
-    var content = $('#entry-form-content');
-
-    // Only images can be uploaded
-    var types = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'];
-    if (!file || types.indexOf(file.type) < 0) {
-      alert('Only images can be uploaded.');
-      return;
-    }
+    var $content = $('#content-body-container');
 
     // Only upload if editing
-    if (content.length <= 0 || !content.is(':visible')) {
+    if ($content.length <= 0 || !$content.is(':visible')) {
       return;
     }
 
-    // Replace any illegal characters from the filename
-    var filename = 'images/' + file.name.replace(/\s|\\|\/|\(|\)/g,'-');
+    var filename = '';
+
+    // Images
+    var types = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'];
+    if (types.indexOf(file.type) !== -1) {
+      filename = 'images/' + file.name.replace(/\s|\\|\/|\(|\)/g,'-');
+    }
+    //Other files
+    else {
+      filename = 'files/' + file.name.replace(/\s|\\|\/|\(|\)/g,'-');
+    }
 
     // Where to upload the image
     var link = 'http://' + ASSETS_BUCKET + '.' + S3_ENDPOINT + '/' + filename;
@@ -1101,13 +1104,14 @@ $(function() {
       if (err) {
         errorHandler(err);
       } else {
-        // Insert the markdown with the correct link into the document
-        var cursorPosStart = content.prop('selectionStart');
-        var cursorPosEnd = content.prop('selectionEnd');
-        var v = content.val();
-        var textBefore = v.substring(0,  cursorPosStart );
-        var textAfter = v.substring( cursorPosEnd, v.length );
-        content.val(textBefore + '![' + file.name + ']' + '(' + link + ')' + textAfter);
+        // Insert a hidden input element with the link to the file url
+        //TODO create way to recall these on edit.
+        //TODO also the files should be uniquely named so you can't delete them from another page if the filenames match
+        $content.prepend('<div>'+
+                            '<input id="attachment-'+file.name.replace(/\s|\\|\/|\(|\)/g,'-')+'" type="hidden" value="'+file.name+'" data-wrapwith="<a data-type=\'attachment\' data-key=\''+filename+'\' href=\''+link+'\'></a>" />'+
+                            '<i class="fa fa-paperclip"></i> '+file.name+
+                            '<button class="button-xsmall pure-button remove-upload" data-key="'+filename+'"><i class="fa fa-times"></i></button>'+
+                          '</div>');
       }
     });
   });
@@ -1234,5 +1238,29 @@ $(function() {
       event.preventDefault();
       $(this).parent().remove();
   });
+
+  //Event listener for removing a file upload
+  $('body').delegate('.remove-upload', 'click', function(event){
+      event.preventDefault();
+      var $self = $(this);
+      dodgercms.s3.deleteObject($(this).data('key'), ASSETS_BUCKET, function(){
+        console.log('Removed File', $self.data('key'));
+        $self.parent().remove();
+      });
+
+  });
+
+  function addAttachmentInputs(body){
+    //get the file attachments, if any and put in inputs
+    $(body).find('a[data-type="attachment"]').each(function(){
+      var file_parts = $(this).data('key').split('/');
+      var file_name = file_parts[file_parts.length-1];
+      $('#content-body-container').prepend('<div>'+
+                          '<input id="attachment-'+file_name.replace(/\s|\\|\/|\(|\)/g,'-')+'" type="hidden" value="'+file_name+'" data-wrapwith="<a data-type=\'attachment\' data-key=\''+$(this).data('key')+'\' href=\''+$(this).attr('href')+'\'></a>" />'+
+                          '<i class="fa fa-paperclip"></i> '+file_name+
+                          '<button class="button-xsmall pure-button remove-upload" data-key="'+$(this).data('key')+'"><i class="fa fa-times"></i></button>'+
+                        '</div>');
+    });
+  }
 
 });
