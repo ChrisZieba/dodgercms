@@ -654,8 +654,15 @@ $(function() {
       }
 
       if($(this).val() !== ''){
-        content += '<div id="' + $(this).attr('id') + '">' +
-                    '<span class="before">' + before + '</span>';
+        var cssclass = '';
+        if($(this).data('class')){
+          cssclass = ' class="'+$(this).data('class')+'"';
+        }
+
+        content += '<div id="' + $(this).attr('id') + '"'+cssclass+'>';
+        if(before !== ''){
+          content += '<span class="before">' + before + '</span>';
+        }
         if($(this).data('wrapwith')){
           var nodes = $(this).data('wrapwith').split('><');
           if(nodes.length == 2){
@@ -669,8 +676,10 @@ $(function() {
           content += $.trim($(this).val());
         }
 
-        content +=  '<span class="after">' + after+ '</span>'+
-                  '</div>';
+        if(after !== ''){
+          content += '<span class="after">' + after + '</span>';
+        }
+        content +=  '</div>';
       }
     });
     return content;
