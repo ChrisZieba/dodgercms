@@ -2,11 +2,17 @@
  * Data Types Helpers
  */
 
-Handlebars.registerHelper('before_after_split', function(id){
+Handlebars.registerHelper('before_after_split', function(id, wysiwyg){
   var $context = $.parseHTML(this.content);
   var el = _.findWhere($context, {id: id});
   $(el).find('.before, .after').remove();
-  return $(el).text();
+  console.log(wysiwyg);
+  if(wysiwyg !== 'wysiwyg'){
+    return $(el).text();
+  }
+  else {
+    return $(el).html();
+  }
 });
 
 Handlebars.registerHelper('checked_element', function(id){
