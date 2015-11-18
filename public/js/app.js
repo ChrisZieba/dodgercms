@@ -848,6 +848,13 @@ $(function() {
           //set the datatype selector to the document's datatype
           $('#datatype').val(data.Metadata.datatype);
 
+          //set any select elements to their data-value attribute values
+          $('#entry-form select').each(function(){
+            if($(this).data('value')){
+              $(this).val($(this).data('value'));
+            }
+          });
+
           //set the external link to the asset
           $('#view-entry').attr('href', SITE_ENDPOINT + $('#entry-form-folder').val() + $('#entry-form-slug').val());
         }

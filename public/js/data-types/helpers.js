@@ -6,7 +6,7 @@ Handlebars.registerHelper('before_after_split', function(id){
   var $context = $.parseHTML(this.content);
   var el = _.findWhere($context, {id: id});
   $(el).find('.before, .after').remove();
-  return $(el).html();
+  return $(el).text();
 });
 
 Handlebars.registerHelper('checked_element', function(id){
@@ -31,7 +31,7 @@ Handlebars.registerHelper('multiples_text', function(id){
   else {
     $(els).each(function(){
       $(this).find('.before, .after').remove();
-      html += '<div><input type="text" value="'+$(this).html()+'" id="'+$(this).attr('id')+'"/>';
+      html += '<div><input type="text" value="'+$(this).text()+'" id="'+$(this).attr('id')+'"/>';
       if($(this).attr('id') != id+'_0'){
         //add a delete button
         html += '<button class="button-xsmall pure-button add-multiple" data-target="'+id+'"><i class="fa fa-times"></i></button>';
