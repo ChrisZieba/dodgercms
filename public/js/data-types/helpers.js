@@ -34,7 +34,7 @@ Handlebars.registerHelper('multiples_text', function(id){
       html += '<div><input type="text" value="'+$(this).text()+'" id="'+$(this).attr('id')+'"/>';
       if($(this).attr('id') != id+'_0'){
         //add a delete button
-        html += '<button class="button-xsmall pure-button add-multiple" data-target="'+id+'"><i class="fa fa-times"></i></button>';
+        html += '<button class="button-xsmall pure-button remove-multiple" data-target="'+id+'"><i class="fa fa-times"></i></button>';
       }
       html += '</div>';
     }); ;

@@ -1224,4 +1224,10 @@ $(function() {
 
   });
 
+  //Event listener for removing a multiple row
+  $('body').delegate('.remove-multiple', 'click', function(event){
+      event.preventDefault();
+      $(this).parent().remove();
+  });
+
 });
