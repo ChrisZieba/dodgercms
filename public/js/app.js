@@ -997,8 +997,7 @@ $(function() {
     var context = {
       title: content.Metadata.title,
       modified: modified.toLocaleString(),
-      // TODO: provide a link to the actual resource
-      link: '',
+      link: SITE_ENDPOINT+key,
       key: key,
       content: marked(body, markedOptions)
     };
