@@ -844,6 +844,7 @@ $(function() {
 
           addTinyMCE();
           addDataTypeSelector(null);
+          setVisibilitySelect(data.Metadata.visibility);
           addBeforeAfterText();
           //set the datatype selector to the document's datatype
           $('#datatype').val(data.Metadata.datatype);
@@ -1186,11 +1187,16 @@ $(function() {
       }, 500);
     });
     $('#datatype').val(datatype);
-
   }
   _.each(DATATYPES.models, function(element){
     $('#new-entry-data-types').append('<li><a data-value="'+element.get('id')+'">'+element.get('name')+'</a></li>');
   });
+
+  //set the visible/not visible value of the visibility select
+  function setVisibilitySelect(val){
+      $('#visibility').val(val);
+  }
+
   // Event listenter for the new entry button
   $('#new-entry-data-types a').click(function(event) {
     console.log($(this).data('value'));
