@@ -15,6 +15,18 @@ Handlebars.registerHelper('before_after_split', function(id, wysiwyg){
   }
 });
 
+Handlebars.registerHelper('radio', function(id, value){
+  var $context = $.parseHTML(this.content);
+  var el = _.findWhere($context, {id: id});
+
+  var html = 'id="'+id+'" name="'+id+'" value="'+value+'" type="radio"';
+  if($(el).text() == value) {
+    html += ' checked';
+  }
+
+  return html;
+});
+
 Handlebars.registerHelper('checked_element', function(id){
   var $context = $.parseHTML(this.content);
   var el = _.findWhere($context, {id: id});
