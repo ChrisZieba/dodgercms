@@ -1,0 +1,22 @@
+<label>Effective Date/Time</label>
+<input id="effective-date-time" value="{{{before_after_split "effective-date-time"}}}" data-before="This notice is effective as of " data-after="."/>
+<label>Affected Areas</label>
+<div class="col-lg-12 pure-form">
+  <label class="pure-checkbox"><input type="checkbox" id="beach-1" value="Chesapeake Beach" {{{checked_element "beach-1"}}}/> Chesapeake Beach</label>
+  <label class="pure-checkbox"><input type="checkbox" id="beach-2" value="Croatan Beach" {{{checked_element "beach-2"}}}/> Croatan Beach</label>
+  <label class="pure-checkbox"><input type="checkbox" id="beach-3" value="Sandbridge Beach" {{{checked_element "beach-3"}}}/> Sandbridge Beach</label>
+  <label class="pure-checkbox"><input type="checkbox" id="beach-4" value="Little Island Park Beach" {{{checked_element "beach-4"}}}/> Little Island Park Beach</label>
+  <label class="pure-checkbox"><input type="checkbox" id="beach-5" value="Oceanfront" {{{checked_element "beach-5"}}}/> Oceanfront</label>
+</div>
+<label>Message</label>
+<select id="message" data-value="{{{before_after_split "message"}}}" data-before="" data-after="">
+  <option value=""></option>
+  <option value="The following major roadways have been closed or detoured. Motorists are urged to use alternate routes.">The following major roadways have been closed or detoured. Motorists are urged to use alternate routes.</option>
+  <option value="The following major roadways have been re-opened:">The following major roadways have been re-opened:</option>
+</select>
+<label>Roadways</label>
+<div class="multiples">
+  {{{multiples_text "roads"}}}
+</div>
+<label>Notes</label>
+<textarea id="notes" class="pure-u-1 content-textarea wysiwyg" rows="25">{{{before_after_split "notes"}}}</textarea>
