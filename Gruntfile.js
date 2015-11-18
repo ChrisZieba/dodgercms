@@ -15,7 +15,7 @@ module.exports = function(grunt) {
       build: {
         files: {
           'public/js/dist/login.min.js': 'public/js/login.js',
-          'public/js/dist/app.min.js': 'public/js/app.js',
+          'public/js/dist/app.min.js': ['public/js/app.js', 'public/js/data-types/helpers.js', 'public/js/data-types/partials.js'],
           'public/js/dist/dodgercms.min.js': 'lib/**/*.js'
         }
       },
@@ -61,27 +61,21 @@ module.exports = function(grunt) {
       }
     },
     aws: grunt.file.readJSON('./grunt-aws.json'),
-    s3: {
+    aws_s3: {
       options: {
-        key: '<%= aws.key %>',
-        secret: '<%= aws.secret %>',
-        bucket: '<%= aws.bucket %>',
-        access: 'private'
+        accessKeyId: '<%= aws.key %>',
+        secretAccessKey: '<%= aws.secret %>',
+        uploadConcurrency: 5,
+        region: 'us-east-1',
+        debug: false
       },
-      dev: {
-        upload: [
-          {
-            src: 'index.html',
-            dest: 'index.html'
-          },
-          {
-            src: 'login.html',
-            dest: 'login.html'
-          },
-          {
-            src: 'public/**',
-            dest: 'public/**'
-          },
+      production: {
+        options: {
+            bucket: '<%= aws.bucket %>'
+        },
+        files: [
+          {action: 'upload', expand: true, cwd: '', src: ['*.html'], dest: '/'},
+          {action: 'upload', expand: true, cwd: 'public/', src: ['**'], dest: 'public/'}
         ]
       }
     }
@@ -93,8 +87,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-mocha');
-  grunt.loadNpmTasks('grunt-s3');
+  grunt.loadNpmTasks('grunt-aws-s3'); // the other library is unsupported; use this one
+  //grunt.loadNpmTasks('grunt-s3');
 
   grunt.registerTask('default', ['handlebars', 'mocha', 'jshint', 'cssmin', 'uglify']);
-  grunt.registerTask('deploy', ['default', 's3']);
+  grunt.registerTask('deploy', ['default', 'aws_s3:production']);
 };
