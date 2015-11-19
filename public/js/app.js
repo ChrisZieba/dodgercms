@@ -890,8 +890,7 @@ $(function() {
             body = data.Body.toString();
           }
 
-          var metadata = getMetadata();
-
+          var metadata = data.Metadata;
           dodgercms.entry.upsert(key, metadata, body, SITE_BUCKET, SITE_ENDPOINT, function(err, data) {
             if (err) {
               callback(err);
