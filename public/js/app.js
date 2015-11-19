@@ -849,11 +849,15 @@ $(function() {
 
           addTinyMCE();
           addDataTypeSelector(null);
+          addPageTemplateSelector(null);
           setVisibilitySelect(data.Metadata.visibility);
           addBeforeAfterText();
           addAttachmentInputs(body);
           //set the datatype selector to the document's datatype
           $('#datatype').val(data.Metadata.datatype);
+
+          //set the template selector to the document's template
+          $('#template').val(data.Metadata.template);
 
           //set any select elements to their data-value attribute values
           $('#entry-form select').each(function(){
@@ -974,6 +978,7 @@ $(function() {
 
         addTinyMCE();
         addDataTypeSelector(datatype);
+        addPageTemplateSelector(null);
       }
     });
   }
@@ -1196,6 +1201,25 @@ $(function() {
     });
     $('#datatype').val(datatype);
   }
+
+  //page template selector
+  function addPageTemplateSelector(template){
+    template = template || 'entry.html'; //default to entry.html
+    //add the data type to the drop down selector
+    for(var temp in dodgercms.templates) {
+      $('#template').append('<option value="'+temp+'">'+temp+'</option>');
+    }
+    $('#template').off('change');
+    $('#template').on('change', function(){
+      $('#entry-form').trigger('submit');
+      setTimeout(function(){
+        $('#close-entry').trigger('click');
+      }, 500);
+    });
+    $('#template').val(template);
+  }
+
+  //add to the main menu
   _.each(DATATYPES.models, function(element){
     $('#new-entry-data-types').append('<li><a data-value="'+element.get('id')+'">'+element.get('name')+'</a></li>');
   });
