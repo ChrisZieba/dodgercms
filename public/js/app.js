@@ -653,6 +653,10 @@ $(function() {
         }
       }
 
+      if($(this).is('[type="file"]')){
+        return; //file uploads are processed another way through a hidden input appended to the document
+      }
+
       if($(this).val() !== ''){
         var cssclass = '';
         if($(this).data('class')){
@@ -1071,8 +1075,11 @@ $(function() {
   });
 
   // Event listener for the upload image toolbar button
-  $(document).on('change', '#upload-image', function(event) {
-    var file = $('#upload-image')[0].files[0];
+  $(document).on('change', '.file-upload', function(event) {
+    var file = event.currentTarget.files[0];
+
+    var $input = $(event.currentTarget);
+    console.log($input);
     var $content = $('#content-body-container');
 
     // Only upload if editing
@@ -1085,11 +1092,11 @@ $(function() {
     // Images
     var types = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'];
     if (types.indexOf(file.type) !== -1) {
-      filename = 'images/' + file.name.replace(/\s|\\|\/|\(|\)/g,'-');
+      filename = 'images/' + Date.now() + '_' + file.name.replace(/\s|\\|\/|\(|\)/g,'-');
     }
     //Other files
     else {
-      filename = 'files/' + file.name.replace(/\s|\\|\/|\(|\)/g,'-');
+      filename = 'files/' + Date.now() + '_' + file.name.replace(/\s|\\|\/|\(|\)/g,'-');
     }
 
     // Where to upload the image
@@ -1106,12 +1113,11 @@ $(function() {
         errorHandler(err);
       } else {
         // Insert a hidden input element with the link to the file url
-        //TODO also the files should be uniquely named so you can't delete them from another page if the filenames match
-        $content.prepend('<div>'+
-                            '<input id="attachment-'+file.name.replace(/\s|\\|\/|\(|\)/g,'-')+'" type="hidden" value="'+file.name+'" data-wrapwith="<a data-type=\'attachment\' data-key=\''+filename+'\' href=\''+link+'\'></a>" />'+
-                            '<i class="fa fa-paperclip"></i> '+file.name+
-                            '<button class="button-xsmall pure-button remove-upload" data-key="'+filename+'"><i class="fa fa-times"></i></button>'+
-                          '</div>');
+        $input.after('<div>'+
+                        '<input id="attachment-'+filename.replace(/\s|\\|\/|\(|\)/g,'-')+'" type="hidden" value="'+filename+'" data-wrapwith="<a data-type=\'attachment\' data-key=\''+filename+'\' href=\''+link+'\' data-input=\''+$input.attr('id')+'\'></a>" />'+
+                        '<i class="fa fa-paperclip"></i> '+filename+
+                        '<button class="button-xsmall pure-button remove-upload" data-key="'+filename+'"><i class="fa fa-times"></i></button>'+
+                      '</div>');
       }
     });
   });
@@ -1243,22 +1249,21 @@ $(function() {
   $('body').delegate('.remove-upload', 'click', function(event){
       event.preventDefault();
       var $self = $(this);
-      dodgercms.s3.deleteObject($(this).data('key'), ASSETS_BUCKET, function(){
+      dodgercms.s3.deleteObject($self.data('key'), ASSETS_BUCKET, function(){
         console.log('Removed File', $self.data('key'));
         $self.parent().remove();
       });
-
   });
 
   function addAttachmentInputs(body){
     //get the file attachments, if any and put in inputs
     $(body).find('a[data-type="attachment"]').each(function(){
-      var file_parts = $(this).data('key').split('/');
-      var file_name = file_parts[file_parts.length-1];
-      $('#content-body-container').prepend('<div>'+
-                          '<input id="attachment-'+file_name.replace(/\s|\\|\/|\(|\)/g,'-')+'" type="hidden" value="'+file_name+'" data-wrapwith="<a data-type=\'attachment\' data-key=\''+$(this).data('key')+'\' href=\''+$(this).attr('href')+'\'></a>" />'+
-                          '<i class="fa fa-paperclip"></i> '+file_name+
-                          '<button class="button-xsmall pure-button remove-upload" data-key="'+$(this).data('key')+'"><i class="fa fa-times"></i></button>'+
+      var filename = $(this).data('key');
+
+      $('#'+$(this).data('input')).after('<div>'+
+                          '<input id="attachment-'+filename.replace(/\s|\\|\/|\(|\)/g,'-')+'" type="hidden" value="'+filename+'" data-wrapwith="<a data-type=\'attachment\' data-key=\''+filename+'\' href=\''+$(this).attr('href')+'\' data-input=\''+$(this).data('input')+'\'></a>" />'+
+                          '<i class="fa fa-paperclip"></i> '+filename+
+                          '<button class="button-xsmall pure-button remove-upload" data-key="'+filename+'"><i class="fa fa-times"></i></button>'+
                         '</div>');
     });
   }
