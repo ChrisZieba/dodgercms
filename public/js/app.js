@@ -833,6 +833,7 @@ $(function() {
             selectedFolder: selectedFolder,
             slug: slug,
             content: body,
+            siteEndpoint: SITE_ENDPOINT,
             whichPartial: function(){
               return 'data-type-is-'+data.Metadata.datatype;
             }
@@ -858,7 +859,7 @@ $(function() {
           });
 
           //set the external link to the asset
-          $('#view-entry').attr('href', SITE_ENDPOINT + $('#entry-form-folder').val() + $('#entry-form-slug').val());
+        //  $('#view-entry').attr('href', SITE_ENDPOINT + $('#entry-form-folder').val() + $('#entry-form-slug').val());
         }
       });
     });
@@ -1105,7 +1106,6 @@ $(function() {
         errorHandler(err);
       } else {
         // Insert a hidden input element with the link to the file url
-        //TODO create way to recall these on edit.
         //TODO also the files should be uniquely named so you can't delete them from another page if the filenames match
         $content.prepend('<div>'+
                             '<input id="attachment-'+file.name.replace(/\s|\\|\/|\(|\)/g,'-')+'" type="hidden" value="'+file.name+'" data-wrapwith="<a data-type=\'attachment\' data-key=\''+filename+'\' href=\''+link+'\'></a>" />'+
