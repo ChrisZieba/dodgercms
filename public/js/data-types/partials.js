@@ -13,9 +13,10 @@ var DATATYPE = Backbone.Model.extend({
  var DATATYPES = new Backbone.Collection([
   /* Basic HTML Template */
   {id: 'html', name: 'HTML'},
+  {id: 'markdown', name: 'Markdown'},
 
    /* Multiple Text Items (and other examples) */
-   {id: 'multiples', name: 'Multiple Text Items'} 
+   {id: 'multiples', name: 'Multiple Text Items'}
 
  ], {model: DATATYPE}
 );

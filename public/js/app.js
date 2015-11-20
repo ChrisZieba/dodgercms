@@ -662,8 +662,9 @@ $(function() {
         if($(this).data('class')){
           cssclass = ' class="'+$(this).data('class')+'"';
         }
-
-        content += '<div id="' + $(this).attr('id') + '"'+cssclass+'>';
+        if($(this).attr('id') != 'markdown'){
+          content += '<div id="' + $(this).attr('id') + '"'+cssclass+'>';
+        }
         if(before !== ''){
           content += '<span class="before">' + before + '</span>';
         }
@@ -683,7 +684,9 @@ $(function() {
         if(after !== ''){
           content += '<span class="after">' + after + '</span>';
         }
-        content +=  '</div>';
+        if($(this).attr('id') != 'markdown'){
+          content +=  '</div>';
+        }
       }
     });
     return content;
@@ -842,17 +845,18 @@ $(function() {
               return 'data-type-is-'+data.Metadata.datatype;
             }
           };
-
           // Render the template and load the contents into the page
           var html = template(context);
           $('#main').html(html);
-
           addTinyMCE();
-          addDataTypeSelector(null);
+          addDataTypeSelector(data.Metadata.datatype);
           addPageTemplateSelector(null);
           setVisibilitySelect(data.Metadata.visibility);
           addBeforeAfterText();
-          addAttachmentInputs(body);
+          if(data.Metadata.datatype !== 'markdown'){
+            addAttachmentInputs(body);
+          }
+
           //set the datatype selector to the document's datatype
           $('#datatype').val(data.Metadata.datatype);
 
@@ -1081,9 +1085,7 @@ $(function() {
   // Event listener for the upload image toolbar button
   $(document).on('change', '.file-upload', function(event) {
     var file = event.currentTarget.files[0];
-
     var $input = $(event.currentTarget);
-    console.log($input);
     var $content = $('#content-body-container');
 
     // Only upload if editing
@@ -1231,7 +1233,6 @@ $(function() {
 
   // Event listenter for the new entry button
   $('#new-entry-data-types a').click(function(event) {
-    console.log($(this).data('value'));
     newEntry(null, $(this).data('value'));
   });
 
