@@ -19,6 +19,7 @@ $(function() {
   var CONTENT_TYPE = 'text/plain; charset=UTF-8';
   var S3_ENDPOINT = 's3.amazonaws.com';
 
+
   // Options for the markdown converter
   var markedOptions = {
     renderer: new marked.Renderer(),
@@ -26,7 +27,7 @@ $(function() {
     tables: true,
     breaks: false,
     pedantic: false,
-    sanitize: true,
+    sanitize: false,
     smartLists: true,
     smartypants: false,
     highlight: function(code) {
@@ -62,7 +63,7 @@ $(function() {
     if (!accessKeyId || !secretAccessKey || !sessionToken) {
       dodgercms.auth.redirect();
     }
-    
+
     // Init the s3 connection
     dodgercms.s3.init(accessKeyId, secretAccessKey, sessionToken, force);
   }
@@ -85,7 +86,7 @@ $(function() {
       dodgercms.auth.login(function(err, data) {
         // Remove the page blocker
         unblock();
-        
+
         if (err) {
           // Redirect to the login page
           dodgercms.auth.redirect();
@@ -124,10 +125,10 @@ $(function() {
 
           // Push the bucket onto the array as the root
           tree.push({
-            'id': 's3--root', 
-            'parent': '#', 
+            'id': 's3--root',
+            'parent': '#',
             'text': '<span class="bucket">' + DATA_BUCKET + '</span>',
-            'type': 'folder', 
+            'type': 'folder',
             'a_attr': {
               'title': DATA_BUCKET
             },
@@ -161,7 +162,7 @@ $(function() {
             for (var j = 0; j < parts.length; j+=1) {
               var isFolder = false;
 
-              // If the last part in the key has a trailing slash or if the part 
+              // If the last part in the key has a trailing slash or if the part
               // is in not the last element it is a path
               if ((j === parts.length-1 && key.substr(-1) === '/') || j !== parts.length-1) {
                 isFolder = true;
@@ -174,7 +175,7 @@ $(function() {
               if (isFolder) {
                 search += '-folder';
               }
-              
+
               // Check to see if the id exists in the tree already
               var result = $.grep(tree, searchFn);
 
@@ -193,8 +194,8 @@ $(function() {
 
                 // Tree node
                 var node = {
-                  'id' : search, 
-                  'parent' : parent, 
+                  'id' : search,
+                  'parent' : parent,
                   'text' : parts[j],
                   'type': (isFolder) ? 'folder' : 'file',
                   'a_attr': {},
@@ -203,22 +204,21 @@ $(function() {
                   }
                 };
 
-                // Only key ojects need the data atribute
+                // Only key objects need the data attribute
                 if (isFolder) {
                   node.li_attr = {
                     'data-key': (j > 0) ? parts.slice(0,j+1).join('/') + '/' : parts[j] + '/'
                   };
-
                   // The last part of the key will have the label
                   if ((parts.slice(0,j+1).join('/')  === parts.join('/')) && object.Metadata.label) {
                     node.li_attr['data-label'] = object.Metadata.label;
                     node.a_attr.title = object.Metadata.label;
-                  } 
+                  }
                 } else {
                   // The last part of the key will have the title
                   if ((parts.slice(0,j+1).join('/')  === parts.join('/')) && object.Metadata.title) {
                     node.a_attr.title = object.Metadata.title;
-                  } 
+                  }
 
                   if (parts[j] === 'index') {
                     //node.text = '<span class=index-key>' + parts[j] + '</span>';
@@ -253,9 +253,9 @@ $(function() {
                     }
                   });
                 }
-                
+
                 break;
-            } 
+            }
           };
 
           // Custom drop down menu for nodes in the tree
@@ -327,7 +327,7 @@ $(function() {
 
                   // The new key name
                   target = parts.join('/');
-                } 
+                }
 
                 // Rename the entry in S3
                 dodgercms.entry.rename(key, target, DATA_BUCKET, SITE_BUCKET, function(err, data) {
@@ -410,7 +410,7 @@ $(function() {
               if (input === null) {
                 return;
               }
-             
+
               // This will delete from S3
               dodgercms.entry.remove(key, DATA_BUCKET, SITE_BUCKET, function(err, data) {
                 if (err) {
@@ -461,7 +461,7 @@ $(function() {
                 action: removeItem
               }
             };
-            
+
             // Folders get extra items added to the menu
             if (node.type === 'folder') {
               var label = node.li_attr['data-label'];
@@ -529,14 +529,14 @@ $(function() {
               // Move index files to the top
               if (nodeA.type === nodeB.type) {
                 // If the types are the same, sort by name
-                return this.get_text(a) > this.get_text(b) ? 1 : -1; 
+                return this.get_text(a) > this.get_text(b) ? 1 : -1;
               } else {
                 if (nodeA.type === 'index') {
                   return -1;
                 } else if (nodeB.type === 'index') {
                   return 1;
                 } else {
-                  return nodeA.type === 'file' ? 1 : -1; 
+                  return nodeA.type === 'file' ? 1 : -1;
                 }
               }
             }
@@ -567,7 +567,7 @@ $(function() {
    * @param {String} parent The parent folder
    * @param {String} text The text used in the tree node
    * @param {String} title The title of the entry
-   * @return {Object} A new jsTree node 
+   * @return {Object} A new jsTree node
   */
   function addNode(key, parent, text, title) {
     var folder = dodgercms.utils.isFolder(key);
@@ -577,8 +577,8 @@ $(function() {
     parent = getTreeNodeId(parent);
 
     var node = {
-      'id' : id, 
-      'parent' : parent, 
+      'id' : id,
+      'parent' : parent,
       'text' : text,
       'type': (folder) ? 'folder' : 'file',
       'li_attr': {
@@ -603,7 +603,7 @@ $(function() {
     if (!doesTreeNodeExist(id)) {
       $('#tree').jstree('create_node', '#' + parent, node);
     }
-    
+
     return node;
   }
 
@@ -612,8 +612,8 @@ $(function() {
    * events in the background are still being processed.
   */
   function block() {
-    $.blockUI({ 
-      css: { 
+    $.blockUI({
+      css: {
         'border': 'none',
         'padding': '15px',
         'backgroundColor': '#000',
@@ -622,13 +622,13 @@ $(function() {
         'opacity': 0.5,
         'color': '#fff'
       },
-      // Styles for the overlay 
-      overlayCSS:  { 
-        'backgroundColor': '#000', 
-        'opacity': 0, 
-        'cursor': 'wait' 
+      // Styles for the overlay
+      overlayCSS:  {
+        'backgroundColor': '#000',
+        'opacity': 0,
+        'cursor': 'wait'
       }
-    }); 
+    });
   }
 
   /**
@@ -639,23 +639,86 @@ $(function() {
   }
 
   /**
+   * Process multiple form entry inputs into a single HTML element
+   */
+  function processFormFields($content) {
+    var content = '';
+    $content.find('input, select, textarea').each(function(){
+      var before = ($(this).data('before') ? $(this).data('before') : '');
+      var after = ($(this).data('after') ? $(this).data('after') : '');
+
+      if($(this).is(':radio') || $(this).is(':checkbox')){
+        if($(this).is(':not(:checked)')){
+          return;
+        }
+      }
+
+      if($(this).is('[type="file"]')){
+        return; //file uploads are processed another way through a hidden input appended to the document
+      }
+
+      if($(this).val() !== ''){
+        var cssclass = '';
+        if($(this).data('class')){
+          cssclass = ' class="'+$(this).data('class')+'"';
+        }
+        if($(this).attr('id') != 'markdown'){
+          content += '<div id="' + $(this).attr('id') + '"'+cssclass+'>';
+        }
+        if(before !== ''){
+          content += '<span class="before">' + before + '</span>';
+        }
+        if($(this).data('wrapwith')){
+          var nodes = $(this).data('wrapwith').split('><');
+          if(nodes.length == 2){
+            content += nodes[0] + '>' + $.trim($(this).val()) + '<' + nodes[1];
+          }
+          else {
+            content += $.trim($(this).val());
+          }
+        }
+        else {
+          content += $.trim($(this).val());
+        }
+
+        if(after !== ''){
+          content += '<span class="after">' + after + '</span>';
+        }
+        if($(this).attr('id') != 'markdown'){
+          content +=  '</div>';
+        }
+      }
+    });
+    return content;
+  }
+
+  function getMetadata(){
+    var metadata = {};
+    $('#document-editor .metadata').each(function(){
+      metadata[$(this).attr('id')] = $(this).val();
+    });
+    return metadata;
+  }
+
+
+  /**
    * Save an entry.
    *
    * @param {Object} event The JavaScript event
   */
   function save(event) {
     event.preventDefault();
-    
+
     // Get the form values
-    var $title = $('#entry-form-title');
+    var $title = $('#title');
     var $folder = $('#entry-form-folder');
     var $slug = $('#entry-form-slug');
-    var $content = $('#entry-form-content');
+    var $content = $('#content-body-container');
 
     var title = $.trim($title.val());
     var folder = $('option:selected', $folder).data('folder');
     var slug = $.trim($slug.val()).toLowerCase();
-    var content = $.trim($content.val());
+    var content = processFormFields($content);
 
     // The title cannot be empty
     if (!title.length || title.length > 64) {
@@ -668,27 +731,28 @@ $(function() {
       alert('The url slug must be at most 32 characters, and can only contain letters, numbers, dashes, underscores.');
       return;
     }
-
     // Block the page
     block();
 
+    var metadata = getMetadata();
+
     // Callback used after the entry was uploaded to S3
-    var callback = function(key, folder, slug, title) {
+    var callback = function(key, folder, slug) {
       // Update the key
       $('#main').data('key', key);
 
       // Add the node to the tree (only added if it doesnt exist)
       addNode(key, folder, slug, title);
-      
+
       // Update the data attributes
       $slug.attr('data-entry-form-slug', slug);
       $slug.data('entry-form-slug', slug);
       $slug.val(slug);
       $folder.attr('data-entry-form-folder', folder);
       $folder.data('entry-form-folder', folder);
-
+      var metadata = getMetadata();
       // Process the entry
-      dodgercms.entry.upsert(key, title, content, SITE_BUCKET, SITE_ENDPOINT, function(err, data) {
+      dodgercms.entry.upsert(key, metadata, content, SITE_BUCKET, SITE_ENDPOINT, function(err, data) {
         if (err) {
           errorHandler(err);
         } else {
@@ -705,8 +769,8 @@ $(function() {
     var $folderData = $folder.data('entry-form-folder');
     var $slugData = $slug.data('entry-form-slug');
 
-    // If the folder or slug has changed we need to move the object. The 
-    // reason for checking if the slugData exists is to determine 
+    // If the folder or slug has changed we need to move the object. The
+    // reason for checking if the slugData exists is to determine
     // if the entry exists already (i.e, not new).
     if ($slugData && $folderData && (($folderData !== folder) || ($slugData !== slug))) {
       // This is the where the entry was originally located before the save
@@ -717,7 +781,7 @@ $(function() {
           errorHandler(err);
         } else {
           $('#tree').jstree('delete_node', '#' + getTreeNodeId(oldKey));
-          callback(key, folder, slug, title);
+          callback(key, folder, slug);
         }
       });
     } else {
@@ -730,14 +794,12 @@ $(function() {
         ContentType:  CONTENT_TYPE,
         Expires: 0,
         CacheControl: 'public, max-age=0, no-cache',
-        Metadata: {
-          'title': title,
-        }
+        Metadata: metadata
       };
 
       // Put the object in its place
       dodgercms.s3.putObject(params, function(err, data) {
-        callback(key, folder, slug, title);
+        callback(key, folder, slug);
       });
     }
   }
@@ -750,12 +812,17 @@ $(function() {
   function editEntry(key) {
     // Gets the object data from S3
     dodgercms.s3.getObject(key, DATA_BUCKET, function(err, data) {
-      var body = data.Body.toString();
+      var body = '';
+      if(sessionStorage.getItem(data.ETag+'_'+key+'-Body')) {
+        body = JSON.parse(sessionStorage.getItem(data.ETag+'_'+key+'-Body'));
+      }
+      else if(data.Body !== null){
+        body = data.Body.toString();
+      }
       var source = $('#edit-entry-template').html();
       var template = Handlebars.compile(source);
       var modified = new Date(data.LastModified);
 
-      // TODO: cache the s3 objects
       dodgercms.s3.listObjects(DATA_BUCKET, function(err, list) {
         if (err) {
           errorHandler(err);
@@ -772,12 +839,76 @@ $(function() {
             folders: folders,
             selectedFolder: selectedFolder,
             slug: slug,
-            content: body
+            content: body,
+            siteEndpoint: SITE_ENDPOINT,
+            whichPartial: function(){
+              return 'data-type-is-'+data.Metadata.datatype;
+            }
           };
-
           // Render the template and load the contents into the page
           var html = template(context);
           $('#main').html(html);
+          addTinyMCE();
+          addDataTypeSelector(data.Metadata.datatype);
+          addPageTemplateSelector(null);
+          setVisibilitySelect(data.Metadata.visibility);
+          addBeforeAfterText();
+          if(data.Metadata.datatype !== 'markdown'){
+            addAttachmentInputs(body);
+          }
+
+          //set the datatype selector to the document's datatype
+          $('#datatype').val(data.Metadata.datatype);
+
+          //set the template selector to the document's template
+          $('#template').val(data.Metadata.template);
+
+          //set any select elements to their data-value attribute values
+          $('#entry-form select').each(function(){
+            if($(this).data('value')){
+              $(this).val($(this).data('value'));
+            }
+          });
+
+          //set the external link to the asset
+        //  $('#view-entry').attr('href', SITE_ENDPOINT + $('#entry-form-folder').val() + $('#entry-form-slug').val());
+        }
+      });
+    });
+  }
+
+  /**
+   * Do an edit and save operation on the entry (used on a template update)
+   *
+   * @param {String} key The key name
+  */
+  function quickPublishEntry(item, callback) {    // Gets the object data from S3
+    var key = item.Key;
+    dodgercms.s3.getObject(key, DATA_BUCKET, function(err, data) {
+      dodgercms.s3.listObjects(DATA_BUCKET, function(err, list) {
+        if (err) {
+          errorHandler(err);
+        } else {
+          // Process the entry
+          var body = '';
+          if(sessionStorage.getItem(data.ETag+'_'+key+'-Body')) {
+            body = JSON.parse(sessionStorage.getItem(data.ETag+'_'+key+'-Body'));
+          }
+          else {
+            body = data.Body.toString();
+          }
+
+          var metadata = data.Metadata;
+          dodgercms.entry.upsert(key, metadata, body, SITE_BUCKET, SITE_ENDPOINT, function(err, data) {
+            if (err) {
+              callback(err);
+              errorHandler(err);
+            }
+            else {
+              console.log('Updated', key);
+              callback(null);
+            }
+          });
         }
       });
     });
@@ -827,7 +958,7 @@ $(function() {
    *
    * @param {String} folder Where the entry will get placed
   */
-  function newEntry(folder) {
+  function newEntry(folder, datatype) {
     // The objects are needed so we can generate the folder dropd down
     dodgercms.s3.listObjects(DATA_BUCKET, function(err, data) {
       if (err) {
@@ -837,7 +968,10 @@ $(function() {
 
         var context = {
           folders: folders,
-          selectedFolder: (folder) ? folder : null
+          selectedFolder: (folder) ? folder : null,
+          whichPartial: function(){
+            return 'data-type-is-' + (datatype ? datatype : 'html');
+          }
         };
 
         // Render the template and load its contents into the page
@@ -845,6 +979,10 @@ $(function() {
         var template = Handlebars.compile(source);
         var html = template(context);
         $('#main').html(html);
+
+        addTinyMCE();
+        addDataTypeSelector(datatype);
+        addPageTemplateSelector(null);
       }
     });
   }
@@ -856,9 +994,16 @@ $(function() {
    * @param {String} content The key object from S3
   */
   function loadKeyContent(key, content) {
-    var body = content.Body.toString();
+    removeTinyMCE();
+    var body = '';
+    if(sessionStorage.getItem(content.ETag+'_'+key+'-Body')) {
+      body = JSON.parse(sessionStorage.getItem(content.ETag+'_'+key+'-Body'));
+    }
+    else if(content.Body !== null){
+      body = content.Body.toString();
+    }
 
-    // Check if the file is a markdown file, we dont wantt o load any images, etc
+    // Check if the file is a markdown file, we dont want to load any images, etc
     var source   = $('#entry-template').html();
     var template = Handlebars.compile(source);
     var modified = new Date(content.LastModified);
@@ -866,8 +1011,7 @@ $(function() {
     var context = {
       title: content.Metadata.title,
       modified: modified.toLocaleString(),
-      // TODO: provide a link to the actual resource
-      link: '',
+      link: SITE_ENDPOINT+key,
       key: key,
       content: marked(body, markedOptions)
     };
@@ -881,7 +1025,7 @@ $(function() {
     });
   }
 
-  // Event listenter for the delete entry button
+  // Event listener for the delete entry button
   $(document).on('click', '#delete-entry', function(event) {
     var key = $(this).data('key');
 
@@ -909,18 +1053,19 @@ $(function() {
 
   // Event listenter for the close entry button
   $(document).on('click', '#close-entry', function(event) {
-    var key = $('#main').data('key');
-    if (key && key !== '/') {
-      dodgercms.s3.getObject(key, DATA_BUCKET, function(err, data) {
-        if (err) {
-          errorHandler(err);
-        } else {
-          loadKeyContent(key, data);
-        }
-      });
-    } else {
-      clearEntry(key);
-    }
+      removeTinyMCE();
+      var key = $('#main').data('key');
+      if (key && key !== '/') {
+        dodgercms.s3.getObject(key, DATA_BUCKET, function(err, data) {
+          if (err) {
+            errorHandler(err);
+          } else {
+            loadKeyContent(key, data);
+          }
+        });
+      } else {
+        clearEntry(key);
+      }
   });
 
   // Event listener for when a new entry is submitted or saved
@@ -937,74 +1082,35 @@ $(function() {
     }
   });
 
-  // Event listenter for the preview entry toolbar button
-  $(document).on('click', '#preview-entry', function(event) {
-    // The content-preview div exists only if in preview mode
-    var preview = $('#content-preview');
-
-    // Textarea
-    var content = $('#entry-form-content');
-
-    // If the content is already being previewed, display the editor again
-    if (preview.length > 0) {
-      // Remove the preview content and show the editor
-      preview.remove();
-      content.show();
-
-      // Add in the correct icon
-      $(this).html('<i class="fa fa-search"></i>');
-      $(this).prop('title', 'Preview');
-      $('label[for=upload-image]').removeClass('none');
-    } else {
-      // Raw markdown
-      var md = content.val();
-      var html = '<div id="content-preview">' + marked(md, markedOptions) + '</div>';
-
-      // Hide the textarea
-      content.hide();
-
-      // Append the markdown to the container
-      $('#content-body-container').append(html);
-
-      // Highlight any code blocks
-      $('#content-preview pre code').each(function(i, block) {
-        hljs.highlightBlock(block);
-      });
-
-      $(this).html('<i class="fa fa-pencil"></i>');
-      $(this).prop('title', 'Write');
-
-      // Remove the upload image icon
-      $('label[for=upload-image]').addClass('none');
-    }
-  });
-
-  // Event listenter for the upload iamge toolbar button
-  $(document).on('change', '#upload-image', function(event) {
-    var file = $('#upload-image')[0].files[0];
-    var content = $('#entry-form-content');
-
-    // Only images can be uploaded
-    var types = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'];
-    if (!file || types.indexOf(file.type) < 0) {
-      alert('Only images can be uploaded.');
-      return;
-    }
+  // Event listener for the upload image toolbar button
+  $(document).on('change', '.file-upload', function(event) {
+    var file = event.currentTarget.files[0];
+    var $input = $(event.currentTarget);
+    var $content = $('#content-body-container');
 
     // Only upload if editing
-    if (content.length <= 0 || !content.is(':visible')) {
+    if ($content.length <= 0 || !$content.is(':visible')) {
       return;
     }
 
-    // Replace any illegal characters from the filename
-    var filename = 'images/' + file.name.replace(/\s|\\|\/|\(|\)/g,'-');
+    var filename = '';
+
+    // Images
+    var types = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'];
+    if (types.indexOf(file.type) !== -1) {
+      filename = 'images/' + Date.now() + '_' + file.name.replace(/\s|\\|\/|\(|\)/g,'-');
+    }
+    //Other files
+    else {
+      filename = 'files/' + Date.now() + '_' + file.name.replace(/\s|\\|\/|\(|\)/g,'-');
+    }
 
     // Where to upload the image
     var link = 'http://' + ASSETS_BUCKET + '.' + S3_ENDPOINT + '/' + filename;
     var params = {
       Bucket: ASSETS_BUCKET,
-      Key: filename, 
-      ContentType: file.type, 
+      Key: filename,
+      ContentType: file.type,
       Body: file
     };
 
@@ -1012,20 +1118,14 @@ $(function() {
       if (err) {
         errorHandler(err);
       } else {
-        // Insert the markdown with the correct link into the document
-        var cursorPosStart = content.prop('selectionStart');
-        var cursorPosEnd = content.prop('selectionEnd');
-        var v = content.val();
-        var textBefore = v.substring(0,  cursorPosStart );
-        var textAfter = v.substring( cursorPosEnd, v.length );
-        content.val(textBefore + '![' + file.name + ']' + '(' + link + ')' + textAfter);
+        // Insert a hidden input element with the link to the file url
+        $input.after('<div>'+
+                        '<input id="attachment-'+filename.replace(/\s|\\|\/|\(|\)/g,'-')+'" type="hidden" value="'+filename+'" data-wrapwith="<a data-type=\'attachment\' data-key=\''+filename+'\' href=\''+link+'\' data-input=\''+$input.attr('id')+'\'></a>" />'+
+                        '<i class="fa fa-paperclip"></i> '+filename+
+                        '<button class="button-xsmall pure-button remove-upload" data-key="'+filename+'"><i class="fa fa-times"></i></button>'+
+                      '</div>');
       }
     });
-  });
-
-  // Event listenter for the new entry button
-  $('#new-entry').click(function(event) {
-    newEntry(null);
   });
 
   // Purecss buttons seem to stay focused when you click them, so remove manually
@@ -1034,7 +1134,7 @@ $(function() {
     $(this).blur();
   });
 
-  // Event listenter for [ctrl-s] key events
+  // Event listener for [ctrl-s] key events
   $(document).bind('keydown', function(event) {
     if (event.ctrlKey && (event.which === 83)) {
       // Check if there is an entry loaded
@@ -1043,4 +1143,153 @@ $(function() {
       }
     }
   });
+
+  //Event listener to publish all files
+  $('.publish-all-link').click(function(event){
+    dodgercms.s3.listObjects(DATA_BUCKET, function(err, data) {
+      async.each(data.Contents, quickPublishEntry, function(err){
+          if(err){
+            alert('Error: '+err);
+          }
+          else {
+            alert('Publish operation is complete.');
+          }
+      });
+    });
+
+  });
+
+  //TinyMCE
+  function removeTinyMCE() {
+    $('.wysiwyg').each(function(){
+        tinymce.execCommand('mceRemoveEditor',true,$(this).attr('id'));
+    });
+  }
+
+  function addTinyMCE(){
+    tinymce.init({
+      selector: '.wysiwyg',
+      height: 300,
+      plugins: 'code table',
+      removed_menuitems: 'newdocument'
+    });
+  }
+
+  //add the before/after text of inputs so editors can see them.
+  function addBeforeAfterText(){
+    $('#entry-form').find('input,select,textarea').each(function(){
+      if($(this).data('before')){
+        $(this).before('<span class="recede">' + $(this).data('before') + ' </span>');
+      }
+      if($(this).data('after')){
+        $(this).after('<span class="recede">' + $(this).data('after') + ' </span>');
+      }
+    });
+  }
+
+
+  //data type selector
+  function addDataTypeSelector(datatype){
+    //add the data type to the drop down selector
+    _.each(DATATYPES.models, function(element){
+      $('#datatype').append('<option value="'+element.get('id')+'">'+element.get('name')+'</option>');
+    });
+    $('#datatype').off('change');
+    $('#datatype').on('change', function(){
+      $('#entry-form').trigger('submit');
+      setTimeout(function(){
+        $('#close-entry').trigger('click');
+      }, 500);
+    });
+    $('#datatype').val(datatype);
+  }
+
+  //page template selector
+  function addPageTemplateSelector(template){
+    template = template || 'entry.html'; //default to entry.html
+    //add the data type to the drop down selector
+    for(var temp in dodgercms.templates) {
+      $('#template').append('<option value="'+temp+'">'+temp+'</option>');
+    }
+    $('#template').off('change');
+    $('#template').on('change', function(){
+      $('#entry-form').trigger('submit');
+      setTimeout(function(){
+        $('#close-entry').trigger('click');
+      }, 500);
+    });
+    $('#template').val(template);
+  }
+
+  //add to the main menu
+  _.each(DATATYPES.models, function(element){
+    $('#new-entry-data-types').append('<li><a data-value="'+element.get('id')+'">'+element.get('name')+'</a></li>');
+  });
+
+  //set the visible/not visible value of the visibility select
+  function setVisibilitySelect(val){
+      $('#visibility').val(val);
+  }
+
+  // Event listenter for the new entry button
+  $('#new-entry-data-types a').click(function(event) {
+    newEntry(null, $(this).data('value'));
+  });
+
+  //event listener for republishing the Menu
+  $('.publish-menu-link').click(function(){
+    dodgercms.entry.menu(SITE_BUCKET, SITE_ENDPOINT, function(err) {
+      if (err) {
+        errorHandler(err);
+      } else {
+        rebuildTree();
+        //$('#main').data('key', key);
+      }
+    });
+  });
+
+  //event listener for adding a new multiple data type
+  $('body').delegate('.add-multiple', 'click', function(event){
+      event.preventDefault();
+      var target = $(this).data('target');
+      var n = $(this).prevAll().filter(function(){
+        return $(this).children('input').attr('id').indexOf(target) === 0;
+      }).length;
+
+      var row = $(this).prev().clone();
+      row.children('input').attr('id', target+'_'+n);
+      row.children('input').val('');
+      $(this).before(row);
+
+  });
+
+  //Event listener for removing a multiple row
+  $('body').delegate('.remove-multiple', 'click', function(event){
+      event.preventDefault();
+      $(this).parent().remove();
+  });
+
+  //Event listener for removing a file upload
+  $('body').delegate('.remove-upload', 'click', function(event){
+      event.preventDefault();
+      var $self = $(this);
+      dodgercms.s3.deleteObject($self.data('key'), ASSETS_BUCKET, function(){
+        console.log('Removed File', $self.data('key'));
+        $self.parent().remove();
+      });
+  });
+
+  function addAttachmentInputs(body){
+    //get the file attachments, if any and put in inputs
+    $(body).find('a[data-type="attachment"]').each(function(){
+      var filename = $(this).data('key');
+
+      $('#'+$(this).data('input')).after('<div>'+
+                          '<input id="attachment-'+filename.replace(/\s|\\|\/|\(|\)/g,'-')+'" type="hidden" value="'+filename+'" data-wrapwith="<a data-type=\'attachment\' data-key=\''+filename+'\' href=\''+$(this).attr('href')+'\' data-input=\''+$(this).data('input')+'\'></a>" />'+
+                          '<i class="fa fa-paperclip"></i> '+filename+
+                          '<button class="button-xsmall pure-button remove-upload" data-key="'+filename+'"><i class="fa fa-times"></i></button>'+
+                        '</div>');
+    });
+  }
+
 });

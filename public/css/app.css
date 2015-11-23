@@ -324,3 +324,48 @@ p.content-subtitle {
     margin-left: 37.5%;
   }
 }
+
+
+/* Fork additions */
+
+* {
+  letter-spacing: initial !important;
+}
+
+label {
+  display: block;
+  width: 100%;
+  margin-top: 20px;
+}
+
+label.pure-button {
+  width: auto;
+  font-weight: normal;
+}
+#metacontent {
+ background: rgba(0,0,0,0.1);
+ font-size: 0.9em;
+ padding: 10px;
+ margin-bottom: 10px;
+}
+
+#metacontent label {
+ margin-top: 6px;
+}
+
+.button-xsmall {
+ font-size: 0.7em;
+ padding: 4px;
+}
+
+.multiples > div {
+ margin: 6px 0;
+}
+
+.multiples > div button {
+ margin-left: 6px;
+}
+
+.recede {
+ color: #888888;
+}

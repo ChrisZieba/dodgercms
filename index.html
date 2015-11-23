@@ -32,6 +32,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.66.0-2013.10.09/jquery.blockUI.min.js"></script>
 
+  <<!-- Added TinyMCE -->
+  <script src="//tinymce.cachefly.net/4.2/tinymce.min.js"></script>
+
+  <!-- Added underscorejs, backbone, and bootstrap -->
+  <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.3/backbone-min.js"></script>
+  <script src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js'></script>
+
   <script src="public/js/dist/entry.min.js"></script>
   <script src="public/js/dist/app.min.js"></script>
   <script src="public/js/dist/dodgercms.min.js"></script>
@@ -55,86 +64,87 @@
 </script>
 
 <script id="edit-entry-template" type="text/x-handlebars-template">
-  <div class="content-header pure-g">
-    <div class="pure-u-3-4">
-      {{#if title}}
-        <h1 class="content-title">Editing <span>{{title}}</span></h1>
-      {{else}}
-        <h1 class="content-title">New Entry</h1>
-      {{/if}}
+  <div id="document-editor">
+    <div class="content-header pure-g">
+      <div class="pure-u-3-4">
+        {{#if title}}
+          <h1 class="content-title">Editing <span>{{title}}</span></h1>
+        {{else}}
+          <h1 class="content-title">New Entry</h1>
+        {{/if}}
+      </div>
+      <div class="content-controls pure-u-1-4">
+        {{#title}}
+          <button id="delete-entry" data-key="{{key}}" class="secondary-button pure-button" title="Delete"><i class="fa fa-trash"></i></button>
+        {{/title}}
+        <button id="close-entry" class="secondary-button pure-button" title="Close"><i class="fa fa-times"></i></button>
+      </div>
     </div>
-    <div class="content-controls pure-u-1-4">
-      {{#title}}
-        <button id="delete-entry" data-key="{{key}}" class="secondary-button pure-button" title="Delete"><i class="fa fa-trash"></i></button>
-      {{/title}}
-      <button id="close-entry" class="secondary-button pure-button" title="Close"><i class="fa fa-times"></i></button>
-    </div>
-  </div>
-  <div class="content-body">
-    <form id="entry-form" class="pure-form pure-form-stacked entry-form">
-      <fieldset>
-        <div class="pure-g">
+    <div class="content-body">
+      <form id="entry-form" class="pure-form entry-form">
+        <fieldset>
+          <div id="metacontent" class="pure-g">
+            <div class="pure-u-1-2">
+              <label>Page Template</label>
+              <select id="template" class="metadata"></select>
+            </div>
+            <div class="pure-u-1-2">
+              <label>Data Type</label>
+              <select id="datatype" class="{{whichPartial}} metadata"></select>
+            </div>
+            <div class="pure-u-1-2">
+              <label>Page Visibility</label>
+              <select id="visibility" class="metadata">
+                <option value="visible">Visible</option>
+                <option value="not-visible">Not Visible</option>
+              </select>
+            </div>
+            <div class="pure-g">
+              <label>Page Title</label>
+              <input id="title" class="pure-u-1 metadata" type="text" placeholder="Title" data-entry-form-title="{{title}}" value="{{title}}" required>
 
-          <input id="entry-form-title" class="pure-u-1" type="text" placeholder="Title" data-entry-form-title="{{title}}" value="{{title}}" required>
+              <label>Page URL</label>
+              <div class="pure-u-1-2">
+                <select id="entry-form-folder" data-entry-form-folder="{{selectedFolder}}" class="pure-u-23-24">
+                  {{#each folders}}
+                    <option value="{{this}}" data-folder="{{this}}" {{selected this ../selectedFolder}}>{{this}}</option>
+                  {{/each}}
+                </select>
+              </div>
 
-          <div class="pure-u-1-2">
-            <select id="entry-form-folder" data-entry-form-folder="{{selectedFolder}}" class="pure-u-23-24">
-              {{#each folders}}
-                <option value="{{this}}" data-folder="{{this}}" {{selected this ../selectedFolder}}>{{this}}</option>
-              {{/each}}
-            </select>
-          </div>
-
-          <input id="entry-form-slug" class="pure-u-1-2" type="text" placeholder="Slug" data-entry-form-slug="{{slug}}" value="{{slug}}" required>
-
-          <div class="pure-u-1">
-            <div class="toolbar">
-              <button type="button" id="preview-entry" class="button-small pure-button" title="Preview"><i class="fa fa-search"></i></button>
-              <label for="upload-image" class="button-small pure-button upload-image" title="Upload Image"><i class="fa fa-cloud-upload"></i></label>
-              <input id="upload-image" type="file" class="file-upload" />
+              <input id="entry-form-slug" class="pure-u-1-2" type="text" placeholder="Slug" data-entry-form-slug="{{slug}}" value="{{slug}}" required>
             </div>
           </div>
-
-          <div id="content-body-container" class="pure-u-1">
-            <textarea id="entry-form-content" class="pure-u-1 content-textarea" rows="25">{{content}}</textarea>
+          <div class="pure-u-1">
+            <div class="toolbar">
+              <a id="view-entry" class="button-small pure-button" href="{{siteEndpoint}}{{key}}" target="_blank"><i class="fa fa-external-link"></i> View</a>
+            </div>
           </div>
-
+          <div id="content-body-container" class="pure-u-1">{{> (whichPartial) }}</div>
           <div class="content-footer-controls pure-u-1">
             <button type="submit" class="pure-button primary-button">Save</button>
           </div>
-        </div>
-      </fieldset>
+        </fieldset>
 
-    </form>
-  </div>
-</script>  
-
-<div id="layout" class="content pure-g">
-  <div id="nav" class="pure-u">
-    <a href="#" class="nav-menu-button">Menu</a>
-    <div class="nav-inner">
-      <button id="new-entry" class="primary-button pure-button new-entry-button"><i class="fa fa-plus-circle"></i> Entry</button>
-      <div class="pure-menu">
-        <ul class="pure-menu-list">
-          <li class="pure-menu-item"><a href="#" class="pure-menu-link">Recent</a></li>
-          <li class="pure-menu-item"><a href="#" class="pure-menu-link">Draft</a></li>
-          <li class="pure-menu-item"><a href="#" class="pure-menu-link">Trash</a></li>
-        </ul>
-      </div>
+      </form>
     </div>
   </div>
+</script>
+
+<div id="layout" class="content">
+  <ul id="nav" class="nav nav-stacked nav-pills">
+    <li class="dropdown">
+      <a id="new-entry" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-plus-circle"></i> New Entry</a>
+      <ul id="new-entry-data-types" class="dropdown-menu"></ul>
+    </li>
+    <li><a href="#" class="publish-all-link"><i class="fa fa-refresh"></i> Publish All Files</a></li>
+    <li><a href="#" class="publish-menu-link"><i class="fa fa-refresh"></i> Refresh Site Menu</a></li>
+  </ul>
 
   <div id="list" class="pure-u-1">
     <div id="tree" class="tree"></div>
   </div>
   <div id="main" class="pure-u-1" data-key></div>
 </div>
-
-<script type="text/javascript">
-  $(document).on("click", ".nav-menu-button", function(event){
-    $('#nav').toggleClass('active');
-  });
-</script>
-
 </body>
 </html>
