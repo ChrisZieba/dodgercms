@@ -143,9 +143,9 @@ label.upload-image {
 
 #nav .pure-menu-link {
   color: #fff;
-  margin-left: 0.5em;
-  margin-right: 0.5em;
-  padding-left: 1.75em;
+  margin-left: 0.25em;
+  margin-right: 0.25em;
+  padding-left: 1.25em;
 }
 
 #nav .pure-menu-link:hover {
