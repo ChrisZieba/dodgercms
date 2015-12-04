@@ -639,6 +639,17 @@ $(function() {
   }
 
   /**
+   * Automatically compile metadata elements
+   */
+  function getMetadata(){
+    var metadata = {};
+    $('#document-editor .metadata').each(function(){
+      metadata[$(this).attr('id')] = $(this).val();
+    });
+    return metadata;
+  }
+
+  /**
    * Save an entry.
    *
    * @param {Object} event The JavaScript event
@@ -647,10 +658,10 @@ $(function() {
     event.preventDefault();
 
     // Get the form values
-    var $title = $('#entry-form-title');
+    var $title = $('#title');
     var $folder = $('#entry-form-folder');
     var $slug = $('#entry-form-slug');
-    var $content = $('#entry-form-content');
+    var $content = $('#content-body-container');
 
     var title = $.trim($title.val());
     var folder = $('option:selected', $folder).data('folder');
@@ -668,12 +679,13 @@ $(function() {
       alert('The url slug must be at most 32 characters, and can only contain letters, numbers, dashes, underscores.');
       return;
     }
-
     // Block the page
     block();
 
+    var metadata = getMetadata();
+
     // Callback used after the entry was uploaded to S3
-    var callback = function(key, folder, slug, title) {
+    var callback = function(key, folder, slug) {
       // Update the key
       $('#main').data('key', key);
 
@@ -686,9 +698,9 @@ $(function() {
       $slug.val(slug);
       $folder.attr('data-entry-form-folder', folder);
       $folder.data('entry-form-folder', folder);
-
+      var metadata = getMetadata();
       // Process the entry
-      dodgercms.entry.upsert(key, title, content, SITE_BUCKET, SITE_ENDPOINT, function(err, data) {
+      dodgercms.entry.upsert(key, metadata, content, SITE_BUCKET, SITE_ENDPOINT, function(err, data) {
         if (err) {
           errorHandler(err);
         } else {
@@ -730,9 +742,7 @@ $(function() {
         ContentType:  CONTENT_TYPE,
         Expires: 0,
         CacheControl: 'public, max-age=0, no-cache',
-        Metadata: {
-          'title': title,
-        }
+        Metadata: metadata
       };
 
       // Put the object in its place
@@ -778,6 +788,7 @@ $(function() {
           // Render the template and load the contents into the page
           var html = template(context);
           $('#main').html(html);
+          setVisibilitySelect(data.Metadata.visibility);
         }
       });
     });
@@ -804,7 +815,8 @@ $(function() {
             body = data.Body.toString();
           }
 
-          dodgercms.entry.upsert(key, data.Metadata.title, body, SITE_BUCKET, SITE_ENDPOINT, function(err, data) {
+          var metadata = data.Metadata;
+          dodgercms.entry.upsert(key, metadata, body, SITE_BUCKET, SITE_ENDPOINT, function(err, data) {
             if (err) {
               callback(err);
               errorHandler(err);
@@ -1078,6 +1090,11 @@ $(function() {
       }
     }
   });
+
+  //set the visible/not visible value of the visibility select
+  function setVisibilitySelect(val){
+      $('#visibility').val(val);
+  }
 
   //Event listener to publish all files
   $('.publish-all-link').click(function(event){
