@@ -21,6 +21,9 @@
     "Handlebars": true,
     "async": true,
     "marked": true,
-    "hljs": true
+    "hljs": true,
+    "_": true,
+    "Backbone": true,
+    "console": true
   }
 }

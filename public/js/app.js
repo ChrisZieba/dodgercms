@@ -62,7 +62,7 @@ $(function() {
     if (!accessKeyId || !secretAccessKey || !sessionToken) {
       dodgercms.auth.redirect();
     }
-    
+
     // Init the s3 connection
     dodgercms.s3.init(accessKeyId, secretAccessKey, sessionToken, force);
   }
@@ -85,7 +85,7 @@ $(function() {
       dodgercms.auth.login(function(err, data) {
         // Remove the page blocker
         unblock();
-        
+
         if (err) {
           // Redirect to the login page
           dodgercms.auth.redirect();
@@ -124,10 +124,10 @@ $(function() {
 
           // Push the bucket onto the array as the root
           tree.push({
-            'id': 's3--root', 
-            'parent': '#', 
+            'id': 's3--root',
+            'parent': '#',
             'text': '<span class="bucket">' + DATA_BUCKET + '</span>',
-            'type': 'folder', 
+            'type': 'folder',
             'a_attr': {
               'title': DATA_BUCKET
             },
@@ -161,7 +161,7 @@ $(function() {
             for (var j = 0; j < parts.length; j+=1) {
               var isFolder = false;
 
-              // If the last part in the key has a trailing slash or if the part 
+              // If the last part in the key has a trailing slash or if the part
               // is in not the last element it is a path
               if ((j === parts.length-1 && key.substr(-1) === '/') || j !== parts.length-1) {
                 isFolder = true;
@@ -174,7 +174,7 @@ $(function() {
               if (isFolder) {
                 search += '-folder';
               }
-              
+
               // Check to see if the id exists in the tree already
               var result = $.grep(tree, searchFn);
 
@@ -193,8 +193,8 @@ $(function() {
 
                 // Tree node
                 var node = {
-                  'id' : search, 
-                  'parent' : parent, 
+                  'id' : search,
+                  'parent' : parent,
                   'text' : parts[j],
                   'type': (isFolder) ? 'folder' : 'file',
                   'a_attr': {},
@@ -213,12 +213,12 @@ $(function() {
                   if ((parts.slice(0,j+1).join('/')  === parts.join('/')) && object.Metadata.label) {
                     node.li_attr['data-label'] = object.Metadata.label;
                     node.a_attr.title = object.Metadata.label;
-                  } 
+                  }
                 } else {
                   // The last part of the key will have the title
                   if ((parts.slice(0,j+1).join('/')  === parts.join('/')) && object.Metadata.title) {
                     node.a_attr.title = object.Metadata.title;
-                  } 
+                  }
 
                   if (parts[j] === 'index') {
                     //node.text = '<span class=index-key>' + parts[j] + '</span>';
@@ -253,9 +253,9 @@ $(function() {
                     }
                   });
                 }
-                
+
                 break;
-            } 
+            }
           };
 
           // Custom drop down menu for nodes in the tree
@@ -327,7 +327,7 @@ $(function() {
 
                   // The new key name
                   target = parts.join('/');
-                } 
+                }
 
                 // Rename the entry in S3
                 dodgercms.entry.rename(key, target, DATA_BUCKET, SITE_BUCKET, function(err, data) {
@@ -410,7 +410,7 @@ $(function() {
               if (input === null) {
                 return;
               }
-             
+
               // This will delete from S3
               dodgercms.entry.remove(key, DATA_BUCKET, SITE_BUCKET, function(err, data) {
                 if (err) {
@@ -461,7 +461,7 @@ $(function() {
                 action: removeItem
               }
             };
-            
+
             // Folders get extra items added to the menu
             if (node.type === 'folder') {
               var label = node.li_attr['data-label'];
@@ -529,14 +529,14 @@ $(function() {
               // Move index files to the top
               if (nodeA.type === nodeB.type) {
                 // If the types are the same, sort by name
-                return this.get_text(a) > this.get_text(b) ? 1 : -1; 
+                return this.get_text(a) > this.get_text(b) ? 1 : -1;
               } else {
                 if (nodeA.type === 'index') {
                   return -1;
                 } else if (nodeB.type === 'index') {
                   return 1;
                 } else {
-                  return nodeA.type === 'file' ? 1 : -1; 
+                  return nodeA.type === 'file' ? 1 : -1;
                 }
               }
             }
@@ -567,7 +567,7 @@ $(function() {
    * @param {String} parent The parent folder
    * @param {String} text The text used in the tree node
    * @param {String} title The title of the entry
-   * @return {Object} A new jsTree node 
+   * @return {Object} A new jsTree node
   */
   function addNode(key, parent, text, title) {
     var folder = dodgercms.utils.isFolder(key);
@@ -577,8 +577,8 @@ $(function() {
     parent = getTreeNodeId(parent);
 
     var node = {
-      'id' : id, 
-      'parent' : parent, 
+      'id' : id,
+      'parent' : parent,
       'text' : text,
       'type': (folder) ? 'folder' : 'file',
       'li_attr': {
@@ -603,7 +603,7 @@ $(function() {
     if (!doesTreeNodeExist(id)) {
       $('#tree').jstree('create_node', '#' + parent, node);
     }
-    
+
     return node;
   }
 
@@ -612,8 +612,8 @@ $(function() {
    * events in the background are still being processed.
   */
   function block() {
-    $.blockUI({ 
-      css: { 
+    $.blockUI({
+      css: {
         'border': 'none',
         'padding': '15px',
         'backgroundColor': '#000',
@@ -622,13 +622,13 @@ $(function() {
         'opacity': 0.5,
         'color': '#fff'
       },
-      // Styles for the overlay 
-      overlayCSS:  { 
-        'backgroundColor': '#000', 
-        'opacity': 0, 
-        'cursor': 'wait' 
+      // Styles for the overlay
+      overlayCSS:  {
+        'backgroundColor': '#000',
+        'opacity': 0,
+        'cursor': 'wait'
       }
-    }); 
+    });
   }
 
   /**
@@ -645,7 +645,7 @@ $(function() {
   */
   function save(event) {
     event.preventDefault();
-    
+
     // Get the form values
     var $title = $('#entry-form-title');
     var $folder = $('#entry-form-folder');
@@ -679,7 +679,7 @@ $(function() {
 
       // Add the node to the tree (only added if it doesnt exist)
       addNode(key, folder, slug, title);
-      
+
       // Update the data attributes
       $slug.attr('data-entry-form-slug', slug);
       $slug.data('entry-form-slug', slug);
@@ -705,8 +705,8 @@ $(function() {
     var $folderData = $folder.data('entry-form-folder');
     var $slugData = $slug.data('entry-form-slug');
 
-    // If the folder or slug has changed we need to move the object. The 
-    // reason for checking if the slugData exists is to determine 
+    // If the folder or slug has changed we need to move the object. The
+    // reason for checking if the slugData exists is to determine
     // if the entry exists already (i.e, not new).
     if ($slugData && $folderData && (($folderData !== folder) || ($slugData !== slug))) {
       // This is the where the entry was originally located before the save
@@ -778,6 +778,41 @@ $(function() {
           // Render the template and load the contents into the page
           var html = template(context);
           $('#main').html(html);
+        }
+      });
+    });
+  }
+
+  /**
+   * Do an edit and save operation on the entry (used on a template update or publish all call)
+   *
+   * @param {Object} item The S3 item to be published
+  */
+  function quickPublishEntry(item, callback) {    // Gets the object data from S3
+    var key = item.Key;
+    dodgercms.s3.getObject(key, DATA_BUCKET, function(err, data) {
+      dodgercms.s3.listObjects(DATA_BUCKET, function(err, list) {
+        if (err) {
+          errorHandler(err);
+        } else {
+          // Process the entry
+          var body = '';
+          if(sessionStorage.getItem(data.ETag+'_'+key+'-Body')) {
+            body = JSON.parse(sessionStorage.getItem(data.ETag+'_'+key+'-Body'));
+          }
+          else {
+            body = data.Body.toString();
+          }
+
+          dodgercms.entry.upsert(key, data.Metadata.title, body, SITE_BUCKET, SITE_ENDPOINT, function(err, data) {
+            if (err) {
+              callback(err);
+              errorHandler(err);
+            }
+            else {
+              callback(null);
+            }
+          });
         }
       });
     });
@@ -1003,8 +1038,8 @@ $(function() {
     var link = 'http://' + ASSETS_BUCKET + '.' + S3_ENDPOINT + '/' + filename;
     var params = {
       Bucket: ASSETS_BUCKET,
-      Key: filename, 
-      ContentType: file.type, 
+      Key: filename,
+      ContentType: file.type,
       Body: file
     };
 
@@ -1043,4 +1078,30 @@ $(function() {
       }
     }
   });
+
+  //Event listener to publish all files
+  $('.publish-all-link').click(function(event){
+    dodgercms.s3.listObjects(DATA_BUCKET, function(err, data) {
+      async.each(data.Contents, quickPublishEntry, function(err){
+          if(err){
+            alert('Error: '+err);
+          }
+          else {
+            alert('Publish operation is complete.');
+          }
+      });
+    });
+  });
+
+  //event listener for republishing the Menu
+  $('.publish-menu-link').click(function(){
+    dodgercms.entry.menu(SITE_BUCKET, SITE_ENDPOINT, function(err) {
+      if (err) {
+         errorHandler(err);
+       } else {
+         rebuildTree();
+       }
+     });
+  });
+
 });
