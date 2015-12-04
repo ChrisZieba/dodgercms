@@ -58,68 +58,57 @@
 </script>
 
 <script id="edit-entry-template" type="text/x-handlebars-template">
-  <div id="document-editor">
-    <div class="content-header pure-g">
-      <div class="pure-u-3-4">
-        {{#if title}}
-          <h1 class="content-title">Editing <span>{{title}}</span></h1>
-        {{else}}
-          <h1 class="content-title">New Entry</h1>
-        {{/if}}
-      </div>
-      <div class="content-controls pure-u-1-4">
-        {{#title}}
-          <button id="delete-entry" data-key="{{key}}" class="secondary-button pure-button" title="Delete"><i class="fa fa-trash"></i></button>
-        {{/title}}
-        <button id="close-entry" class="secondary-button pure-button" title="Close"><i class="fa fa-times"></i></button>
-      </div>
+  <div class="content-header pure-g">
+    <div class="pure-u-3-4">
+      {{#if title}}
+        <h1 class="content-title">Editing <span>{{title}}</span></h1>
+      {{else}}
+        <h1 class="content-title">New Entry</h1>
+      {{/if}}
     </div>
-    <div class="content-body">
-      <form id="entry-form" class="pure-form pure-form-stacked entry-form">
-        <fieldset>
-          <div class="pure-g">
+    <div class="content-controls pure-u-1-4">
+      {{#title}}
+        <button id="delete-entry" data-key="{{key}}" class="secondary-button pure-button" title="Delete"><i class="fa fa-trash"></i></button>
+      {{/title}}
+      <button id="close-entry" class="secondary-button pure-button" title="Close"><i class="fa fa-times"></i></button>
+    </div>
+  </div>
+  <div class="content-body">
+    <form id="entry-form" class="pure-form pure-form-stacked entry-form">
+      <fieldset>
+        <div class="pure-g">
 
-            <div class="pure-u-1-2">
-              <label>Page Visibility</label>
-              <select id="visibility" class="metadata">
-                <option value="visible">Visible</option>
-                <option value="not-visible">Not Visible</option>
-              </select>
-            </div>
+          <input id="entry-form-title" class="pure-u-1" type="text" placeholder="Title" data-entry-form-title="{{title}}" value="{{title}}" required>
 
-            <label>Page Title</label>
-            <input id="title" class="pure-u-1 metadata" type="text" placeholder="Title" data-entry-form-title="{{title}}" value="{{title}}" required>
+          <div class="pure-u-1-2">
+            <select id="entry-form-folder" data-entry-form-folder="{{selectedFolder}}" class="pure-u-23-24">
+              {{#each folders}}
+                <option value="{{this}}" data-folder="{{this}}" {{selected this ../selectedFolder}}>{{this}}</option>
+              {{/each}}
+            </select>
+          </div>
 
-            <div class="pure-u-1-2">
-              <select id="entry-form-folder" data-entry-form-folder="{{selectedFolder}}" class="pure-u-23-24">
-                {{#each folders}}
-                  <option value="{{this}}" data-folder="{{this}}" {{selected this ../selectedFolder}}>{{this}}</option>
-                {{/each}}
-              </select>
-            </div>
+          <input id="entry-form-slug" class="pure-u-1-2" type="text" placeholder="Slug" data-entry-form-slug="{{slug}}" value="{{slug}}" required>
 
-            <input id="entry-form-slug" class="pure-u-1-2" type="text" placeholder="Slug" data-entry-form-slug="{{slug}}" value="{{slug}}" required>
-
-            <div class="pure-u-1">
-              <div class="toolbar">
-                <button type="button" id="preview-entry" class="button-small pure-button" title="Preview"><i class="fa fa-search"></i></button>
-                <label for="upload-image" class="button-small pure-button upload-image" title="Upload Image"><i class="fa fa-cloud-upload"></i></label>
-                <input id="upload-image" type="file" class="file-upload" />
-              </div>
-            </div>
-
-            <div id="content-body-container" class="pure-u-1">
-              <textarea id="entry-form-content" class="pure-u-1 content-textarea" rows="25">{{content}}</textarea>
-            </div>
-
-            <div class="content-footer-controls pure-u-1">
-              <button type="submit" class="pure-button primary-button">Save</button>
+          <div class="pure-u-1">
+            <div class="toolbar">
+              <button type="button" id="preview-entry" class="button-small pure-button" title="Preview"><i class="fa fa-search"></i></button>
+              <label for="upload-image" class="button-small pure-button upload-image" title="Upload Image"><i class="fa fa-cloud-upload"></i></label>
+              <input id="upload-image" type="file" class="file-upload" />
             </div>
           </div>
-        </fieldset>
 
-      </form>
-    </div>
+          <div id="content-body-container" class="pure-u-1">
+            <textarea id="entry-form-content" class="pure-u-1 content-textarea" rows="25">{{content}}</textarea>
+          </div>
+
+          <div class="content-footer-controls pure-u-1">
+            <button type="submit" class="pure-button primary-button">Save</button>
+          </div>
+        </div>
+      </fieldset>
+
+    </form>
   </div>
 </script>
 
