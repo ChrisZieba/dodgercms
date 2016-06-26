@@ -36,6 +36,10 @@ module.exports = function(grunt) {
           processName: function(filePath) {
             var pieces = filePath.split("/");
             return pieces[pieces.length - 1];
+          },
+          processContent: function(content, filepath) {
+            content = content.replace(/^[\r\n]+/, '').replace(/[\r\n]*$/, '\n');
+            return content;
           }
         },
         files: {
