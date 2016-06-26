@@ -66,19 +66,23 @@ module.exports = function(grunt) {
         key: '<%= aws.key %>',
         secret: '<%= aws.secret %>',
         bucket: '<%= aws.bucket %>',
+        region: '<%= aws.region %>',
         access: 'private'
       },
       dev: {
-        upload: [
+        sync: [
           {
+            options: { verify: true },
             src: 'index.html',
             dest: 'index.html'
           },
           {
+            options: { verify: true },
             src: 'login.html',
             dest: 'login.html'
           },
           {
+            options: { verify: true },
             src: 'public/**',
             dest: 'public/**'
           },
