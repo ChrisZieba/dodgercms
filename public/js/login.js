@@ -33,18 +33,16 @@ $(function() {
 
     var accessKey = $.trim($('#login-form-access-key').val());
     var accessSecret = $.trim($('#login-form-access-secret').val());
+    var siteBucket = $.trim($('#login-form-site-bucket').val());
     var dataBucket = $.trim($('#login-form-data-bucket').val());
     var assetsBucket = $.trim($('#login-form-assets-bucket').val());
-    var siteBucket = $.trim($('#login-form-site-bucket').val());
     var region = $.trim($('#login-form-region').val());
     var remember = $('#login-remember').is(':checked');
 
     // Validate the form fields
     if (accessKey === '' || 
       accessSecret === '' || 
-      dataBucket === '' || 
-      assetsBucket === '' ||
-      siteBucket === '') 
+      siteBucket === '')
     {
       alert('All fields are required.');
       return;
@@ -85,5 +83,23 @@ $(function() {
         window.location.replace(location.protocol + '//' + location.host);
       }
     });
+  });
+
+  /**
+   * Adding click-to-expand functionality for advanced options
+   */
+  $('.header').click(function () {
+      var $header = $(this);
+      var $chevron = $header.find('.chevron');
+      // getting the next element
+      var $content = $header.next();
+      // open up the content needed - toggle the slide- if visible, slide up, if not slidedown.
+      $content.slideToggle(500, function () {
+          // execute this after slideToggle is done
+          // change text of header based on visibility of content div
+          var chevronEntity = $content.is(':visible') ? '\u25bd' : '\u25b7';
+          $chevron.text(chevronEntity);
+      });
+
   });
 });

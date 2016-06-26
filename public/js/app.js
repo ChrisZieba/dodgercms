@@ -12,9 +12,9 @@
 $(function() {
   'use strict';
 
-  var DATA_BUCKET = localStorage.getItem('dodgercms-data-bucket');
-  var ASSETS_BUCKET = localStorage.getItem('dodgercms-assets-bucket');
   var SITE_BUCKET = localStorage.getItem('dodgercms-site-bucket');
+  var DATA_BUCKET = localStorage.getItem('dodgercms-data-bucket') || 'data.' + SITE_BUCKET;
+  var ASSETS_BUCKET = localStorage.getItem('dodgercms-assets-bucket') || 'assets.' + SITE_BUCKET;
   var SITE_ENDPOINT = localStorage.getItem('dodgercms-site-endpoint');
   var CONTENT_TYPE = 'text/plain; charset=UTF-8';
   var S3_ENDPOINT = 's3.amazonaws.com';

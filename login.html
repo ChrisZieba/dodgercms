@@ -15,6 +15,7 @@
 
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="robots" content="nofollow,noindex"/>
+  <meta charset="UTF-8"/>
 
   <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css" />
   <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css" />
@@ -45,27 +46,32 @@
               <input id="login-form-access-secret" class="pure-u-1" type="text" placeholder="Access Secret" value="" required/>
             </div>
             <div class="pure-u-1">
-              <input id="login-form-data-bucket" class="pure-u-1" type="text" placeholder="Data Bucket" value="" required/>
-            </div>
-            <div class="pure-u-1">
-              <input id="login-form-assets-bucket" class="pure-u-1" type="text" placeholder="Assets Bucket" value="" required/>
-            </div>
-            <div class="pure-u-1">
               <input id="login-form-site-bucket" class="pure-u-1" type="text" placeholder="Site Bucket" value="" required/>
             </div>
-            <div class="pure-u-1">
-              <select id="login-form-region" class="pure-u-1" required>
-                <option value="us-east-1">us-east-1</option>
-                <option value="us-west-1">us-west-1</option>
-                <option value="us-west-2">us-west-2</option>
-                <option value="eu-west-1">eu-west-1</option>
-                <option value="ap-southeast-1">ap-southeast-1</option>
-                <option value="ap-southeast-2">ap-southeast-2</option>
-                <option value="ap-northeast-1">ap-northeast-1</option>
-                <option value="sa-east-1">sa-east-1</option>
-                <option value="cn-north-1">cn-north-1</option>
-                <option value="eu-central-1">eu-central-1</option>
-              </select>
+            <div class="pure-u-1" id="login-form-advanced-options">
+              <label class="header"><span class="chevron">&#x25b7;</span>&nbsp;<span>Advanced Options...</span></label>
+              <div class="content">
+                <div class="pure-u-1">
+                  <input id="login-form-data-bucket" class="pure-u-1" type="text" placeholder="Data Bucket" value=""/>
+                </div>
+                <div class="pure-u-1">
+                  <input id="login-form-assets-bucket" class="pure-u-1" type="text" placeholder="Assets Bucket" value=""/>
+                </div>
+                <div class="pure-u-1">
+                  <select id="login-form-region" class="pure-u-1" required>
+                    <option value="us-east-1">us-east-1</option>
+                    <option value="us-west-1">us-west-1</option>
+                    <option value="us-west-2">us-west-2</option>
+                    <option value="eu-west-1">eu-west-1</option>
+                    <option value="ap-southeast-1">ap-southeast-1</option>
+                    <option value="ap-southeast-2">ap-southeast-2</option>
+                    <option value="ap-northeast-1">ap-northeast-1</option>
+                    <option value="sa-east-1">sa-east-1</option>
+                    <option value="cn-north-1">cn-north-1</option>
+                    <option value="eu-central-1">eu-central-1</option>
+                  </select>
+                </div>
+              </div>
             </div>
             <div class="pure-u-1">
               <label for="login-remember" class="pure-checkbox pure-input-label">

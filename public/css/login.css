@@ -55,6 +55,11 @@ p.help {
   font-size:1.1em;
 }
 
+.container .content {
+    display: none;
+    padding : 5px;
+}
+
 @media (min-width: 48em) {
   .container  {
     width: 24em;
