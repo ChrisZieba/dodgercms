@@ -12,9 +12,9 @@
 $(function() {
   'use strict';
 
-  var DATA_BUCKET = localStorage.getItem('dodgercms-data-bucket');
-  var ASSETS_BUCKET = localStorage.getItem('dodgercms-assets-bucket');
   var SITE_BUCKET = localStorage.getItem('dodgercms-site-bucket');
+  var DATA_BUCKET = localStorage.getItem('dodgercms-data-bucket') || 'data.' + SITE_BUCKET;
+  var ASSETS_BUCKET = localStorage.getItem('dodgercms-assets-bucket') || 'assets.' + SITE_BUCKET;
   var SITE_ENDPOINT = localStorage.getItem('dodgercms-site-endpoint');
   var CONTENT_TYPE = 'text/plain; charset=UTF-8';
   var S3_ENDPOINT = 's3.amazonaws.com';
@@ -58,13 +58,14 @@ $(function() {
     var accessKeyId = sessionStorage.getItem('dodgercms-token-access-key-id');
     var secretAccessKey = sessionStorage.getItem('dodgercms-token-secret-access-key');
     var sessionToken = sessionStorage.getItem('dodgercms-token-session-token');
+    var region = sessionStorage.getItem('dodgercms-token-region');
 
-    if (!accessKeyId || !secretAccessKey || !sessionToken) {
+    if (!accessKeyId || !secretAccessKey || !sessionToken || !region) {
       dodgercms.auth.redirect();
     }
     
     // Init the s3 connection
-    dodgercms.s3.init(accessKeyId, secretAccessKey, sessionToken, force);
+    dodgercms.s3.init(accessKeyId, secretAccessKey, sessionToken, region, force);
   }
 
   /**
