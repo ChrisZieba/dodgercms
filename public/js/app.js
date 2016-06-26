@@ -58,13 +58,14 @@ $(function() {
     var accessKeyId = sessionStorage.getItem('dodgercms-token-access-key-id');
     var secretAccessKey = sessionStorage.getItem('dodgercms-token-secret-access-key');
     var sessionToken = sessionStorage.getItem('dodgercms-token-session-token');
+    var region = sessionStorage.getItem('dodgercms-token-region');
 
-    if (!accessKeyId || !secretAccessKey || !sessionToken) {
+    if (!accessKeyId || !secretAccessKey || !sessionToken || !region) {
       dodgercms.auth.redirect();
     }
     
     // Init the s3 connection
-    dodgercms.s3.init(accessKeyId, secretAccessKey, sessionToken, force);
+    dodgercms.s3.init(accessKeyId, secretAccessKey, sessionToken, region, force);
   }
 
   /**
