@@ -1000,7 +1000,8 @@ $(function() {
     var filename = 'images/' + file.name.replace(/\s|\\|\/|\(|\)/g,'-');
 
     // Where to upload the image
-    var link = 'http://' + ASSETS_BUCKET + '.' + S3_ENDPOINT + '/' + filename;
+    var link = 'https://s3.amazonaws.com/' + ASSETS_BUCKET + '/' + filename;
+
     var params = {
       Bucket: ASSETS_BUCKET,
       Key: filename, 
