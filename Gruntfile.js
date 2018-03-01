@@ -60,7 +60,6 @@ module.exports = function(grunt) {
         }
       }
     },
-    aws: grunt.file.readJSON('./grunt-aws.json'),
     s3: {
       options: {
         key: '<%= aws.key %>',
@@ -95,6 +94,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-s3');
 
-  grunt.registerTask('default', ['handlebars', 'mocha', 'jshint', 'cssmin', 'uglify']);
+  grunt.registerTask('default', ['handlebars', 'mocha', 'cssmin', 'uglify']);
   grunt.registerTask('deploy', ['default', 's3']);
 };
