@@ -491,7 +491,7 @@
           }
         };
 
-        request.open("GET", "{{&endpoint}}/{{dataKey}}");
+        request.open("GET", "{{&endpoint}}{{dataKey}}");
         request.send();
 
         // Retrieve the json file with menu data
